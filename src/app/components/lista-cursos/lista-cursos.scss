@@ -1,0 +1,187 @@
+// ✅ VARIABLES UNIFICADAS
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$blanco-puro: #ffffff;
+$fuente-titulo: 'Georgia', serif;
+$fuente-retro: 'Courier New', monospace;
+$fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+.page-container {
+  max-width: 1100px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  
+  h1 { 
+    font-family: $fuente-titulo; 
+    color: $verde-colegial; 
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  
+  &::after { 
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: $dorado-diploma;
+    margin: 0 auto;
+  }
+}
+
+// ✅ LISTADO HORIZONTAL (A LO LARGO)
+.card-grid {
+  display: flex;
+  flex-direction: column; 
+  gap: 1.5rem; 
+}
+
+.curso-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-left: 8px solid $dorado-diploma; // Solo acento lateral
+  border-radius: 4px;
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+
+  &:hover {
+    transform: translateX(10px); // Desplazamiento lateral al elegirlo
+    box-shadow: 8px 8px 0px rgba($dorado-diploma, 0.2);
+    border-color: $verde-colegial;
+  }
+
+  .card-content {
+    flex: 1;
+    
+    h3 { 
+      margin: 0 0 0.5rem 0; 
+      color: $verde-colegial; 
+      font-family: $fuente-titulo;
+      font-size: 1.8rem;
+    }
+    
+    .maestro { 
+      font-size: 0.95rem; 
+      color: #555; 
+      margin: 0;
+      font-family: $fuente-retro;
+    }
+    
+    .ciclo { 
+      font-family: $fuente-retro; 
+      font-size: 0.8rem; 
+      color: #999;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 5px;
+    }
+  }
+
+  .badge {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: $fuente-retro;
+  }
+
+  .detalles-fila span + span {
+  margin-left: 10px;
+}
+}
+
+// ✅ PAGINACIÓN RETRO MEJORADA (FUERA DE LAS TARJETAS)
+.paginacion-retro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+  margin-top: 5rem;
+  padding: 2rem;
+  border-top: 2px solid $dorado-diploma;
+  background: rgba($crema-papel, 0.2);
+
+  button {
+    background: $blanco-puro;
+    border: 3px solid $verde-colegial; 
+    color: $verde-colegial;
+    font-family: $fuente-retro;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 12px 30px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.4); // Sombra dorada tipo cartel
+
+    &:disabled { 
+      opacity: 0.3; 
+      cursor: not-allowed; 
+      border-color: #ccc;
+      color: #999;
+      box-shadow: none; 
+    }
+
+    &:hover:not(:disabled) { 
+      background: $verde-colegial; 
+      color: $blanco-puro; 
+      transform: translate(-3px, -3px); // Movimiento físico
+      box-shadow: 10px 10px 0px $dorado-diploma; 
+    }
+    
+    &:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px $dorado-diploma;
+    }
+  }
+
+  .info-pagina {
+    font-family: $fuente-titulo;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: $verde-colegial;
+    letter-spacing: 1px;
+    background: $crema-papel;
+    padding: 5px 20px;
+    border: 1px solid $dorado-diploma;
+  }
+}
+
+.filtro-container {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  font-family: $fuente-moderna;
+
+  select {
+    padding: 8px 15px;
+    border: 2px solid $verde-colegial;
+    border-radius: 4px;
+    background: white;
+    font-family: $fuente-moderna;
+    color: $verde-colegial;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($dorado-diploma, 0.3);
+    }
+  }
+}

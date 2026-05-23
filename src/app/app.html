@@ -1,0 +1,48 @@
+<nav class="navbar-pascasio">
+  <div class="nav-container">
+    <div class="nav-brand" routerLink="/">
+      <span class="escuela-sigla">C.P.M.</span>
+    </div>
+    
+    <div class="nav-links">
+      <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">INICIO</a>
+      <a routerLink="/cursos" routerLinkActive="active-link">CURSOS</a>
+      <a routerLink="/anotador" routerLinkActive="active-link">ANOTADOR</a>
+      <a routerLink="/cuenta-corriente" routerLinkActive="active-link">CTA CORRIENTE</a>
+      <a routerLink="/inscripcion" routerLinkActive="active-link">NUEVA INSCRIPCIÓN</a>
+
+      <!-- SUBMENU DESPLEGABLE DE ADMINISTRACIÓN -->
+      <div class="dropdown">
+        <a class="dropbtn">ADMINISTRACIÓN ▼</a>
+        <div class="dropdown-content">
+          <a routerLink="/periodos">PERIODOS</a>
+          <a routerLink="/conceptos">CONCEPTOS</a>
+          <a routerLink="/recaudacion">RECAUDACIÓN DIARIA</a>
+          <a routerLink="/facturacion-periodo">FACTURACIÓN POR PERÍODO</a>
+          <a routerLink="/recaudacion-periodo">RECAUDACIÓN POR PERÍODO</a>
+          <a routerLink="/recaudacion-fechas">RECAUDACIÓN POR FECHAS</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="main-content">
+  <router-outlet />
+</main>
+
+<footer class="footer-pascasio">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <span class="escuela-sigla">C.P.M.</span>
+      <p class="fundacion">Est. 1945</p>
+    </div>
+    <div class="footer-info">
+      <p class="institucion">Col. Francisco P. Moreno</p>
+      <p class="direccion">Alfonso X Nº47, Mendoza</p>
+    </div>
+    <div class="footer-copy">
+      <p>&copy; 2026 S.G.A. - Registros Oficiales</p>
+    </div>
+  </div>
+</footer>

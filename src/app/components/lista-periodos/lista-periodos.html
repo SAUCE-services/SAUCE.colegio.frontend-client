@@ -1,0 +1,64 @@
+<div class="page-container">
+  <header class="section-header">
+    <h1>Períodos de Facturación</h1>
+    
+   <div class="filtros-periodo">
+  <div class="grupo-input">
+    <label>1° Vencimiento</label>
+    <input type="date" [(ngModel)]="filtroVenc1" (change)="onFiltrar()">
+  </div>
+  <div class="grupo-input">
+    <label>2° Vencimiento</label>
+    <input type="date" [(ngModel)]="filtroVenc2" (change)="onFiltrar()">
+  </div>
+  
+  <div class="grupo-input">
+    <label>Ciclo Lectivo</label>
+    <input type="text" [(ngModel)]="filtroCiclo" (keyup.enter)="onFiltrar()" placeholder="Ej: 2026">
+  </div>
+
+  <button class="btn-limpiar" (click)="limpiarFiltros()">
+    LIMPIAR FILTROS
+  </button>
+</div>
+  </header>
+
+  <div class="tabla-container">
+    <table class="tabla-retro">
+      <thead>
+        <tr>
+          <th># ID</th>
+          <th>Descripción del Período</th>
+          <th>Ciclo Lectivo</th>
+          <th>Primer Vencimiento</th>
+          <th>Segundo Vencimiento</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of periodos; track p.periodoId) {
+          <tr>
+            <td class="legajo-cell">{{ p.periodoId }}</td>
+            <td class="descripcion-cell">{{ p.descripcion }}</td>
+            <td>{{ p.nombreCiclo }}</td>
+            <td>{{ p.mes | date:'dd/MM/yyyy' }}</td>
+            <td>{{ p.fechaSegundo | date:'dd/MM/yyyy' }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="sin-datos">No se encontraron folios en este rango de fechas.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="paginacion-retro">
+    <button [disabled]="paginaActual === 0" (click)="cargarPeriodos(paginaActual - 1)">
+      « ANTERIOR
+    </button>
+    <span class="info-pagina">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
+    <button [disabled]="paginaActual >= totalPaginas - 1" (click)="cargarPeriodos(paginaActual + 1)">
+      SIGUIENTE »
+    </button>
+  </div>
+</div>

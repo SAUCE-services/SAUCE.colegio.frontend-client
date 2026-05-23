@@ -1,0 +1,46 @@
+<div class="page-container">
+  <header class="section-header">
+    <h1>Listado de Cursos</h1>
+    
+    <div class="filtro-container">
+      <label for="cicloFilter">Filtrar por Ciclo:</label>
+      <select id="cicloFilter" (change)="onFiltrarPorCiclo($any($event.target).value)">
+        <option value="">Todos los Ciclos</option>
+        @for (ciclo of ciclosDisponibles; track ciclo) {
+          <option [value]="ciclo">{{ ciclo }}</option>
+        }
+      </select>
+    </div>
+  </header>
+
+  <div class="card-grid">
+    @for (curso of cursos; track curso.cursoId) {
+      <div class="curso-card" [routerLink]="['/curso', curso.descripcion]">
+        <div class="card-content">
+          <h3>{{ curso.descripcion }}</h3>
+          <div class="detalles-fila">
+            <span><strong>Profesor:</strong> <span class="maestro-bold">{{ curso.nombreMaestro }}</span></span>
+            <span><strong>Ciclo:</strong> {{ curso.nombreCiclo }}</span>
+          </div>
+        </div>
+        <span class="badge">{{ curso.nombreTurno }}</span>
+      </div>
+    } @empty {
+      <div class="cargando">
+        <p>Buscando folios en el archivo...</p>
+      </div>
+    }
+  </div>
+
+  <div class="paginacion-retro">
+    <button [disabled]="paginaActual === 0" (click)="cargarCursos(paginaActual - 1)">
+      « ANTERIOR
+    </button>
+    
+    <span class="info-pagina">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
+    
+    <button [disabled]="paginaActual >= totalPaginas - 1" (click)="cargarCursos(paginaActual + 1)">
+      SIGUIENTE »
+    </button>
+  </div>
+</div>

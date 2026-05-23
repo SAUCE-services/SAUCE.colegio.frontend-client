@@ -1,0 +1,55 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Anotador</h1>
+      <button class="btn-toggle" routerLink="/">« VOLVER AL INICIO</button>
+    </div>
+
+    <div class="filtros-periodo">
+      <div class="grupo-input">
+        <label>Nro. de Legajo</label>
+        <div class="input-mixto-search">
+          <input 
+            type="number" 
+            [(ngModel)]="legajoBusqueda" 
+            (blur)="buscarYConsultar()" 
+            (keyup.enter)="buscarYConsultar()"
+            placeholder="Ej: 105">
+          <button type="button" class="btn-buscar-accion" (click)="buscarYConsultar()">🔍</button>
+        </div>
+      </div>
+
+      @if (nombreAlumno) {
+        <div class="alumno-identificado">
+          <label>Identificado como:</label>
+          <span class="nombre-resaltado">{{ nombreAlumno }}</span>
+        </div>
+      }
+
+      <button class="btn-limpiar" (click)="legajoBusqueda=null; nombreAlumno=''">
+        LIMPIAR IDENTIFICACIÓN
+      </button>
+    </div>
+  </header>
+
+  @if (nombreAlumno && nombreAlumno !== 'Alumno no encontrado') {
+    <div class="anotacion-form-box">
+      <fieldset class="seccion-ficha">
+        <legend>📝 REGISTRAR NUEVA OBSERVACIÓN PARA EL LEGADO #{{legajoBusqueda}}</legend>
+        <div class="area-anotacion">
+          <textarea 
+            [(ngModel)]="nuevaNota" 
+            placeholder="Escriba aquí la observación para el folio del alumno...">
+          </textarea>
+          <div class="acciones-nota">
+            <button class="btn-guardar-grande" (click)="guardarNota()" [disabled]="!nuevaNota">
+              💾 REGISTRAR EN FOLIO
+            </button>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  }
+
+  
+</div>

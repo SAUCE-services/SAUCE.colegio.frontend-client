@@ -1,0 +1,268 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Ficha de Inscripción</h1>
+      <button class="btn-toggle" routerLink="/alumnos">« VOLVER AL LISTADO</button>
+    </div>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="enviar()" class="form-retro-container">
+    <fieldset class="seccion-ficha search-bg">
+  <legend>BUSCAR ALUMNO (ACTUALIZACIÓN)</legend>
+  <div class="grupo-input row-search">
+    <label>Nro. de Legajo</label>
+    <div class="input-mixto">
+      <input type="number" #legajoInput placeholder="Ingrese legajo...">
+      <button type="button" class="btn-toggle" (click)="buscarAlumno(legajoInput.valueAsNumber)">
+        🔍 BUSCAR Y CARGAR
+      </button>
+    </div>
+  </div>
+</fieldset>
+    
+    <fieldset class="seccion-ficha">
+      <legend>I. DATOS PERSONALES DEL ASPIRANTE</legend>
+      <div class="grid-formulario">
+        <div class="grupo-input"><label>Apellido</label><input type="text" formControlName="apellido"></div>
+        <div class="grupo-input"><label>Nombre</label><input type="text" formControlName="nombre"></div>
+        <div class="grupo-input">
+          <label>Documento</label>
+          <div class="input-mixto">
+            <select formControlName="tipoDocumentoId">
+              <option [ngValue]="null">TIPO</option>
+              @for (t of tiposDoc$ | async; track t.tipoDocumentoId) {
+                <option [value]="t.tipoDocumentoId">{{t.descripcion}}</option>
+              }
+            </select>
+            <input type="text" formControlName="nroDocumento">
+          </div>
+        </div>
+        <div class="grupo-input">
+          <label>Transporte</label>
+          <select formControlName="transporteId">
+            <option [ngValue]="null">Seleccione...</option>
+            @for (tr of transportes$ | async; track tr.id) {
+              <option [value]="tr.id">{{tr.nombre}}</option>
+            }
+          </select>
+        </div>
+      <div class="grupo-input">
+  <label>Nacionalidad</label>
+  <select formControlName="nacionalidadId">
+    <option [ngValue]="null">Seleccione...</option>
+    @for (n of nacionalidades$ | async; track n.tipoNacionalidadId) {
+      <option [value]="n.tipoNacionalidadId">{{ n.descripcion }}</option>
+    }
+  </select>
+        </div>
+        <div class="columna-fechas">
+          <div class="grupo-input"><label>Fecha Nacimiento</label><input type="date" formControlName="fechaNacimiento"></div>
+          <div class="grupo-input"><label>Fecha Ingreso</label><input type="date" formControlName="fechaIngreso"></div>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="grid-padres">
+      <fieldset class="seccion-ficha">
+        <legend>II. DATOS DEL PADRE</legend>
+        <div class="grid-interna">
+          <div class="grupo-input"><label>Apellido</label><input type="text" formControlName="apellidoPadre"></div>
+          <div class="grupo-input"><label>Nombre</label><input type="text" formControlName="nombrePadre"></div>
+          <div class="grupo-input">
+            <label>Documento Padre</label>
+            <div class="input-mixto">
+              <select formControlName="tipoDocumentoPadreId">
+                <option [ngValue]="null">TIPO</option>
+                @for (t of tiposDoc$ | async; track t.tipoDocumentoId) {
+                  <option [value]="t.tipoDocumentoId">{{t.descripcion}}</option>
+                }
+              </select>
+              <input type="text" formControlName="nroDocumentoPadre">
+            </div>
+          </div>
+          <div class="grupo-input full-width"><label>Calle</label><input type="text" formControlName="callePadre"></div>
+          <div class="grupo-input"><label>Nro</label><input type="text" formControlName="nroPadre"></div>
+          <div class="grupo-input"><label>Piso/Dto</label>
+            <div class="input-mixto">
+              <input type="text" formControlName="pisoPadre" placeholder="Piso">
+              <input type="text" formControlName="deptoPadre" placeholder="Dto">
+            </div>
+          </div>
+          <div class="grupo-input">
+            <label> Departamento</label>
+            <select formControlName="departamentoPadreId">
+  <option [ngValue]="null">Seleccione...</option>
+  @for (d of departamentos$ | async; track d.id) {
+    <option [value]="d.id">{{ d.nombre }}</option>
+  }
+</select>
+          </div>
+          <div class="grupo-input">
+            <label>Nivel de Estudio</label>
+            <select formControlName="nivelEstudioPadreId">
+              @for (n of nivelesEstudio$ | async; track n.nivelEstudioId) {
+                <option [value]="n.nivelEstudioId">{{ n.descripcion }}</option>
+              }
+            </select>
+          </div>
+          <div class="grupo-input">
+  <label>Localidad</label>
+  <select formControlName="localidadPadreId">
+    <option [ngValue]="null">Seleccione...</option>
+    @for (l of localidades$ | async; track $index) {
+      <option [value]="l.id">{{ l.nombre }}</option>
+    }
+  </select>
+</div>
+<div class="grupo-input">
+  <label>Actividad / Profesión</label>
+  <select formControlName="actividadPadreId">
+    <option [ngValue]="null">Seleccione Actividad...</option>
+    @for (a of actividades$ | async; track a.actividadId) {
+      <option [value]="a.actividadId">{{ a.descripcion }}</option>
+    }
+  </select>
+</div>
+          <div class="grupo-input"><label>Celular</label><input type="text" formControlName="telCelPadre"></div>
+          <div class="grupo-input"><label>Fijo</label><input type="text" formControlName="telFijoPadre"></div>
+          <div class="grupo-input"><label>Parentesco</label>
+            <select formControlName="parentescoPadreId">
+              @for (p of parentescos$ | async; track p.parentescoId) { <option [value]="p.parentescoId">{{p.descripcion}}</option> }
+            </select>
+          </div>
+          <div class="grupo-input check-row"><input type="checkbox" formControlName="presentePadre"><label>Presente</label></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="seccion-ficha">
+        <legend>III. DATOS DE LA MADRE</legend>
+        <div class="grid-interna">
+          <div class="grupo-input"><label>Apellido</label><input type="text" formControlName="apellidoMadre"></div>
+          <div class="grupo-input"><label>Nombre</label><input type="text" formControlName="nombreMadre"></div>
+          <div class="grupo-input">
+            <label>Documento Madre</label>
+            <div class="input-mixto">
+              <select formControlName="tipoDocumentoMadreId">
+                <option [ngValue]="null">TIPO</option>
+                @for (t of tiposDoc$ | async; track t.tipoDocumentoId) {
+                  <option [value]="t.tipoDocumentoId">{{t.descripcion}}</option>
+                }
+              </select>
+              <input type="text" formControlName="nroDocumentoMadre">
+            </div>
+          </div>
+          <div class="grupo-input full-width"><label>Calle</label><input type="text" formControlName="calleMadre"></div>
+          <div class="grupo-input"><label>Nro</label><input type="text" formControlName="nroMadre"></div>
+          <div class="grupo-input"><label>Piso/Dto</label>
+            <div class="input-mixto">
+              <input type="text" formControlName="pisoMadre" placeholder="Piso">
+              <input type="text" formControlName="deptoMadre" placeholder="Dto">
+            </div>
+          </div>
+          <div class="grupo-input">
+            <label> Departamento</label>
+            <select formControlName="departamentoMadreId">
+              <option [ngValue]="null">Seleccione...</option>
+              @for (d of departamentos$ | async; track d.id) {
+                <option [value]="d.id">{{ d.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="grupo-input">
+            <label>Nivel de Estudio</label>
+            <select formControlName="nivelEstudioMadreId">
+              @for (n of nivelesEstudio$ | async; track n.nivelEstudioId) {
+                <option [value]="n.nivelEstudioId">{{ n.descripcion }}</option>
+              }
+            </select>
+          </div>
+          <div class="grupo-input">
+  <label>Localidad</label>
+  <select formControlName="localidadMadreId">
+    <option [ngValue]="null">Seleccione...</option>
+    @for (l of localidades$ | async; track $index) {
+      <option [value]="l.id">{{ l.nombre }}</option>
+    }
+  </select>
+</div>
+<div class="grupo-input">
+  <label>Actividad / Profesión</label>
+  <select formControlName="actividadMadreId">
+    <option [ngValue]="null">Seleccione Actividad...</option>
+    @for (a of actividades$ | async; track a.actividadId) {
+      <option [value]="a.actividadId">{{ a.descripcion }}</option>
+    }
+  </select>
+</div>
+          <div class="grupo-input"><label>Celular</label><input type="text" formControlName="telCelMadre"></div>
+          <div class="grupo-input"><label>Fijo</label><input type="text" formControlName="telFijoMadre"></div>
+          <div class="grupo-input"><label>Parentesco</label>
+            <select formControlName="parentescoMadreId">
+              @for (p of parentescos$ | async; track p.parentescoId) { <option [value]="p.parentescoId">{{p.descripcion}}</option> }
+            </select>
+          </div>
+          <div class="grupo-input check-row"><input type="checkbox" formControlName="presenteMadre"><label>Presente</label></div>
+        </div>
+      </fieldset>
+    </div>
+
+    <fieldset class="seccion-ficha salud-bg">
+  <legend>IV. CARTA MÉDICA Y EMERGENCIAS</legend>
+  <div class="grid-salud">
+    <div class="grupo-input">
+      <label>Enfermedades</label>
+      <textarea formControlName="enfermedades"></textarea>
+    </div>
+    
+    <div class="grupo-input">
+      <label>Toma Medicamentos</label>
+      <input type="text" formControlName="tomaMedicamentos">
+    </div>
+
+    <div class="grupo-input">
+      <label>Grupo Sanguíneo</label>
+      <select formControlName="grupoSanguineoId">
+        <option [ngValue]="null">Seleccione...</option>
+        @for (g of gruposSanguineos$ | async; track g.grupoSanguineoId) {
+          <option [value]="g.grupoSanguineoId">{{g.descripcion}}</option>
+        }
+      </select>
+    </div>
+
+    <div class="grupo-input">
+      <label>Medicamentos Alergia</label>
+      <input type="text" formControlName="medicamentosAlergia">
+    </div>
+
+    <div class="grupo-input">
+      <label>Obra Social</label>
+      <select formControlName="obraSocialId">
+        <option [ngValue]="null">Seleccione...</option>
+        @for (os of obrasSociales$ | async; track os.obraSocialId) {
+          <option [value]="os.obraSocialId">{{os.descripcion}}</option>
+        }
+      </select>
+    </div>
+
+    <div class="grupo-input">
+      <label>Teléfono Emergencia 1</label>
+      <input type="text" formControlName="telEmergencia1">
+    </div>
+
+    <div class="grupo-input">
+      <label>Teléfono Emergencia 2</label>
+      <input type="text" formControlName="telEmergencia2">
+    </div>
+
+    <div class="grupo-input check-row">
+      <input type="checkbox" formControlName="padeceEnfermedad">
+      <label>Padece Enfermedad</label>
+    </div>
+  </div>
+</fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-guardar-grande" [disabled]="form.invalid">💾 FINALIZAR E INSCRIBIR ALUMNO</button>
+    </div>
+  </form>
+</div>

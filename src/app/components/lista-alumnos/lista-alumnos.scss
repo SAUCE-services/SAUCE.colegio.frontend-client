@@ -1,0 +1,325 @@
+@use "sass:color";
+
+// Variables institucionales actualizadas
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$blanco-puro: #ffffff;
+$rojo-pdf: #cf222e;
+
+// ✅ CAMBIO: Usamos las mismas fuentes sans-serif modernas
+$fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+$fuente-datos: $fuente-moderna; // Usamos la misma para datos
+
+.nav-actions {
+  margin-bottom: 2rem;
+}
+
+.btn-volver {
+  background: transparent;
+  border: 2px solid $verde-colegial; 
+  color: $verde-colegial;
+  // ✅ Fuente moderna para el botón
+  font-family: $fuente-moderna; 
+  padding: 10px 25px;
+  font-weight: 600; // Un poco menos pesado que bold para sans-serif
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border-radius: 4px; // Añadimos bordes ligeramente redondeados para modernizar
+
+  &:hover {
+    background: $verde-colegial;
+    color: $blanco-puro;
+    transform: translateY(-2px); // Cambio sutil de dirección
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); // Sombra más moderna
+  }
+}
+
+.cabecera {
+  border-left: 6px solid $dorado-diploma;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: rgba($crema-papel, 0.2); // Un poco más sutil
+  border-radius: 0 4px 4px 0; // Bordes redondeados
+  
+  h2 { 
+    margin: 0; 
+    text-transform: uppercase; 
+    // ✅ Fuente moderna y peso para títulos
+    font-family: $fuente-moderna;
+    font-weight: 700;
+    color: $verde-colegial;
+    letter-spacing: 0.5px;
+  }
+  .institucion { 
+    // ✅ Fuente moderna para datos secundarios
+    font-family: $fuente-datos; 
+    font-size: 0.85rem; 
+    color: #777;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+  
+  .info-secundaria {
+    margin-top: 1rem;
+    p {
+      margin: 5px 0;
+      // ✅ Fuente moderna
+      font-family: $fuente-datos;
+      color: #555;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.tabla-container {
+  // ✅ Ocupa casi todo el ancho y se pega a la izquierda
+  width: 96%; 
+  margin: 0 0 0 1rem; 
+  background: white;
+  padding: 0.5rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.tabla-retro {
+  width: 100%;
+  border-collapse: collapse;
+  // ✅ Ya no es tipografía monoespaciada
+  font-family: $fuente-datos; 
+
+  th {
+    background: $verde-colegial; 
+    color: $dorado-diploma; 
+    padding: 14px 12px; // Un poco más de padding vertical
+    text-transform: uppercase;
+    font-size: 0.8rem; // Sans-serif se ve más grande, ajustamos tamaño
+    font-weight: 600;
+    letter-spacing: 1px;
+    // ✅ color.adjust corregido
+    border: 1px solid color.adjust($verde-colegial, $lightness: -10%); 
+  }
+
+  td {
+    padding: 12px 15px; // Padding ajustado
+    border-bottom: 1px solid #eee; // Solo borde inferior para limpieza
+    color: #444;
+    font-size: 0.9rem;
+  }
+
+  tr:nth-child(even) {
+    background-color: rgba($crema-papel, 0.1); 
+  }
+
+  tr:hover {
+    background-color: rgba($dorado-diploma, 0.08); // Hover más sutil
+  }
+
+  .legajo-cell {
+    font-weight: 600;
+    color: $verde-colegial;
+    width: 120px; // Un poco más de ancho
+    text-align: center;
+  }
+}
+
+// BOTÓN PDF ROJO INSTITUCIONAL UNIFICADO
+.btn-pdf-descarga {
+  background: #ffffff;
+  color: $rojo-pdf;
+  border: 2px solid $rojo-pdf;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  height: 42px;
+  box-sizing: border-box;
+  margin-left: auto; // Lo empuja de forma limpia a la derecha de la barra de filtros
+
+  &:hover { 
+    background: $rojo-pdf; 
+    color: white; 
+  }
+  
+  &:disabled {
+    background: #eaeaea;
+    color: #999;
+    border-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+// BOTÓN DE DEUDA GLOBAL DEL CURSO (ESTILO ADAPTADO SAUCE)
+.btn-mora-curso {
+  background: #ffffff;
+  color: #cf222e; // Rojo de deuda exigible
+  border: 2px solid #cf222e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  padding: 10px 25px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0px rgba(#cf222e, 0.15);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #cf222e;
+    color: #ffffff;
+    box-shadow: 2px 2px 0px rgba(#cf222e, 0.05);
+    transform: translateY(1px);
+  }
+}
+
+// === ESTILOS UNIFICADOS PARA EL MODAL INTERNO DE MORA (DESAPRETADOS) ===
+.btn-mora-curso {
+  background: #ffffff;
+  color: #cf222e;
+  border: 2px solid #cf222e;
+  font-family: $fuente-moderna;
+  padding: 10px 25px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0px rgba(#cf222e, 0.15);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #cf222e;
+    color: #ffffff;
+  }
+}
+
+.modal-mora-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-mora-box {
+  background: white;
+  width: 85%;
+  max-width: 950px;
+  max-height: 85vh;
+  border-radius: 8px;
+  padding: 2.5rem !important;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid $verde-colegial;
+
+  .modal-mora-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px double $dorado-diploma;
+    padding-bottom: 1.2rem;
+    margin-bottom: 1.5rem;
+
+    .header-titulos {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      h2 { margin: 0; color: #cf222e; font-size: 1.3rem; font-weight: 800; }
+      
+      .btn-pdf-mora {
+        background: white;
+        color: #cf222e;
+        border: 2px solid #cf222e;
+        padding: 6px 15px;
+        font-weight: 800;
+        font-size: 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover:not(:disabled) { background: #cf222e; color: white; }
+      }
+    }
+
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      color: #666;
+      font-weight: 700;
+      cursor: pointer;
+      &:hover { color: black; }
+    }
+  }
+
+  .modal-mora-body {
+    overflow-y: auto;
+    flex: 1;
+    margin-bottom: 1.5rem;
+    
+    .modal-table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th {
+        background: #f8f9fa !important;
+        color: $verde-colegial !important;
+        padding: 15px 12px !important;
+      }
+      
+      td {
+        padding: 18px 12px !important; /* HOLGURA PERFECTA SOLICITADA */
+        border-bottom: 1px solid #f0f0f0 !important;
+        font-size: 0.95rem;
+      }
+
+      .money-right-deuda {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: #cf222e;
+        text-align: right;
+      }
+    }
+  }
+
+  .caja-total-global-mora {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #ccc;
+
+    .total-mora-block {
+      background: $verde-colegial;
+      color: white;
+      padding: 15px 35px;
+      border-radius: 6px;
+      box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.3);
+      text-align: right;
+      min-width: 320px;
+
+      .total-mora-label {
+        display: block;
+        color: $dorado-diploma;
+        font-size: 0.75rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+
+      .total-mora-valor {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.8rem;
+        font-weight: 900;
+      }
+    }
+  }
+}

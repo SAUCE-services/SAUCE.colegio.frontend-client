@@ -1,0 +1,87 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Cierre de Recaudación Diaria</h1>
+      <button class="btn-toggle" routerLink="/">« VOLVER AL INICIO</button>
+    </div>
+
+    <div class="filtros-periodo">
+      <div class="grupo-input">
+        <label>Seleccione Fecha del Informe</label>
+        <div class="input-mixto-search">
+          <input type="date" [(ngModel)]="fechaInput" (change)="consultar()">
+          <button type="button" class="btn-buscar-accion" (click)="consultar()">
+            🔍 VER PLANILLA
+          </button>
+        </div>
+      </div>
+      
+      @if (reporte) {
+        <button class="btn-descarga-pdf" (click)="descargarPdf()">
+          📥 DESCARGAR PDF
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (reporte) {
+    <div class="reporte-container">
+      @for (est of reporte.establecimientos; track est.nombre) {
+        <div class="establecimiento-card">
+          <h2 class="est-titulo">{{ est.nombre }}</h2>
+          
+          @for (medio of est.medios; track medio.nombre) {
+            <div class="medio-pago-seccion">
+              <h3 class="medio-titulo">Medio de Pago: <span>{{ medio.nombre }}</span></h3>
+              
+              <div class="tabla-container-amplio">
+                <table class="tabla-retro">
+                  <thead>
+                    <tr>
+                      <th style="width: 120px;">Factura</th>
+                      <th style="width: 150px;">Período</th>
+                      <th style="width: 100px;">Legajo</th>
+                      <th>Apellido, Nombre del Alumno</th>
+                      <!-- Alineación al centro para el encabezado -->
+                      <th class="text-center" style="width: 180px;">Monto Pagado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of medio.items; track $index) {
+                      <tr>
+                        <td class="bold-cell"># {{ item.factura }}</td>
+                        <td>{{ item.periodo }}</td>
+                        <td class="text-center">{{ item.legajo }}</td>
+                        <td class="nombre-cell">{{ item.nombre }}</td>
+                        <!-- Clase money-center para centrar el importe -->
+                        <td class="money-center">{{ item.pagado | number:'1.2-2' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="subtotal-barra">
+                <span class="cantidad">Pagos: {{ medio.cantidadPagos }}</span>
+                <!-- Eliminado el símbolo ARS -->
+                <span class="monto">SUBTOTAL {{ medio.nombre }}: {{ medio.subtotal | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          }
+          
+          <!-- Texto simplificado sin el nombre del establecimiento -->
+          <div class="total-establecimiento-barra">
+            TOTAL RECAUDADO: {{ est.totalEstablecimiento | number:'1.2-2' }}
+          </div>
+        </div>
+      }
+
+      <div class="caja-gran-total">
+        <div class="total-final">
+          <span class="label">RECAUDACIÓN TOTAL GENERAL</span>
+          <span class="valor">{{ reporte.granTotal | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

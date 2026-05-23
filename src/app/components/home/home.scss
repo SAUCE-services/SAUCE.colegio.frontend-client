@@ -1,0 +1,75 @@
+@use "sass:color";
+
+// 1. Usamos los colores institucionales para que combine con la navbar
+$verde-colegial: #1a5d3b; 
+$dorado-diploma: #d4af37;
+$color-texto-principal: #2c2c2c;
+$fuente-retro: 'Courier New', Courier, monospace;
+$fuente-titulo: 'Georgia', serif;
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;     
+  min-height: 85vh;        
+  padding: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: $fuente-titulo;
+  color: $color-texto-principal;
+
+  .cartel-header {
+    text-align: center;
+
+    .retro-box {
+      // 2. Cambiamos el borde a verde para darle identidad
+      border: 5px solid $verde-colegial; 
+      padding: 3rem 4rem;
+      display: inline-block;
+      background: #ffffff;
+      // 3. Sombra sólida en dorado: se ve mucho más moderno y "vintage caro"
+      box-shadow: 15px 15px 0px rgba($dorado-diploma, 0.2); 
+      transition: all 0.5s ease;
+
+      &:hover {
+        transform: translate(-5px, -5px);
+        box-shadow: 20px 20px 0px rgba($dorado-diploma, 0.3);
+      }
+
+      .subtitulo-retro {
+        font-family: $fuente-retro;
+        font-size: 1rem;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        color: color.adjust($verde-colegial, $lightness: 10%);
+      }
+
+      .titulo-colegio {
+        font-size: 3.5rem; // Un poco más grande para impacto
+        font-weight: bold;
+        color: $verde-colegial; // Título en verde
+        text-transform: uppercase;
+        margin: 0;
+        line-height: 1.1;
+      }
+
+      .divisor {
+        height: 3px;
+        background: $dorado-diploma; // El divisor ahora es dorado
+        width: 60px;
+        margin: 2rem auto;
+      }
+
+      .ubicacion {
+        font-family: $fuente-retro;
+        font-style: italic;
+        color: #666;
+        letter-spacing: 2px;
+      }
+    }
+  }
+}
+
+

@@ -1,0 +1,253 @@
+@use "sass:color";
+
+// ✅ VARIABLES INSTITUCIONALES UNIFICADAS
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$blanco-puro: #ffffff;
+
+.page-container { padding: 1rem 0; }
+
+// --- CABECERA Y FILTROS (DISEÑO UNIFICADO) ---
+.section-header {
+  margin-left: 2rem;
+  margin-right: 2rem;
+  margin-bottom: 2rem;
+  .header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    h1 { color: $verde-colegial; font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin: 0; }
+  }
+}
+
+.filtros-periodo {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+  background: rgba($crema-papel, 0.4);
+  padding: 1.5rem;
+  border-left: 6px solid $dorado-diploma;
+  width: fit-content;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.05);
+
+  .grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    label { font-size: 0.75rem; font-weight: 700; color: $verde-colegial; text-transform: uppercase; }
+    
+    .input-mixto-search {
+      display: flex;
+
+      input.input-date-custom {
+        padding: 10px 12px;
+        border: 2px solid $verde-colegial;
+        border-radius: 4px;
+        font-family: inherit;
+        height: 42px;
+        box-sizing: border-box;
+
+        &:focus { 
+          outline: none; 
+          box-shadow: 0 0 0 3px rgba($dorado-diploma, 0.3); 
+        }
+
+        // Estilo para cuando se une al botón
+        &.date-split {
+          border-radius: 4px 0 0 4px;
+        }
+      }
+
+      .btn-buscar-accion {
+        background: $verde-colegial;
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 0 4px 4px 0;
+        font-weight: 700;
+        cursor: pointer;
+        height: 42px;
+        transition: background 0.2s;
+        &:hover { background: color.adjust($verde-colegial, $lightness: 10%); }
+      }
+    }
+  }
+}
+
+.btn-descarga-pdf {
+  background: $blanco-puro;
+  color: #cf222e;
+  border: 2px solid #cf222e;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s;
+  &:hover { background: #cf222e; color: white; }
+}
+
+// --- CONTENEDORES Y TARJETAS ---
+.establecimiento-card {
+  margin: 0 2rem 3rem 2rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  overflow: hidden;
+
+  .est-titulo {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    margin: 0;
+    padding: 1.2rem 2rem;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.medio-pago-seccion {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px dashed #ccc;
+  &:last-of-type { border-bottom: none; }
+
+  .medio-titulo {
+    color: #555;
+    font-size: 1rem;
+    border-left: 5px solid $dorado-diploma;
+    padding-left: 12px;
+    margin-bottom: 1.5rem;
+    span { color: $verde-colegial; font-weight: 800; }
+  }
+}
+
+// --- TABLAS (ESTILO DESAPRETADO) ---
+.tabla-container-amplio {
+  width: 100%;
+  margin-bottom: 1rem;
+  
+  .tabla-retro {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; // Obliga a respetar los porcentajes del HTML
+    
+    th {
+      background: #f8f9fa;
+      color: $verde-colegial;
+      padding: 18px 15px !important; // Cabeceras más altas
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      border-bottom: 2px solid #eee;
+    }
+
+    td {
+      padding: 22px 15px !important; // Padding generoso para evitar amontonamiento
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+      color: #444;
+    }
+
+    .money-center { 
+      font-family: 'Courier New', Courier, monospace; 
+      font-weight: 800; 
+      font-size: 1.25rem;
+      color: $verde-colegial; 
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: 1px;
+    }
+
+    .bold-cell { font-weight: 700; color: #222; }
+    .nombre-cell { text-transform: uppercase; font-size: 0.9rem; font-weight: 600; color: #333; }
+  }
+}
+
+// --- SECCIONES DE TOTALES ---
+.subtotal-barra {
+  display: flex;
+  justify-content: space-between; // Separa cantidad a la izquierda y monto a la derecha
+  align-items: center;
+  padding: 1.2rem 2rem;
+  background: rgba($crema-papel, 0.6);
+  border: 1px solid #eee;
+  border-radius: 4px;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  border-top: 2px solid $dorado-diploma;
+  text-align: right;
+
+  .cantidad { 
+    text-align: right;
+    font-weight: 800; 
+    color: $verde-colegial;
+    text-transform: uppercase; 
+    font-size: 1.2rem; 
+    letter-spacing: 1px;
+  }
+
+  .monto { 
+    color: $verde-colegial; 
+    font-family: 'Courier New', monospace;
+    font-weight: 850;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
+}
+
+.total-establecimiento-barra {
+  background: rgba($crema-papel, 0.6);
+  padding: 2rem !important;
+  text-align: right;
+  font-weight: 800;
+  color: $verde-colegial;
+  font-size: 1.25rem;
+  border-top: 2px solid $dorado-diploma;
+}
+
+.caja-gran-total {
+  margin: 0 2rem 4rem 2rem;
+  background: $verde-colegial;
+  padding: 2.5rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: flex-end;
+  box-shadow: 10px 10px 0px rgba($dorado-diploma, 0.3);
+
+  .total-final {
+    text-align: right;
+    color: white;
+    .label { 
+      display: block;
+      color: $dorado-diploma;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
+    .valor { 
+      font-size: 3.5rem; 
+      font-weight: 900; 
+      font-family: 'Courier New', monospace;
+    }
+  }
+}
+
+// UTILIDADES
+.text-center { text-align: center !important; }
+.btn-toggle {
+  background: white;
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 10px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.4);
+  &:hover {
+    background: $verde-colegial;
+    color: white;
+  }
+}

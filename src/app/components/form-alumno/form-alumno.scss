@@ -1,0 +1,188 @@
+@use "sass:color";
+
+// VARIABLES COMPARTIDAS
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$blanco-puro: #ffffff;
+
+.section-header {
+  margin: 1rem 2rem 2rem 2rem;
+  .header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h1 {
+      color: $verde-colegial;
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin: 0;
+    }
+  }
+}
+
+.form-retro-container {
+  padding: 0 2rem 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.seccion-ficha {
+  background: white;
+  border: 2px solid $verde-colegial;
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.2);
+
+  legend {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    padding: 6px 20px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+
+  &.salud-bg {
+    background-color: rgba($verde-colegial, 0.02);
+    border-style: dashed;
+  }
+}
+
+.grid-formulario {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.columna-fechas {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  // Opcional: define un ancho máximo para que no se estiren demasiado
+  max-width: 250px;
+}
+
+.grid-padres {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+.grupo-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+  }
+
+  input, select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    &:focus {
+      outline: none;
+      border-color: $dorado-diploma;
+      box-shadow: 0 0 0 3px rgba($dorado-diploma, 0.1);
+    }
+  }
+
+  &.check-row {
+    flex-direction: row;
+    align-items: center;
+    input { width: 20px; height: 20px; }
+  }
+}
+
+.input-mixto {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 5px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-guardar-grande {
+  background: $verde-colegial;
+  color: $dorado-diploma;
+  border: none;
+  padding: 18px 40px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 8px 8px 0px color.adjust($verde-colegial, $lightness: -10%);
+
+  &:hover:not(:disabled) {
+    transform: scale(1.02) translateY(-4px);
+    filter: brightness(1.1);
+    box-shadow: 12px 12px 0px $dorado-diploma;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+  }
+}
+
+.btn-toggle {
+  background: white;
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 10px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.4);
+  &:hover {
+    background: $verde-colegial;
+    color: white;
+  }
+}
+
+.grid-interna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  
+  .full-width { grid-column: span 2; }
+  
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+}
+
+.grid-salud {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr; // Tres columnas para la fila superior
+  gap: 1.5rem;
+
+  // Hacemos que el textarea de enfermedades ocupe espacio hacia abajo si es necesario
+  .grupo-input:first-child {
+    grid-row: span 2; 
+  }
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}

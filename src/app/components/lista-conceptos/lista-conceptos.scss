@@ -1,0 +1,356 @@
+@use "sass:color";
+
+// ✅ VARIABLES INSTITUCIONALES
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$blanco-puro: #ffffff;
+$rojo-pdf: #cf222e;
+$fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+.page-container {
+  padding: 1rem 0;
+}
+
+.section-header {
+  margin-left: 2rem;
+  margin-bottom: 2rem;
+  margin-right: 2rem;
+
+  .header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h1 {
+      color: $verde-colegial;
+      font-family: $fuente-moderna;
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin: 0;
+    }
+  }
+}
+
+// ✅ BOTÓN DE CONTROL DESPLEGABLE
+.btn-toggle {
+  background: white;
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 10px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.4);
+
+  &:hover {
+    background: $verde-colegial;
+    color: white;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px $dorado-diploma;
+  }
+}
+
+// ✅ CONTENEDOR DESAPRETADO ESTILO FICHA
+.tabla-container-amplio {
+  width: 96%;
+  margin-left: 2rem;
+  background: white;
+  padding: 0.5rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.tabla-retro {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $fuente-moderna;
+
+  th {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    padding: 18px 15px !important; // Cabeceras más altas y desapretadas
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid color.adjust($verde-colegial, $lightness: -10%);
+  }
+
+  td {
+    padding: 22px 15px !important; // Padding alto para dar aire visual a las filas
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+    vertical-align: middle;
+  }
+
+  .bold-cell {
+    font-weight: 700;
+    color: #222;
+  }
+
+  .nombre-cell {
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #333;
+  }
+
+  // Alineación contable estricta para importes
+  .money-center { 
+    font-family: 'Courier New', Courier, monospace; 
+    font-weight: 800; 
+    font-size: 1.25rem;
+    color: $verde-colegial; 
+    text-align: center !important;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+
+  tr:hover {
+    background-color: rgba($dorado-diploma, 0.05);
+  }
+}
+
+.paginacion-retro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  
+  button {
+    background: white;
+    border: 2px solid $verde-colegial;
+    color: $verde-colegial;
+    font-family: $fuente-moderna;
+    font-weight: 700;
+    padding: 10px 25px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.4);
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    &:hover:not(:disabled) {
+      background: $verde-colegial;
+      color: white;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px $dorado-diploma;
+    }
+  }
+
+  .info-pagina {
+    font-weight: 700;
+    color: $verde-colegial;
+    font-family: $fuente-moderna;
+    letter-spacing: 1px;
+    background: $crema-papel;
+    padding: 5px 15px;
+    border-radius: 20px;
+  }
+}
+
+.form-nuevo-concepto {
+  background: $blanco-puro;
+  border-left: 6px solid $verde-colegial;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  width: fit-content;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 4px 4px 15px rgba(0,0,0,0.05);
+  animation: slideDown 0.3s ease-out;
+
+  h3 {
+    margin-top: 0;
+    color: $verde-colegial;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  
+  .input-id { width: 80px; }
+
+  .inputs-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5rem;
+  }
+
+  .grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    label { font-size: 0.7rem; font-weight: 700; color: #666; text-transform: uppercase; }
+    input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: $fuente-moderna;
+      &:focus { border-color: $verde-colegial; outline: none; }
+    }
+  }
+
+  .btn-guardar {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    border: none;
+    padding: 12px 20px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    box-shadow: 3px 3px 0px color.adjust($verde-colegial, $lightness: -10%);
+    &:hover { filter: brightness(1.2); transform: translateY(-1px); }
+  }
+}
+
+// 🌟 BOTÓN PDF ROJO INSTITUCIONAL UNIFICADO
+.btn-pdf-descarga {
+  background: #ffffff;
+  color: $rojo-pdf;
+  border: 2px solid $rojo-pdf;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  height: 42px;
+  box-sizing: border-box;
+
+  &:hover { 
+    background: $rojo-pdf; 
+    color: white; 
+  }
+  
+  &:disabled {
+    background: #eaeaea;
+    color: #999;
+    border-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+// 🌟 BOTÓN EDITAR INTERNO DE LA GRILLA RETRO
+.btn-editar-accion {
+  background: white;
+  color: $verde-colegial;
+  border: 2px solid $verde-colegial;
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $verde-colegial;
+    color: white;
+  }
+}
+
+// 🌟 BOTÓN GUARDAR DEL MODAL FLOTANTE
+.btn-deudas-clasico {
+  background: white;
+  color: #cf222e;
+  border: 2px solid #cf222e;
+  padding: 8px 25px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+// 🌟 VENTANA MODAL FLOTANTE PARA EDITAR CONCEPTO (LOOK CC DE DEUDAS)
+.modal-deuda-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-deuda-box {
+  background: white;
+  width: 90%;
+  border-radius: 8px;
+  padding: 2rem !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  border: 2px solid $verde-colegial;
+
+  .modal-deuda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid $dorado-diploma;
+    padding-bottom: 0.8rem;
+
+    h2 {
+      margin: 0;
+      color: $verde-colegial;
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+    
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #666;
+      cursor: pointer;
+      &:hover { color: black; }
+    }
+  }
+}
+
+// UTILIDADES AUXILIARES
+.text-center { text-align: center !important; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.banner-exito-concepto {
+  background-color: #e6f4ea; // Verde suave de éxito
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 14px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: center;
+  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.15);
+  animation: popIn 0.25s ease-out;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

@@ -1,0 +1,78 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Facturación por Período</h1>
+      <button class="btn-toggle" routerLink="/">« VOLVER AL INICIO</button>
+    </div>
+
+    <div class="filtros-periodo">
+      <div class="grupo-input">
+        <label>Descripción del Período</label>
+        <div class="input-mixto-search">
+          <input 
+            type="text" 
+            [(ngModel)]="periodoInput" 
+            placeholder="Ej: ABRIL - 2026"
+            (keyup.enter)="consultar()">
+          <button type="button" class="btn-buscar-accion" (click)="consultar()">
+            🔍 BUSCAR FACTURAS
+          </button>
+        </div>
+      </div>
+      
+      @if (reporte) {
+        <button class="btn-pdf-descarga" (click)="descargarPdf()">
+          📄 DESCARGAR REPORTE PDF
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (reporte) {
+    <div class="reporte-container">
+      <h2 style="margin-left: 2rem; color: #666;">Período: {{ reporte.descripcionPeriodo }}</h2>
+
+      @for (est of reporte.establecimientos; track est.nombre) {
+        <div class="establecimiento-card">
+          <h2 class="est-titulo">{{ est.nombre }}</h2>
+          
+          <div class="tabla-container-amplio">
+            <table class="tabla-retro">
+              <thead>
+                <tr>
+                  <th style="width: 120px;">Factura</th>
+                  <th style="width: 150px;">Período</th>
+                  <th style="width: 100px;">Legajo</th>
+                  <th>Apellido, Nombre del Alumno</th>
+                  <th class="text-center" style="width: 180px;">Importe</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of est.items; track $index) {
+                  <tr>
+                    <td class="bold-cell"># {{ item.factura }}</td>
+                    <td>{{ item.periodo }}</td>
+                    <td class="text-center">{{ item.legajo }}</td>
+                    <td class="nombre-cell">{{ item.nombre }}</td>
+                    <td class="money-center">{{ item.pagado | number:'1.2-2' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="total-establecimiento-barra">
+            CANTIDAD: {{ est.cantidadFacturas }} — TOTAL: {{ est.totalEstablecimiento | number:'1.2-2' }}
+          </div>
+        </div>
+      }
+
+      <div class="caja-gran-total">
+        <div class="total-final">
+          <span class="label">TOTAL GENERAL FACTURADO ({{ reporte.cantidadTotalFacturas }} ítems)</span>
+          <span class="valor">{{ reporte.granTotal | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,138 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Conceptos</h1>
+      
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <button 
+          type="button" 
+          class="btn-pdf-descarga" 
+          (click)="imprimirConceptos()"
+          [disabled]="generandoPdf || conceptos.length === 0">
+          {{ generandoPdf ? '⏳ GENERANDO...' : '📥 EXPORTAR PDF' }}
+        </button>
+
+        <button class="btn-toggle" (click)="toggleFormulario()">
+          {{ mostrarFormulario ? '✕ CANCELAR' : '+ NUEVO CONCEPTO' }}
+        </button>
+      </div>
+    </div>
+    
+    @if (mostrarFormulario) {
+      <div class="form-nuevo-concepto">
+        <h3>📝 Registro de Nuevo Concepto</h3>
+        <div class="inputs-row">
+          <div class="grupo-input input-id">
+            <label># ID</label>
+            <input type="number" [(ngModel)]="nuevoConcepto.conceptoId" placeholder="Auto">
+          </div>
+
+          <div class="grupo-input">
+            <label>Descripción / Concepto</label>
+            <input type="text" [(ngModel)]="nuevoConcepto.descripcion" placeholder="Ej: Matrícula 2026">
+          </div>
+
+          <div class="grupo-input">
+            <label>Importe ($)</label>
+            <input type="number" [(ngModel)]="nuevoConcepto.importe" placeholder="0.00">
+          </div>
+
+          <button class="btn-guardar" (click)="crearConcepto()">
+            GUARDAR REGISTRO
+          </button>
+        </div>
+      </div>
+    }
+  </header>
+
+  <div class="tabla-container-amplio seccion-ficha">
+    <table class="tabla-retro" style="width: 100%; table-layout: fixed;">
+      <thead>
+        <tr>
+          <th class="text-center" style="width: 15%"># ID</th>
+          <th style="width: 50%">Descripción</th>
+          <th class="text-center" style="width: 20%">Importe ($)</th>
+          <th class="text-center" style="width: 15%">Acción</th> </tr>
+      </thead>
+      <tbody>
+        @for (c of conceptos; track c.conceptoId) {
+          <tr>
+            <td class="text-center bold-cell"># {{ c.conceptoId }}</td>
+            <td class="nombre-cell font-bold">{{ c.descripcion }}</td>
+            <td class="money-center">{{ c.importe | number:'1.2-2' }}</td>
+            <td class="text-center">
+              <button type="button" class="btn-editar-accion" (click)="abrirEditor(c)">
+                📝 EDITAR
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="text-center" style="padding: 40px; color: #666; font-weight: 600;">
+              No se encontraron registros en el archivo.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="paginacion-retro" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; align-items: center;">
+    <button class="btn-toggle" [disabled]="paginaActual === 0" (click)="cambiarPagina(paginaActual - 1)">« ANTERIOR</button>
+    <span class="info-pagina" style="font-weight: 700; color: #1a5d3b;">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
+    <button class="btn-toggle" [disabled]="paginaActual >= totalPaginas - 1" (click)="cambiarPagina(paginaActual + 1)">SIGUIENTE »</button>
+  </div>
+
+  @if (mostrarModalEditar && conceptoEnEdicion) {
+  <div class="modal-deuda-overlay">
+    <div class="modal-deuda-box seccion-ficha" style="max-width: 500px;">
+      <div class="modal-deuda-header">
+        <h2>📝 MODIFICAR VALOR DE CONCEPTO</h2>
+        <button type="button" class="btn-close-modal" [disabled]="mensajeExito !== null" (click)="mostrarModalEditar = false">✕</button>
+      </div>
+
+      <div class="modal-deuda-body" style="display: flex; flex-direction: column; gap: 1.5rem; padding-top: 1rem;">
+        
+        @if (mensajeExito) {
+          <div class="banner-exito-concepto">
+            <span>{{ mensajeExito }}</span>
+          </div>
+        }
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <label style="font-size: 0.75rem; font-weight: 700; color: #1a5d3b; text-transform: uppercase;">Descripción del Arancel</label>
+          <input 
+            type="text" 
+            [disabled]="guardandoEdicion || mensajeExito !== null"
+            [(ngModel)]="conceptoEnEdicion.descripcion" 
+            style="padding: 10px; border: 2px solid #1a5d3b; border-radius: 4px; font-family: inherit; font-weight: 600; background: #fafafa;">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <label style="font-size: 0.75rem; font-weight: 700; color: #1a5d3b; text-transform: uppercase;">Importe Base ($)</label>
+          <input 
+            type="number" 
+            [disabled]="guardandoEdicion || mensajeExito !== null"
+            [(ngModel)]="conceptoEnEdicion.importe" 
+            style="padding: 10px; border: 2px solid #1a5d3b; border-radius: 4px; font-family: 'Courier New', monospace; font-weight: 800; font-size: 1.2rem; color: #1a5d3b;">
+        </div>
+      </div>
+
+      <div class="subtotal-barra" style="margin: 2rem 0 0 0; display: flex; justify-content: flex-end; gap: 1rem; border: none; background: transparent; padding: 0;">
+        @if (!mensajeExito) {
+          <button type="button" class="btn-toggle" style="box-shadow: none;" [disabled]="guardandoEdicion" (click)="mostrarModalEditar = false">CANCELAR</button>
+          <button 
+            type="button" 
+            class="btn-deudas-clasico" 
+            style="background: #1a5d3b; color: white; border-color: #1a5d3b; box-shadow: 4px 4px 0px rgba(#d4af37, 0.3);" 
+            [disabled]="guardandoEdicion"
+            (click)="guardarCambios()">
+            {{ guardandoEdicion ? 'GUARDANDO...' : '💾 GUARDAR CAMBIOS' }}
+          </button>
+        } @else {
+          <span style="font-size: 0.8rem; font-weight: 700; color: #666; font-style: italic; align-self: center;">Sincronizando grilla oficial...</span>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,188 @@
+@use "sass:color";
+
+// VARIABLES INSTITUCIONALES
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+
+.page-container { padding: 1rem 0; }
+
+.section-header {
+  margin: 1rem 2rem 2rem 2rem;
+  .header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h1 { color: $verde-colegial; font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin: 0; }
+  }
+}
+
+.filtros-periodo {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+  background: rgba($crema-papel, 0.4);
+  padding: 1.5rem;
+  border-left: 6px solid $dorado-diploma;
+  width: fit-content;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.05);
+
+  .grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    label { font-size: 0.75rem; font-weight: 700; color: $verde-colegial; text-transform: uppercase; }
+    
+    .input-mixto-search {
+      display: flex;
+      input {
+        padding: 10px 12px;
+        border: 2px solid $verde-colegial;
+        border-radius: 4px 0 0 4px;
+        &:focus { outline: none; box-shadow: 0 0 0 3px rgba($dorado-diploma, 0.3); }
+      }
+      .btn-buscar-accion {
+        background: $verde-colegial;
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 0 4px 4px 0;
+        font-weight: 700;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.btn-descarga-pdf {
+  background: #ffffff;
+  color: #cf222e;
+  border: 2px solid #cf222e;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+  &:hover { background: #cf222e; color: white; }
+}
+
+.establecimiento-card {
+  margin: 0 2rem 3rem 2rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  overflow: hidden;
+
+  .est-titulo {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    padding: 1.5rem 2rem; // Más espacio en el título
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+}
+
+.tabla-container-amplio {
+  width: 100%;
+  padding: 1rem 0; // Agrega separación interna
+}
+
+.tabla-retro {
+  width: 100%;
+  border-collapse: collapse;
+  
+  th {
+    background: #f8f9fa;
+    color: $verde-colegial;
+    padding: 15px 20px; // Aumentar padding lateral
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border-bottom: 2px solid #eee;
+  }
+
+  td {
+    padding: 20px; // Espacio generoso para que no se vea "apretado"
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+    vertical-align: middle;
+  }
+}
+
+.money-center { 
+  font-family: 'Courier New', Courier, monospace; 
+  font-weight: 800; 
+  font-size: 1.2rem;
+  color: #1a5d3b; 
+  text-align: center;
+}
+
+.subtotal-barra {
+  display: flex;
+  justify-content: space-between; // Separa cantidad de monto
+  align-items: center;
+  padding: 1.2rem 2rem;
+  background: #fdfdfd;
+  border-top: 1px solid #eee;
+  margin-top: 0.5rem; // Separa la barra de la última fila de la tabla
+
+  .cantidad { font-weight: 600; color: #777; font-size: 0.85rem; }
+  .monto { 
+    font-weight: 800; 
+    color: $verde-colegial;
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+  }
+}
+
+.total-establecimiento-barra {
+  background: rgba($crema-papel, 0.6);
+  padding: 1.5rem 2rem;
+  text-align: right;
+  font-weight: 800;
+  color: $verde-colegial;
+  border-top: 2px solid $dorado-diploma;
+  font-size: 1.1rem;
+}
+
+.caja-gran-total {
+  margin: 0 2rem 4rem 2rem;
+  background: $verde-colegial;
+  padding: 2.5rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: flex-end;
+  box-shadow: 10px 10px 0px rgba($dorado-diploma, 0.3);
+
+  .total-final {
+    text-align: right;
+    color: white;
+    .label { 
+      display: block;
+      color: $dorado-diploma;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
+    .valor { font-size: 3.5rem; font-weight: 900; font-family: 'Courier New', monospace; }
+  }
+}
+.text-center { text-align: center !important; }
+.bold-cell { font-weight: 700; color: #222; }
+.btn-toggle {
+  background: white;
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 10px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.4);
+  &:hover {
+    background: $verde-colegial;
+    color: white;
+  }
+}

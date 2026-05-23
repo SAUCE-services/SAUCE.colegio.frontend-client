@@ -1,0 +1,308 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Cuenta Corriente</h1>
+    </div>
+  </header>
+
+  <div class="form-retro-container">
+    <section class="seccion-ficha search-bg">
+      <div class="row-search">
+        <label>Legajo:</label>
+        <div class="input-mixto">
+          <input 
+            type="number" 
+            [(ngModel)]="legajo" 
+            [ngModelOptions]="{updateOn: 'blur'}"
+            (keyup.enter)="consultarCuenta()" 
+            placeholder="Ej: 1484">
+          
+          <button 
+            type="button"
+            class="btn-toggle" 
+            (click)="consultarCuenta()" 
+            [disabled]="cargando">
+            {{ cargando ? 'BUSCANDO...' : 'CONSULTAR' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    @if (cargando) {
+      <div class="info-alumno-banner" style="justify-content: center; background: #fff3cd;">
+        <span class="nombre-resaltado">Accediendo a los registros oficiales...</span>
+      </div>
+    }
+
+    @if (movimientos && !cargando) {
+      <div class="info-alumno-banner" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <label>ALUMNO:</label>
+          <span class="nombre-resaltado">{{ movimientos.nombreCompleto }}</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-novedades-retro" (click)="abrirModalNovedades()">
+            📋 NOVEDADES
+          </button>
+          <button type="button" class="btn-deudas-clasico" (click)="abrirModalDeudas()">
+            ⚠️ DEUDAS
+          </button>
+        </div>
+      </div>
+
+      <div class="tabla-container-amplio seccion-ficha">
+        <table class="tabla-retro">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 10%">Factura</th>
+              <th class="text-center" style="width: 15%">Estado</th>
+              <th class="text-center" style="width: 13%">F.Estado</th>
+              <th class="text-center" style="width: 13%">1er Venc</th>
+              <th class="text-center" style="width: 13%">F.Pago</th>
+              <th class="text-center" style="width: 12%">Imp.Adeudac</th>
+              <th class="text-center" style="width: 12%">Imp.Pagado</th>
+              <th class="text-center" style="width: 12%">Saldo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of movimientos.facturas; track f.nroFactura) {
+              <tr (click)="seleccionarFactura(f)" 
+                  [class.fila-seleccionada]="facturaSeleccionada?.nroFactura === f.nroFactura"
+                  class="pointer">
+                <td class="text-center bold-cell"># {{ f.nroFactura }}</td>
+                <td class="text-center"><span class="badge-estado">{{ f.estado }}</span></td>
+                <td class="text-center">{{ f.fechaEstado | date:'dd/MM/yyyy' }}</td>
+                <td class="text-center">{{ f.primerVenc | date:'dd/MM/yyyy' }}</td>
+                <td class="text-center">{{ f.fechaPago | date:'dd/MM/yyyy' }}</td>
+                <td class="money-center" [class.negativo]="f.impAdeudado > 0">{{ f.impAdeudado | number:'1.2-2' }}</td>
+                <td class="money-center">{{ f.impPagado | number:'1.2-2' }}</td>
+                <td class="money-center font-bold status-saldo">{{ f.saldoProgresivo | number:'1.2-2' }}</td>
+              </tr>
+
+              @if (facturaSeleccionada?.nroFactura === f.nroFactura) {
+                <tr class="fila-detalle-expandida">
+                  <td colspan="8">
+                    <div class="detalle-desplegable-animado">
+                      <table class="tabla-detalle-interna">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width: 15%">F.Estado</th>
+                            <th style="width: 35%">Concepto</th>
+                            <th class="text-center" style="width: 15%">Estado</th>
+                            <th class="text-center" style="width: 15%">Importe</th>
+                            <th class="text-center" style="width: 10%">F.Registro</th>
+                            <th class="text-center" style="width: 10%">Periodo</th> 
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @if (cargandoDetalle) {
+                            <tr><td colspan="6" class="text-center" style="padding: 20px;">Buscando desglose...</td></tr>
+                          } @else {
+                            @for (linea of lineasDetalle; track $index) {
+                              <tr>
+                                <td class="text-center">{{ linea.fechaEstado | date:'dd/MM/yyyy' }}</td>
+                                <td class="nombre-cell font-bold">{{ linea.concepto }}</td>
+                                <td class="text-center"><span class="badge-concepto">{{ linea.estado }}</span></td>
+                                <td class="money-center" [class.negativo]="linea.importe < 0">{{ linea.importe | number:'1.2-2' }}</td>
+                                <td class="text-center">{{ linea.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+                                <td class="text-center bold-cell">{{ linea.periodo }}</td>
+                              </tr>
+                            } @empty {
+                              <tr><td colspan="6" class="text-center" style="padding: 25px;">No hay detalles registrados.</td></tr>
+                            }
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  @if (mostrarModalDeudas) {
+    <div class="modal-deuda-overlay">
+      <div class="modal-deuda-box seccion-ficha">
+        <div class="modal-deuda-header">
+          <div class="header-titulos">
+            <h2>⚠️ DESGLOSE DE DEUDA INDIVIDUAL EXIGIBLE</h2>
+            @if (movimientos && !cargandoDeudaModal && reporteDeudaIndividual?.detalles?.length) {
+              <button type="button" class="btn-pdf-deuda" (click)="descargarPdfDeuda()">
+                📄 DESCARGAR PDF OFICIAL
+              </button>
+            }
+          </div>
+          <button type="button" class="btn-close-modal" (click)="mostrarModalDeudas = false">❌ CERRAR</button>
+        </div>
+
+        <div class="modal-deuda-body">
+          <div class="tabla-container-amplio">
+            <table class="tabla-retro modal-table">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width: 15%">F. Estado</th>
+                  <th style="width: 40%">Concepto / Descripción</th>
+                  <th class="text-center" style="width: 15%">Estado</th>
+                  <th class="text-center" style="width: 15%">F. Registro</th>
+                  <th class="text-right" style="width: 15%">Importe</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (cargandoDeudaModal) {
+                  <tr><td colspan="5" class="text-center" style="padding: 40px; font-weight: 600;">Consultando saldos exigibles...</td></tr>
+                } @else {
+                  @for (d of reporteDeudaIndividual?.detalles; track $index) {
+                    <tr>
+                      <td class="text-center">{{ d.fechaEstado | date:'dd/MM/yyyy' }}</td>
+                      <td class="nombre-cell font-bold">{{ d.concepto }}</td>
+                      <td class="text-center"><span class="badge-concepto-deuda">{{ d.estado }}</span></td>
+                      <td class="text-center">{{ d.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+                      <td class="money-right-deuda">{{ d.importe | number:'1.2-2' }}</td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="5" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700; font-size: 1.1rem;">
+                        ✅ El alumno no registra deudas exigibles pendientes en este legajo.
+                      </td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        @if (!cargandoDeudaModal && reporteDeudaIndividual?.detalles?.length) {
+          <div class="caja-total-deuda-exigible">
+            <div class="total-deuda-block">
+              <span class="total-deuda-label">TOTAL DEUDA EXIGIBLE ACUMULADA</span>
+              <span class="total-deuda-valor">$ {{ reporteDeudaIndividual?.totalDeuda | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (mostrarModalNovedades) {
+    <div class="modal-novedades-overlay">
+      <div class="modal-novedades-box seccion-ficha">
+        
+        <div class="modal-novedades-header" style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px double #d4af37; padding-bottom: 1rem; margin-bottom: 1rem;">
+          <div class="header-titulos">
+            <h2 style="margin: 0; color: #1a5d3b; font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">📋 Novedades por Alumno</h2>
+            @if (reporteNovedades?.nombreCompleto) {
+              <span class="subtitulo-alumno" style="font-size: 0.95rem; font-weight: 700; color: #555; text-transform: uppercase; display: block; margin-top: 4px;">
+                ALUMNO: {{ reporteNovedades?.nombreCompleto }}
+              </span>
+            }
+          </div>
+          <button type="button" class="btn-close-modal" (click)="mostrarModalNovedades = false" style="background: transparent; border: none; color: #666; font-weight: 700; cursor: pointer; font-size: 0.95rem;">❌ CERRAR</button>
+        </div>
+
+        <div style="margin-bottom: 1.2rem;">
+          <button type="button" class="btn-deudas-clasico" (click)="toggleFormularioAlta()" style="background-color: #1a5d3b; border-color: #113f28; color: white; padding: 8px 16px; font-size: 0.85rem; font-weight: 700; margin: 0; cursor: pointer;">
+            {{ mostrarFormularioAlta ? '❌ CANCELAR ALTA MANUAL' : '➕ REGISTRAR NOVEDAD MANUAL' }}
+          </button>
+        </div>
+
+        @if (periodosDisponibles.length > 0) {
+          <div class="filtro-periodo-modal" style="display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 12px 18px; border-radius: 4px; border: 1px dashed #1a5d3b; width: fit-content; margin-bottom: 1.5rem;">
+            <label style="font-weight: 700; color: #1a5d3b; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Seleccionar Período:</label>
+            <select [(ngModel)]="periodoFiltro" (change)="cargarNovedadesDelServidor()" style="padding: 8px 16px; border: 2px solid #1a5d3b; border-radius: 4px; font-weight: 700; background-color: white; color: #333; cursor: pointer; min-width: 200px;">
+              @for (p of periodosDisponibles; track p) {
+                <option [value]="p">{{ p }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        @if (mostrarFormularioAlta) {
+          <div class="seccion-ficha" style="margin: 0 0 1.5rem 0; background: #fffcf4; border: 2px solid #d4af37; padding: 20px; border-radius: 4px; width: 100%; box-sizing: border-box;">
+            <h3 style="margin-top: 0; color: #7d6608; font-size: 1.1rem; font-weight: 800; border-bottom: 1px dashed #d4af37; padding-bottom: 8px; text-transform: uppercase;">
+              Novedad Manual para el período: <span style="text-decoration: underline;">{{ periodoFiltro }}</span>
+            </h3>
+            
+            <div style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
+              <div style="display: flex; flex-direction: column; gap: 6px; flex: 2; min-width: 250px;">
+                <label style="font-weight: 700; font-size: 0.85rem; color: #555;">Concepto Contable:</label>
+                <select [(ngModel)]="conceptoSeleccionadoId" style="padding: 10px; border: 1px solid #ccc; font-weight: 600; border-radius: 4px; background: white; color: #333; cursor: pointer; width: 100%;">
+                  <option [ngValue]="null" disabled>[ Seleccione un concepto oficial ]</option>
+                  @for (c of conceptosDisponibles; track c.id) {
+                    <option [ngValue]="c.id">{{ c.nombre }}</option>
+                  }
+                </select>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 150px;">
+                <label style="font-weight: 700; font-size: 0.85rem; color: #555;">Importe ($):</label>
+                <input 
+                  type="number" 
+                  [(ngModel)]="importeNovedad" 
+                  placeholder="0.00" 
+                  style="padding: 10px; border: 1px solid #ccc; font-weight: 700; border-radius: 4px; text-align: right; background: white; width: 100%; box-sizing: border-box;">
+              </div>
+
+              <div style="flex: 1; min-width: 180px;">
+                <button 
+                  type="button" 
+                  class="btn-toggle" 
+                  (click)="guardarNuevaNovedad()"
+                  [disabled]="guardandoNovedad"
+                  style="width: 100%; background-color: #b7950b; border-color: #9a7d0a; color: white; padding: 11px; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; margin: 0; cursor: pointer;">
+                  {{ guardandoNovedad ? 'PROCESANDO...' : '✔ ASENTAR REGISTRO' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="modal-novedades-body">
+          <table class="tabla-retro modal-table">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 15%">F. Registro</th>
+                <th style="width: 40%">Concepto Devengado</th>
+                <th class="text-center" style="width: 15%">Período</th>
+                <th class="text-center" style="width: 15%">Estado Proceso</th>
+                <th class="text-right" style="width: 15%">Importe</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (cargandoNovedades) {
+                <tr><td colspan="5" class="text-center" style="padding: 40px; font-weight: 600;">Consultando novedades contables para el período {{ periodoFiltro }}...</td></tr>
+              } @else {
+                @for (nov of reporteNovedades?.novedades; track $index) {
+                  <tr>
+                    <td class="text-center">{{ nov.fechaRegistro }}</td>
+                    <td class="nombre-cell font-bold">{{ nov.nombreConcepto }}</td>
+                    <td class="text-center bold-cell">{{ nov.nombrePeriodo }}</td>
+                    <td class="text-center">
+                      <span class="badge-proceso" [class.badge-procesado]="nov.procesado">
+                        {{ nov.procesado ? 'FACTURADO' : 'PENDIENTE' }}
+                      </span>
+                    </td>
+                    <td class="money-right-novedad" [class.texto-rojo]="nov.importe > 0">
+                      $ {{ nov.importe | number:'1.2-2' }}
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700;">
+                      ✅ El alumno no registra novedades cargadas para el período {{ periodoFiltro }}.
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

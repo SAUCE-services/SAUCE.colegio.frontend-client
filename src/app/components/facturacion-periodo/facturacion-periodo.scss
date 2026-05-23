@@ -1,0 +1,240 @@
+@use "sass:color";
+
+// ✅ VARIABLES INSTITUCIONALES UNIFICADAS[cite: 7, 14]
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$blanco-puro: #ffffff;
+$rojo-pdf: #cf222e;
+
+.page-container { 
+  padding: 1rem 0; 
+}
+
+// --- CABECERA Y FILTROS (ESTILO PERIODOS)[cite: 11, 15] ---
+.section-header {
+  margin-left: 2rem;
+  margin-right: 2rem;
+  margin-bottom: 2rem;
+
+  .header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h1 { 
+      color: $verde-colegial; 
+      font-size: 2.2rem; 
+      font-weight: 800; 
+      text-transform: uppercase; 
+      margin: 0; 
+    }
+  }
+}
+
+// CONTENEDOR DE FILTROS IDÉNTICO A OTROS MÓDULOS[cite: 11]
+.filtros-periodo {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+  background: rgba($crema-papel, 0.4);
+  padding: 1.5rem;
+  border-left: 6px solid $dorado-diploma;
+  width: fit-content;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.05);
+
+  .grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label { 
+      font-size: 0.75rem; 
+      font-weight: 700; 
+      color: $verde-colegial; 
+      text-transform: uppercase; 
+    }
+    
+    .input-mixto-search {
+      display: flex;
+
+      input {
+        padding: 10px 12px;
+        border: 2px solid $verde-colegial;
+        border-radius: 4px 0 0 4px;
+        font-family: inherit;
+        min-width: 250px;
+
+        &:focus { 
+          outline: none; 
+          box-shadow: 0 0 0 3px rgba($dorado-diploma, 0.3); 
+        }
+      }
+
+      .btn-buscar-accion {
+        background: $verde-colegial;
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 0 4px 4px 0;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover { 
+          background: color.adjust($verde-colegial, $lightness: 10%); 
+        }
+      }
+    }
+  }
+}
+
+// BOTÓN PDF ROJO INSTITUCIONAL[cite: 10, 15]
+.btn-pdf-descarga {
+  background: $blanco-puro;
+  color: $rojo-pdf;
+  border: 2px solid $rojo-pdf;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: auto;
+
+  &:hover { 
+    background: $rojo-pdf; 
+    color: white; 
+  }
+}
+
+// --- CONTENEDORES DE REPORTE POR ESTABLECIMIENTO[cite: 14, 15] ---
+.establecimiento-card {
+  margin: 0 2rem 3rem 2rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  overflow: hidden;
+
+  .est-titulo {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    margin: 0;
+    padding: 1.2rem 2rem;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+// --- ESTILO DE TABLAS AMPLIAS E IMPORTES CENTRADOS[cite: 14, 15] ---
+.tabla-container-amplio {
+  width: 100%;
+  
+  .tabla-retro {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th {
+      background: #f8f9fa;
+      color: $verde-colegial;
+      padding: 12px 15px;
+      font-size: 0.8rem;
+      border-bottom: 2px solid #eee;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    td { 
+      padding: 15px; 
+      border-bottom: 1px solid #f0f0f0; 
+      vertical-align: middle;
+      color: #444;
+    }
+
+    // Centrado de importes y tipografía contable[cite: 15]
+    .money-center { 
+      font-family: 'Courier New', Courier, monospace; 
+      font-weight: 800; 
+      font-size: 1.2rem;
+      color: #1a5d3b; 
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: 1px;
+    }
+
+    .bold-cell { 
+      font-weight: 700; 
+      color: #333; 
+    }
+
+    .nombre-cell { 
+      text-transform: uppercase; 
+      font-size: 0.85rem; 
+      font-weight: 600;
+    }
+  }
+}
+
+// --- BARRAS DE TOTALES[cite: 14, 15] ---
+.total-establecimiento-barra {
+  background: rgba($crema-papel, 0.6);
+  padding: 1.5rem 2rem;
+  text-align: right;
+  font-weight: 800;
+  color: $verde-colegial;
+  font-size: 1.2rem;
+  border-top: 2px solid $dorado-diploma;
+  letter-spacing: 1px;
+}
+
+// --- CAJA GRAN TOTAL FINAL (ESTILO IMPACTO)[cite: 15] ---
+.caja-gran-total {
+  margin: 0 2rem 4rem 2rem;
+  background: $verde-colegial;
+  padding: 2.5rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: flex-end;
+  box-shadow: 10px 10px 0px rgba($dorado-diploma, 0.3);
+
+  .total-final {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    color: white;
+
+    .label { 
+      font-size: 1rem; 
+      letter-spacing: 3px; 
+      color: $dorado-diploma; 
+      font-weight: 800; 
+      margin-bottom: 0.5rem; 
+    }
+
+    .valor { 
+      font-size: 3.5rem; 
+      font-weight: 900; 
+      font-family: 'Courier New', monospace;
+    }
+  }
+}
+
+// UTILIDADES
+.text-center { text-align: center; }
+.btn-toggle {
+  background: white;
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 10px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.4);
+  &:hover {
+    background: $verde-colegial;
+    color: white;
+  }
+}
