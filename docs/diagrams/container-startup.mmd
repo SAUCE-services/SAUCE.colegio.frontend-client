@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant D as Docker Daemon
+    participant E as Entrypoint (entrypoint.sh)
+    participant F as JS Compilados
+    participant T as nginx.conf.template
+    participant N as Nginx
+
+    D->>E: docker run (API_KEY, BACKEND_HOST, BACKEND_PORT)
+    E->>F: Busca API_KEY_PLACEHOLDER
+    F-->>E: Archivo JS encontrado
+    E->>F: sed: API_KEY_PLACEHOLDER → ${API_KEY}
+    E->>T: envsubst: ${BACKEND_HOST}, ${BACKEND_PORT}
+    T-->>E: default.conf generado
+    E->>N: exec nginx -g "daemon off;"
+    N-->>D: Nginx corriendo en :80 y :443

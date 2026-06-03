@@ -3,15 +3,15 @@ sequenceDiagram
     participant N as Nginx :443
     participant A as Angular SPA
     participant I as ApiKey Interceptor
-    participant B as Backend :8081
+    participant B as Backend (${BACKEND_HOST}:${BACKEND_PORT})
 
     U->>N: GET https://haberes.local/
     N->>A: Sirve index.html (SPA)
     U->>A: Interactúa con la app
     A->>I: Petición HTTP /api/alumno/...
-    I->>I: Agrega header X-API-KEY
+    I->>I: Agrega header X-API-KEY (desde env var)
     I->>N: GET /api/alumno/...
-    N->>B: GET /alumno/... (proxy_pass)
+    N->>B: GET /alumno/... (proxy_pass dinámico)
     B-->>N: Respuesta JSON
     N-->>I: Respuesta JSON
     I-->>A: Respuesta parseada
