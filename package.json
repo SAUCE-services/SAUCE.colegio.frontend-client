@@ -1,13 +1,13 @@
 {
   "name": "sauce-colegio",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:sauceColegio": "node dist/sauceColegio/server/server.mjs"
+    "docs:diagrams": "make docs-diagrams"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
