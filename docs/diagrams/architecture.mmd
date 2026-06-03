@@ -1,0 +1,19 @@
+graph TB
+    subgraph "Cliente"
+        Browser[Navegador]
+    end
+
+    subgraph "Docker / Servidor"
+        direction TB
+        Nginx[Nginx<br/>SSL + Proxy Reverso]
+        Angular[Angular SPA<br/>API Key Interceptor]
+    end
+
+    subgraph "Backend (core-service:8081)"
+        API[API REST<br/>Spring Boot]
+    end
+
+    Browser -->|HTTPS :443| Nginx
+    Nginx -->|/api/*| API
+    Nginx -->|/*| Angular
+    Angular -->|/api/* via fetch| Nginx

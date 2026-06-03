@@ -27,7 +27,7 @@ export class ColegioServ {
   private http = inject(HttpClient);
   
   // Base URL centralizada para evitar repeticiones
-  private baseUrl = 'http://localhost:8081';
+  private baseUrl = '/api';
 
   // --- MÓDULO: ALUMNOS ---
   // Obtiene alumnos de un curso específico para la grilla

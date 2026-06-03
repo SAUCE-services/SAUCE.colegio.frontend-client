@@ -1,0 +1,39 @@
+name: Generate Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate Mermaid Diagrams
+        run: |
+          npm install -g @mermaid-js/mermaid-cli
+          mkdir -p docs/generated
+          for mmd in docs/diagrams/*.mmd; do
+            name=$(basename "$mmd" .mmd)
+            npx @mermaid-js/mermaid-cli -i "$mmd" -o "docs/generated/$name.png"
+          done
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/generated

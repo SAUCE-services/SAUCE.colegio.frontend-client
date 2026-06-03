@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant U as Usuario
+    participant N as Nginx :443
+    participant A as Angular SPA
+    participant I as ApiKey Interceptor
+    participant B as Backend :8081
+
+    U->>N: GET https://haberes.local/
+    N->>A: Sirve index.html (SPA)
+    U->>A: Interactúa con la app
+    A->>I: Petición HTTP /api/alumno/...
+    I->>I: Agrega header X-API-KEY
+    I->>N: GET /api/alumno/...
+    N->>B: GET /alumno/... (proxy_pass)
+    B-->>N: Respuesta JSON
+    N-->>I: Respuesta JSON
+    I-->>A: Respuesta parseada
+    A-->>U: Renderiza vista
