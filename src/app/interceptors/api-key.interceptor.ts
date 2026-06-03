@@ -1,8 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const apiKeyInterceptor: HttpInterceptorFn = (req, next) => {
-  // Aquí definimos la API KEY. En producción, esto podría venir de un environment.ts
-  const apiKey = 'sauce-secret-key-2026'; 
+  // El placeholder será reemplazado por el script de entrada del contenedor
+  const apiKey = 'API_KEY_PLACEHOLDER'; 
 
   const authReq = req.clone({
     setHeaders: {

@@ -2,31 +2,33 @@
 FROM node:22-alpine AS build
 
 WORKDIR /app
-
-# Instalar dependencias
 COPY package*.json ./
 RUN npm install
-
-# Copiar código fuente
 COPY . .
-
-# Construir la aplicación
 RUN npm run build -- --configuration production
 
 # Etapa 2: Servidor Nginx
 FROM nginx:alpine
 
-# Instalamos openssl y generamos un certificado auto-firmado
-RUN apk add --no-cache openssl     && mkdir -p /etc/nginx/ssl     && openssl req -x509 -nodes -days 365 -newkey rsa:2048     -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt     -subj "/C=AR/ST=Mendoza/L=Mendoza/O=UM/OU=Haberes/CN=haberes.local"
+# Instalamos openssl
+RUN apk add --no-cache openssl
 
-# Copiamos los archivos estáticos desde la etapa de construcción
-# Buscamos el index.html para determinar la carpeta correcta dinámicamente
-COPY --from=build /app/dist /app/dist_temp
-RUN FIND_PATH=$(find /app/dist_temp -name index.html -print -quit | xargs dirname) &&     cp -r $FIND_PATH/. /usr/share/nginx/html/ &&     rm -rf /app/dist_temp
+# Generar certificado SSL
+RUN mkdir -p /etc/nginx/ssl \
+    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt \
+    -subj "/C=AR/ST=Mendoza/L=Mendoza/O=UM/OU=Haberes/CN=haberes.local"
 
-# Copiamos la configuración de Nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copiar archivos estáticos (usamos una ruta fija para evitar problemas con find en el Dockerfile)
+# Basado en el nombre del proyecto detectado anteriormente: sauceColegio
+COPY --from=build /app/dist/sauceColegio/browser /usr/share/nginx/html
+
+# Copiar configuración (como template) y script de entrada
+COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 80 443
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]

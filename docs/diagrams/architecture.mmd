@@ -5,12 +5,18 @@ graph TB
 
     subgraph "Docker / Servidor"
         direction TB
-        Nginx[Nginx<br/>SSL + Proxy Reverso]
-        Angular[Angular SPA<br/>API Key Interceptor]
+        EP[Entrypoint<br/>entrypoint.sh]
+        Nginx[Nginx<br/>SSL + Proxy Reverso<br/>${BACKEND_HOST}:${BACKEND_PORT}]
+        Angular[Angular SPA<br/>API Key Interceptor<br/>API_KEY_PLACEHOLDER]
     end
 
-    subgraph "Backend (core-service:8081)"
+    subgraph "Backend (configurable via env vars)"
         API[API REST<br/>Spring Boot]
+    end
+
+    subgraph "Arranque del Contenedor"
+        EP -->|envsubst| Nginx
+        EP -->|sed| Angular
     end
 
     Browser -->|HTTPS :443| Nginx

@@ -1,4 +1,4 @@
-# SauceColegio v1.0.0
+# SauceColegio v1.1.0
 
 Frontend administrativo para la gestión escolar (alumnos, cursos, periodos, conceptos, facturación, recaudación y anotaciones).
 
@@ -12,12 +12,18 @@ graph TB
 
     subgraph "Docker / Servidor"
         direction TB
-        Nginx[Nginx<br/>SSL + Proxy Reverso]
-        Angular[Angular SPA<br/>API Key Interceptor]
+        EP[Entrypoint<br/>entrypoint.sh]
+        Nginx[Nginx<br/>SSL + Proxy Reverso<br/>${BACKEND_HOST}:${BACKEND_PORT}]
+        Angular[Angular SPA<br/>API Key Interceptor<br/>API_KEY_PLACEHOLDER]
     end
 
-    subgraph "Backend (core-service:8081)"
+    subgraph "Backend (configurable via env vars)"
         API[API REST<br/>Spring Boot]
+    end
+
+    subgraph "Arranque del Contenedor"
+        EP -->|envsubst| Nginx
+        EP -->|sed| Angular
     end
 
     Browser -->|HTTPS :443| Nginx
@@ -34,19 +40,39 @@ sequenceDiagram
     participant N as Nginx :443
     participant A as Angular SPA
     participant I as ApiKey Interceptor
-    participant B as Backend :8081
+    participant B as Backend (${BACKEND_HOST}:${BACKEND_PORT})
 
     U->>N: GET https://haberes.local/
     N->>A: Sirve index.html (SPA)
     U->>A: Interactúa con la app
     A->>I: Petición HTTP /api/alumno/...
-    I->>I: Agrega header X-API-KEY
+    I->>I: Agrega header X-API-KEY (desde env var)
     I->>N: GET /api/alumno/...
-    N->>B: GET /alumno/... (proxy_pass)
+    N->>B: GET /alumno/... (proxy_pass dinámico)
     B-->>N: Respuesta JSON
     N-->>I: Respuesta JSON
     I-->>A: Respuesta parseada
     A-->>U: Renderiza vista
+```
+
+### Flujo de Arranque del Contenedor
+
+```mermaid
+sequenceDiagram
+    participant D as Docker Daemon
+    participant E as Entrypoint (entrypoint.sh)
+    participant F as JS Compilados
+    participant T as nginx.conf.template
+    participant N as Nginx
+
+    D->>E: docker run (API_KEY, BACKEND_HOST, BACKEND_PORT)
+    E->>F: Busca API_KEY_PLACEHOLDER
+    F-->>E: Archivo JS encontrado
+    E->>F: sed: API_KEY_PLACEHOLDER → ${API_KEY}
+    E->>T: envsubst: ${BACKEND_HOST}, ${BACKEND_PORT}
+    T-->>E: default.conf generado
+    E->>N: exec nginx -g "daemon off;"
+    N-->>D: Nginx corriendo en :80 y :443
 ```
 
 ## Despliegue con Docker
@@ -55,8 +81,12 @@ sequenceDiagram
 # Construir la imagen
 docker build -t sauce-colegio-frontend .
 
-# Ejecutar el contenedor
-docker run -p 443:443 -p 80:80 sauce-colegio-frontend
+# Ejecutar el contenedor (con configuración dinámica)
+docker run -p 443:443 -p 80:80 \
+  -e BACKEND_HOST=core-service \
+  -e BACKEND_PORT=8081 \
+  -e API_KEY=mi-clave-secreta \
+  sauce-colegio-frontend
 ```
 
 La aplicación se sirve en `https://localhost` con un certificado SSL auto-firmado.
@@ -64,8 +94,22 @@ La aplicación se sirve en `https://localhost` con un certificado SSL auto-firma
 ### Configuración del Backend
 
 El Nginx actúa como proxy inverso: las rutas `/api/*` se redirigen al backend
-`core-service:8081` (nombre del servicio en la red Docker). Asegúrate de que el
-backend sea accesible con ese nombre de host.
+configurado mediante las variables de entorno `BACKEND_HOST` y `BACKEND_PORT`
+(valores por defecto: `core-service` y `8081`). Esto permite cambiar el backend
+sin reconstruir la imagen Docker.
+
+### Configuración en Tiempo de Ejecución
+
+Al iniciar el contenedor, `entrypoint.sh` realiza dos tareas:
+
+1. **Inyección de API Key:** Busca el marcador `API_KEY_PLACEHOLDER` en los
+   archivos JS compilados y lo reemplaza con el valor de la variable `API_KEY`.
+2. **Configuración de Nginx:** Procesa la plantilla `nginx.conf.template`
+   sustituyendo `${BACKEND_HOST}` y `${BACKEND_PORT}` para generar la
+   configuración final de Nginx.
+
+Esto permite parametrizar el frontend sin necesidad de reconstruir la imagen
+para cada entorno (desarrollo, staging, producción).
 
 ## Development server
 
@@ -99,8 +143,13 @@ Ejecuta las pruebas unitarias con [Vitest](https://vitest.dev/).
 ## API Configuration
 
 La aplicación comunica con el backend a través de la ruta `/api` (proxy inverso
-configurado en Nginx). Todas las peticiones HTTP incluyen automáticamente el
-header `X-API-KEY` mediante un interceptor de Angular.
+configurado dinámicamente en Nginx). Todas las peticiones HTTP incluyen
+automáticamente el header `X-API-KEY` mediante un interceptor de Angular.
+
+En el código fuente, el valor de la API key es un placeholder
+(`API_KEY_PLACEHOLDER`). Al desplegar con Docker, el script `entrypoint.sh`
+reemplaza este marcador en los archivos JS compilados usando la variable de
+entorno `API_KEY`, evitando almacenar secretos en el repositorio.
 
 ## Project Structure
 
@@ -114,12 +163,16 @@ src/
 │   └── app.config.ts     # Configuración global
 ├── main.ts              # Punto de entrada
 └── styles.scss          # Estilos globales
+
+Docker/
+├── Dockerfile           # Build multi-etapa (Node 22 → Nginx)
+├── entrypoint.sh        # Script de entrada con inyección runtime
+└── nginx.conf.template  # Plantilla Nginx con variables de entorno
 ```
 
 ## Tecnologías
 
 - **Angular 21.2** con signals y standalone components
-- **Angular CDK** para componentes de UI
 - **Vitest** para testing unitario
 - **Nginx** para servir en producción
 - **Docker** para contenedorización
