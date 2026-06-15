@@ -269,3 +269,20 @@ export interface NovedadesAlumnoResponseDto {
   nombreCompleto: string;
   novedades: NovedadCargaDto[];
 }
+
+export interface NovedadCargaDto {
+  alumnoId: number;
+  periodoNombre: string;
+  conceptoId? : number;
+  importe : number;
+}
+
+export interface NovedadCursoDto {
+  legajo: number;
+  alumno: string;
+  curso: string;
+  concepto: string;
+  importe : number;
+  estado : string;
+  fecha : Date;
+}

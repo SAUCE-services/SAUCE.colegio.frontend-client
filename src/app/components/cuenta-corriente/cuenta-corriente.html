@@ -266,17 +266,18 @@
             <thead>
               <tr>
                 <th class="text-center" style="width: 15%">F. Registro</th>
-                <th style="width: 40%">Concepto Devengado</th>
+                <th style="width: 35%">Concepto Devengado</th>
                 <th class="text-center" style="width: 15%">Período</th>
                 <th class="text-center" style="width: 15%">Estado Proceso</th>
-                <th class="text-right" style="width: 15%">Importe</th>
+                <th class="text-right" style="width: 12%">Importe</th>
+                <th class="text-center" style="width: 8%">Acciones</th>
               </tr>
             </thead>
             <tbody>
               @if (cargandoNovedades) {
-                <tr><td colspan="5" class="text-center" style="padding: 40px; font-weight: 600;">Consultando novedades contables para el período {{ periodoFiltro }}...</td></tr>
+                <tr><td colspan="6" class="text-center" style="padding: 40px; font-weight: 600;">Consultando novedades contables para el período {{ periodoFiltro }}...</td></tr>
               } @else {
-                @for (nov of reporteNovedades?.novedades; track $index) {
+                @for (nov of novedadesFiltradas; track $index) {
                   <tr>
                     <td class="text-center">{{ nov.fechaRegistro }}</td>
                     <td class="nombre-cell font-bold">{{ nov.nombreConcepto }}</td>
@@ -289,10 +290,19 @@
                     <td class="money-right-novedad" [class.texto-rojo]="nov.importe > 0">
                       $ {{ nov.importe | number:'1.2-2' }}
                     </td>
+                    <td class="text-center">
+                      <button 
+                        type="button"
+                        class="btn-trash-retro"
+                        (click)="eliminarNovedad(nov)"
+                        title="Anular / Eliminar esta novedad del legajo">
+                        ❌
+                      </button>
+                    </td>
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="5" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700;">
+                    <td colspan="6" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700;">
                       ✅ El alumno no registra novedades cargadas para el período {{ periodoFiltro }}.
                     </td>
                   </tr>

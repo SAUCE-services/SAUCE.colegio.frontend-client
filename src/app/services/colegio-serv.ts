@@ -17,7 +17,9 @@ import {
   ReporteFacturaPeriodoDto,
   DeudaIndividualResponseDto,
   DeudaCursoResponseDto,
-  NovedadesAlumnoResponseDto
+  NovedadesAlumnoResponseDto,
+  NovedadCargaDto,
+  NovedadCursoDto
 } from '../models/colegio.models';
 
 @Injectable({
@@ -212,8 +214,6 @@ descargarPdfFacturasPeriodo(periodo: string): Observable<Blob> {
   });
 }
 
-// app/services/colegio-serv.ts
-
 getRecaudacionPorPeriodo(periodo: string): Observable<ReporteRecaudacionDto> {
   return this.http.get<ReporteRecaudacionDto>(`${this.baseUrl}/facturacion/recaudacion-periodo`, {
     params: { periodo }
@@ -280,7 +280,39 @@ getConceptosCombo(): Observable<any[]> {
 // 🌟 Envía el POST real a tu @PostMapping("/novedades/agregar")
 agregarNovedadManual(dto: { alumnoId: number; periodoNombre: string; conceptoId: number; importe: number }): Observable<any[]> {
   return this.http.post<any[]>(`${this.baseUrl}/concepto/novedades/agregar`, dto);
+
 }
+// 3. Eliminar novedad individual (Sincronizado con el RequestBody del Back)
+  eliminarNovedadIndividual(alumnoId: number, conceptoId: number, periodoNombre: string, importe: number): Observable<void> {
+    
+    // Armamos el payload con la estructura exacta que pide tu Swagger
+    const payload = {
+      alumnoId: Number(alumnoId),
+      periodoNombre: periodoNombre.trim(),
+      periodo: periodoNombre.trim(),        // 🌟 Fallback rústico por si las moscas
+      conceptoId: Number(conceptoId),
+      importe: Number(importe)
+    };
+
+    // 🌟 TRUCO CLAVE: En Angular, para pasar un BODY en un DELETE se usa la propiedad 'body' dentro de las opciones
+    // ✅ CORRECTO - para post() el segundo argumento ES el body directamente
+    return this.http.post<void>(`${this.baseUrl}/concepto/novedades/anular`, payload);
+  }
+
+  // 4. Obtener novedades cargadas por curso (para ver qué se aplicó)
+  getNovedadesPorCurso(cursoId: number, periodoId: number): Observable<NovedadCursoDto[]> {
+    return this.http.get<NovedadCursoDto[]>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}`);
+  }
+
+  // 5. Grabar novedad masiva por curso
+  guardarNovedadCurso(cursoId:number,novedadCurso: NovedadCargaDto): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}/agregar-todos`, novedadCurso);
+  }
+
+  // 6. Eliminar novedades en bloque de un curso
+  eliminarNovedadCurso(cursoId: number, periodoId: number, conceptoId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}/anular-todos`);
+  }
 }
 
 

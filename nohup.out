@@ -1,0 +1,71 @@
+2026-06-04 09:27:30,573 [    997]   WARN - #c.i.m.l.t.AIAssistantTelemetryExporterKt - No Langfuse auth string found.
+2026-06-04 09:27:30,756 [   1180]   WARN - c.i.o.u.r.overrides - Conflicting registry key definition for key completion.cloud.enableCompletionInCommitMessage: it was defined by plugin org.jetbrains.completion.full.line but redefined by plugin org.jetbrains.completion.full.line. Consider adding overrides="true" for one of the plugins, see the documentation for com.intellij.openapi.util.registry.RegistryKeyBean.overrides for more details.
+2026-06-04 09:27:30,968 [   1392]   WARN - #c.i.s.c.i.StationSocketConnectionLoop - Discovery connection failed with NoSuchFileException (/run/user/1000/jb.station.sock)
+2026-06-04 09:27:31,359 [   1783]   WARN - #c.i.o.e.c.i.EditorColorsManagerImpl - resource not found: colorSchemes/SqlDefault.xml
+2026-06-04 09:27:31,363 [   1787]   WARN - #c.i.o.e.c.i.EditorColorsManagerImpl - resource not found: colorSchemes/sassDefault.xml
+2026-06-04 09:27:31,404 [   1828]   WARN - #c.i.o.e.c.i.EditorColorsManagerImpl - resource not found: colorSchemes/SqlDarcula.xml
+2026-06-04 09:27:32,643 [   3067]   WARN - #c.i.o.w.i.h.MainMenuWithButton - Invisible items count mismatch: expandableMenuItemCount = 0,  menuItemCount = 11, invisibleItems is empty = true. Run update menu actions.
+2026-06-04 09:27:32,645 [   3069]   WARN - #c.i.o.w.i.h.MainMenuWithButton - Invisible items count mismatch: expandableMenuItemCount = 0,  menuItemCount = 11, invisibleItems is empty = true. Run update menu actions.
+2026-06-04 09:27:38,552 [   8976]   WARN - #c.i.o.a.i.ActionUpdater - 3886 ms total to grab EDT 5 times to expand ToolWindowHeader$2#expandGroup@ToolwindowTitle (com.intellij.toolWindow.ToolWindowHeader$2). Use `ActionUpdateThread.BGT`.
+2026-06-04 09:27:38,789 [   9213]   WARN - #com.github.weisj.jsvg.parser.NodeMap - unsupported foreignObject
+2026-06-04 09:27:38,790 [   9214]   WARN - #com.github.weisj.jsvg.parser.NodeMap - unsupported foreignObject
+2026-06-04 09:27:38,790 [   9214]   WARN - #com.github.weisj.jsvg.parser.NodeMap - unsupported foreignObject
+2026-06-04 09:27:38,790 [   9214]   WARN - #com.github.weisj.jsvg.parser.NodeMap - unsupported foreignObject
+2026-06-04 09:27:38,790 [   9214]   WARN - #com.github.weisj.jsvg.parser.NodeMap - unsupported foreignObject
+2026-06-04 09:27:38,790 [   9214]   WARN - #com.github.weisj.jsvg.parser.NodeMap - unsupported foreignObject
+2026-06-04 09:27:38,790 [   9214]   WARN - #com.github.weisj.jsvg.parser.NodeMap - unsupported foreignObject
+2026-06-04 09:27:39,964 [  10388]   WARN - #c.i.s.c.i.StationSocketConnectionLoop - /mcp-servers connection failed with NoSuchFileException (/run/user/1000/jb.station.sock)
+2026-06-04 09:27:40,017 [  10441]   WARN - #c.i.s.c.i.StationSocketConnectionLoop - RecentProjects connection failed with NoSuchFileException (/run/user/1000/jb.station.sock)
+2026-06-04 09:27:40,120 [  10544]   WARN - #c.i.m.l.c.q.QuotaManager2Impl - Quota refill state was updated by another thread, wanted to update to Error(exception=com.intellij.ml.llm.core.quota.ResultDoesNotMatchConditionException: Returned result does not match the condition, previous=null)
+2026-06-04 09:27:42,624 [  13048]   WARN - #c.i.s.SpellCheckerManager - Couldn't load dictionary vue.dic with loader 'class org.jetbrains.vuejs.spellchecker.VueSpellcheckingDictionaryProvider'
+com.intellij.packageChecker.model.exceptions.AnalysisException: Failed to check dependencies on server: https://vulnerability-search.jetbrains.com/api/v5/vulnerabilities
+	at com.intellij.packageChecker.model.GeneralRepositoryServer.getPackagesFromServer(GeneralRepositoryServer.kt:110)
+	at com.intellij.packageChecker.model.GeneralRepositoryServer.access$getPackagesFromServer(GeneralRepositoryServer.kt:25)
+	at com.intellij.packageChecker.model.GeneralRepositoryServer$getPackagesFromServer$1.invokeSuspend(GeneralRepositoryServer.kt)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:98)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:610)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runDefaultDispatcherTask(CoroutineScheduler.kt:1194)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:906)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:775)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:762)
+2026-06-04 09:27:49,382 [  19806]   WARN - #c.i.p.m.GeneralRepositoryServer - Failed to check dependencies on server: https://vulnerability-search.jetbrains.com
+com.intellij.packageChecker.model.exceptions.AnalysisException: Failed to check dependencies on server: https://vulnerability-search.jetbrains.com/api/v5/vulnerabilities
+	at com.intellij.packageChecker.model.GeneralRepositoryServer.getPackagesFromServer(GeneralRepositoryServer.kt:110)
+	at com.intellij.packageChecker.model.GeneralRepositoryServer.access$getPackagesFromServer(GeneralRepositoryServer.kt:25)
+	at com.intellij.packageChecker.model.GeneralRepositoryServer$getPackagesFromServer$1.invokeSuspend(GeneralRepositoryServer.kt)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:98)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:610)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runDefaultDispatcherTask(CoroutineScheduler.kt:1194)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:906)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:775)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:762)
+2026-06-04 09:27:49,766 [  20190]   WARN - #c.i.p.m.GeneralRepositoryServer - Failed to check dependencies on server: https://vulnerability-search.jetbrains.com
+com.intellij.packageChecker.model.exceptions.AnalysisException: Failed to check dependencies on server: https://vulnerability-search.jetbrains.com/api/v5/vulnerabilities
+	at com.intellij.packageChecker.model.GeneralRepositoryServer.getPackagesFromServer(GeneralRepositoryServer.kt:110)
+	at com.intellij.packageChecker.model.GeneralRepositoryServer.access$getPackagesFromServer(GeneralRepositoryServer.kt:25)
+	at com.intellij.packageChecker.model.GeneralRepositoryServer$getPackagesFromServer$1.invokeSuspend(GeneralRepositoryServer.kt)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:98)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:610)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runDefaultDispatcherTask(CoroutineScheduler.kt:1194)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:906)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:775)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:762)
+2026-06-04 09:27:50,366 [  20790]   WARN - #c.i.p.m.GeneralRepositoryServer - Failed to check dependencies on server: https://vulnerability-search.jetbrains.com
+2026-06-04 09:27:50,966 [  21390]   WARN - #c.i.p.m.GeneralRepositoryServer - com.intellij.packageChecker.model.GeneralRepositoryServer.getPackagesFromServer(GeneralRepositoryServer.kt:110)
+com.intellij.packageChecker.model.GeneralRepositoryServer.access$getPackagesFromServer(GeneralRepositoryServer.kt:25)
+com.intellij.packageChecker.model.GeneralRepositoryServer$getPackagesFromServer$1.invokeSuspend(GeneralRepositoryServer.kt)
+kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:98)
+kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:610)
+kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runDefaultDispatcherTask(CoroutineScheduler.kt:1194)
+kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:906)
+kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:775)
+kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:762)
+2026-06-04 09:37:31,153 [ 601577]   WARN - #c.i.o.a.ExperimentalFeatureImpl - Feature 'ml.llm.ask.ai' is disabled in Release. Set 'percentOfUsers' to 100% to enable in Release.
+2026-06-04 09:37:31,185 [ 601609]   WARN - #c.i.m.l.c.c.u.AIAssistantUIUtil - quota and refill values are returned as null by platform, refill: null, quota: null
+2026-06-04 09:37:31,185 [ 601609]   WARN - #c.i.m.l.c.c.u.AIAssistantUIUtil - getQuotaUiLabelData returning unknown
+2026-06-04 10:05:31,709 [2282133]   WARN - org.apache.velocity.deprecation - configuration key 'resource.loader' has been deprecated in favor of 'resource.loaders'
+2026-06-04 10:05:31,710 [2282134]   WARN - org.apache.velocity.deprecation - configuration key 'includes.resource.loader.class' has been deprecated in favor of 'resource.loader.includes.class'

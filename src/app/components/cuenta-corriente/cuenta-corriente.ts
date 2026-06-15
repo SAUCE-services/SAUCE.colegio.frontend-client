@@ -176,7 +176,7 @@ export class CuentaCorrienteComponent {
     return this.reporteNovedades.novedades.filter(n => n.nombrePeriodo === this.periodoFiltro);
   }
 
-abrirModalNovedades() {
+  abrirModalNovedades() {
     if (!this.legajo) {
       alert("Por favor, ingrese un legajo primero.");
       return;
@@ -187,23 +187,29 @@ abrirModalNovedades() {
     this.reporteNovedades = null;
     this.cdr.detectChanges();
 
+    // 🌟 NUEVO: Cargamos los conceptos de la escuela de inmediato para que estén listos para el borrado
+    this.service.getConceptosCombo().subscribe({
+      next: (data: any) => {
+        const listaExtraida = Array.isArray(data) ? data : (data?.content || []);
+        this.conceptosDisponibles = listaExtraida.map((c: any) => ({
+          id: c.conceptoId || c.id || 0,
+          nombre: c.descripcion || c.nombre || ''
+        }));
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error("Error preventivo al cargar conceptos para borrado:", err)
+    });
+
     // 1️⃣ PASO 1: Traemos todos los períodos reales cargados en la base de datos
     this.service.getPeriodosHistoricos().subscribe({
       next: (res: any) => {
-        // Tu controlador devuelve una Page<PeriodoDto>, la lista real está en '.content'
         const listaPeriodos = res?.content || [];
         
         if (listaPeriodos.length > 0) {
-          // Extraemos la propiedad 'descripcion' de cada periodo mapeado en el Back
           this.periodosDisponibles = listaPeriodos.map((p: any) => p.descripcion);
-          
-          // Establecemos por defecto el primer período de la lista (el más nuevo por el orden desc del controlador)
           this.periodoFiltro = this.periodosDisponibles[0];
-          
-          // 2️⃣ PASO 2: Ya con el período seleccionado, buscamos las novedades específicas de ese mes
           this.cargarNovedadesDelServidor();
         } else {
-          // Fallback por si la tabla periodos está vacía
           this.periodosDisponibles = ['MAYO - 2026'];
           this.periodoFiltro = 'MAYO - 2026';
           this.cargarNovedadesDelServidor();
@@ -224,11 +230,9 @@ abrirModalNovedades() {
     this.cargandoNovedades = true;
     this.cdr.detectChanges();
 
-    // Invocamos tu controlador pasándole el periodoNombre exacto que exige el RequestParam
     this.service.getNovedadesPorAlumno(this.legajo, this.periodoFiltro).subscribe({
       next: (data: any) => {
         if (data) {
-          // Tu DTO NovedadesAlumnoResponseDto.java de Spring Boot procesa 'detallesGrilla'
           const listaCruda = data.detallesGrilla || []; 
           
           const novedadesProcesadas = listaCruda.map((n: any) => {
@@ -271,23 +275,22 @@ abrirModalNovedades() {
       }
     });
   }
- toggleFormularioAlta() {
+
+  toggleFormularioAlta() {
     this.mostrarFormularioAlta = !this.mostrarFormularioAlta;
     this.conceptoSeleccionadoId = null;
     this.importeNovedad = null;
+    this.cdr.detectChanges();
 
-    if (this.mostrarFormularioAlta) {
+    // 🌟 OPTIMIZADO: Si ya se cargaron al abrir el modal, evitamos golpear el endpoint al cohete
+    if (this.mostrarFormularioAlta && this.conceptosDisponibles.length === 0) {
       this.service.getConceptosCombo().subscribe({
         next: (data: any) => {
-          // 🌟 FORZAMOS EL CASTEO A (data as any) PARA QUE TYPESCRIPT NO CHILLE CON EL 'never'
           const listaExtraida = Array.isArray(data) ? data : ((data as any)?.content || []);
-          
           this.conceptosDisponibles = listaExtraida.map((c: any) => ({
             id: c.conceptoId || c.id || 0,
             nombre: c.descripcion || c.nombre || ''
           }));
-
-          console.log("Conceptos reales de la escuela Moreno mapeados:", this.conceptosDisponibles);
           this.cdr.detectChanges();
         },
         error: (err) => {
@@ -315,14 +318,13 @@ abrirModalNovedades() {
 
     const payload = {
       alumnoId: Number(this.legajo),
-      periodoNombre: this.periodoFiltro.trim(), // Enviamos la descripción (ej: "MARZO - 2026")
+      periodoNombre: this.periodoFiltro.trim(),
       conceptoId: Number(this.conceptoSeleccionadoId),
       importe: Number(this.importeNovedad)
     };
 
     this.service.agregarNovedadManual(payload).subscribe({
       next: (grillaActualizada: any[]) => {
-        // Al impactar el POST, tu Back devuelve el List<LineaDetalleDto> fresco del mes
         if (this.reporteNovedades) {
           this.reporteNovedades.novedades = grillaActualizada.map((n: any) => {
             const rawFecha = n.fechaRegistro || n.fecha_registro || null;
@@ -343,10 +345,9 @@ abrirModalNovedades() {
               importe: Number(n.importe != null ? n.importe : 0),
               procesado: n.estado === 'Concepto FACTURADO' || n.procesado === true
             };
-          });
+          }) as any;
         }
 
-        // Limpiamos y cerramos panel
         this.conceptoSeleccionadoId = null;
         this.importeNovedad = null;
         this.mostrarFormularioAlta = false;
@@ -358,6 +359,51 @@ abrirModalNovedades() {
         alert(err?.error?.message || "Ocurrió un error al procesar el alta contable en el servidor.");
         this.guardandoNovedad = false;
         this.cdr.detectChanges();
+      }
+    });
+  }
+
+eliminarNovedad(novedad: any) {
+    const nombreConceptoVisual = novedad.nombreConcepto || novedad.concepto;
+
+    if (!confirm(`⚠️ ADVERTENCIA: ¿Está seguro de que desea eliminar la novedad "${nombreConceptoVisual}" por $${novedad.importe}?`)) {
+      return;
+    }
+
+    const legajoAlumno = this.legajo;
+    const periodoNombre = novedad.nombrePeriodo || novedad.periodo || this.periodoFiltro;
+    
+    const conceptoObj = this.conceptosDisponibles.find(c => 
+      c.nombre?.trim().toUpperCase() === nombreConceptoVisual?.trim().toUpperCase()
+    );
+    
+    const idConcepto = conceptoObj ? (conceptoObj.id || conceptoObj.conceptoId) : null;
+    const valorImporte = novedad.importe;
+
+    if (!legajoAlumno || !periodoNombre || !idConcepto) {
+      alert("Error: Faltan parámetros de negocio para ejecutar la baja.");
+      return;
+    }
+
+    // Enviamos el payload idéntico a como lo probaste en Swagger
+    this.service.eliminarNovedadIndividual(
+      Number(legajoAlumno), 
+      Number(idConcepto), 
+      periodoNombre, 
+      Number(valorImporte)
+    ).subscribe({
+      next: () => {
+        alert("¡Registro anulado correctamente en el sistema!");
+        
+        // 🌟 SOLUCIÓN AL NEXT: Forzamos el refresco oficial encadenado
+        this.cargarNovedadesDelServidor(); // Recarga la grilla del modal
+        this.consultarCuenta();            // Recalcula los saldos de la cuenta corriente de fondo
+        
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Error devuelto por el Backend:", err);
+        alert(err?.error?.message || "El servidor rechazó la anulación. Verifique las restricciones del período.");
       }
     });
   }
