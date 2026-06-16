@@ -47,6 +47,26 @@ export class CuentaCorrienteComponent {
   // 🌟 LISTA DINÁMICA: Se llenará con los conceptos reales de la Base de Datos
   conceptosDisponibles: any[] = [];
 
+  // 🌟 NUEVO MÉTODO: Autocompleta el importe según el concepto contable seleccionado en el formulario individual
+  onConceptoChange() {
+    if (!this.conceptoSeleccionadoId) {
+      this.importeNovedad = null;
+      return;
+    }
+
+    // Buscamos el objeto concepto seleccionado en nuestra lista en memoria
+    const conceptoSeleccionado = this.conceptosDisponibles.find(c => c.id === Number(this.conceptoSeleccionadoId));
+
+    if (conceptoSeleccionado && conceptoSeleccionado.importeBase !== null && conceptoSeleccionado.importeBase > 0) {
+      // ✅ Si tiene un importe ya establecido mayor a $0 en la base de datos, lo asignamos automáticamente
+      this.importeNovedad = conceptoSeleccionado.importeBase;
+    } else {
+      // ✏️ Si el importe base es 0 o null, dejamos el casillero limpio para carga manual del usuario
+      this.importeNovedad = null;
+    }
+    this.cdr.detectChanges();
+  }
+
   abrirModalDeudas() {
     if (!this.legajo) return;
     this.mostrarModalDeudas = true;
@@ -187,13 +207,14 @@ export class CuentaCorrienteComponent {
     this.reporteNovedades = null;
     this.cdr.detectChanges();
 
-    // 🌟 NUEVO: Cargamos los conceptos de la escuela de inmediato para que estén listos para el borrado
+    // 🌟 SINCRO CON TU BACK: Cargamos los conceptos preservando el importe original del DTO
     this.service.getConceptosCombo().subscribe({
       next: (data: any) => {
         const listaExtraida = Array.isArray(data) ? data : (data?.content || []);
         this.conceptosDisponibles = listaExtraida.map((c: any) => ({
           id: c.conceptoId || c.id || 0,
-          nombre: c.descripcion || c.nombre || ''
+          nombre: c.descripcion || c.nombre || '',
+          importeBase: c.importe !== undefined ? Number(c.importe) : null // 👈 Almacenamos el valor de la base de datos
         }));
         this.cdr.detectChanges();
       },

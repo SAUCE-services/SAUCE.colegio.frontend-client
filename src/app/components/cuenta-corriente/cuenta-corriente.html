@@ -37,7 +37,7 @@
     @if (movimientos && !cargando) {
       <div class="info-alumno-banner" style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <label>ALUMNO:</label>
+          <label style="padding-right: 8px;">ALUMNO:</label>
           <span class="nombre-resaltado">{{ movimientos.nombreCompleto }}</span>
         </div>
         <div style="display: flex; gap: 10px;">
@@ -197,7 +197,7 @@
             <h2 style="margin: 0; color: #1a5d3b; font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">📋 Novedades por Alumno</h2>
             @if (reporteNovedades?.nombreCompleto) {
               <span class="subtitulo-alumno" style="font-size: 0.95rem; font-weight: 700; color: #555; text-transform: uppercase; display: block; margin-top: 4px;">
-                ALUMNO: {{ reporteNovedades?.nombreCompleto }}
+                <label style="padding-right: 8px;">ALUMNO:</label> {{ reporteNovedades?.nombreCompleto }}
               </span>
             }
           </div>
@@ -230,12 +230,14 @@
             <div style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
               <div style="display: flex; flex-direction: column; gap: 6px; flex: 2; min-width: 250px;">
                 <label style="font-weight: 700; font-size: 0.85rem; color: #555;">Concepto Contable:</label>
-                <select [(ngModel)]="conceptoSeleccionadoId" style="padding: 10px; border: 1px solid #ccc; font-weight: 600; border-radius: 4px; background: white; color: #333; cursor: pointer; width: 100%;">
-                  <option [ngValue]="null" disabled>[ Seleccione un concepto oficial ]</option>
+                <select [(ngModel)]="conceptoSeleccionadoId" 
+                      (change)="onConceptoChange()" 
+                      style="padding: 9px; border: 1px solid #ccc; font-weight: 600; border-radius: 4px; background: white; color: #333; cursor: pointer;">
+                  <option [ngValue]="null" disabled>[ Seleccione un concepto / arancel ]</option>
                   @for (c of conceptosDisponibles; track c.id) {
                     <option [ngValue]="c.id">{{ c.nombre }}</option>
-                  }
-                </select>
+                }
+              </select>
               </div>
 
               <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 150px;">
