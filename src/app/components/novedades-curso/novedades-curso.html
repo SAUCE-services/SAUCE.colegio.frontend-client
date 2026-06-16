@@ -1,0 +1,126 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Procesamiento Masivo por Curso</h1>
+    </div>
+  </header>
+
+  <div class="form-retro-container">
+    <section class="seccion-ficha search-bg" style="padding: 20px;">
+      <h2 style="margin-top: 0; color: #1a5d3b; font-size: 1.1rem; font-weight: 800; border-bottom: 2px double #1a5d3b; padding-bottom: 6px; text-transform: uppercase; margin-bottom: 15px;">
+        ⚙️ Parámetros de Selección
+      </h2>
+
+      <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 180px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Curso / División:</label>
+          <select [(ngModel)]="cursoSeleccionadoId" (change)="consultarNovedadesExistentes()" style="padding: 8px; border: 2px solid #1a5d3b; font-weight: 700; border-radius: 4px; background: white; text-transform: uppercase;">
+            <option [ngValue]="null" disabled>[ Seleccione una división ]</option>
+            @for (c of cursos(); track (c.id || c.cursoId)) {
+              <option [ngValue]="c.id || c.cursoId">{{ c.descripcion || c.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 180px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Período Contable:</label>
+          <select [(ngModel)]="periodoSeleccionadoDescripcion" (change)="consultarNovedadesExistentes()" style="padding: 8px; border: 2px solid #1a5d3b; font-weight: 700; border-radius: 4px; background: white;">
+            @for (p of periodosRaw(); track p.descripcion) {
+              <option [value]="p.descripcion">{{ p.descripcion }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 5px; width: 130px; margin-left: 10px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Ciclo Lectivo:</label>
+          <select [(ngModel)]="cicloSeleccionadoNombre" (change)="consultarNovedadesExistentes()" style="padding: 8px; border: 2px solid #1a5d3b; font-weight: 700; border-radius: 4px; background: white; text-align: center;">
+            @for (anio of ciclosDisponibles(); track anio) {
+              <option [value]="anio">{{ anio }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion-ficha" style="background: #fffcf4; border: 2px solid #d4af37; padding: 20px; margin-top: 15px;">
+
+      <div style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 6px; flex: 2; min-width: 250px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #555;">Concepto Contable Oficial:</label>
+          <select [(ngModel)]="conceptoSeleccionadoId" 
+                  (change)="onConceptoChange()" 
+                  style="padding: 9px; border: 1px solid #ccc; font-weight: 600; border-radius: 4px; background: white; color: #333; cursor: pointer;">
+            <option [ngValue]="null" disabled>[ Seleccione un arancel de la UV ]</option>
+            @for (c of conceptosDisponibles(); track c.id) {
+              <option [ngValue]="c.id">{{ c.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; width: 140px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #555;">Importe ($):</label>
+          <input type="number" [(ngModel)]="importeCarga" placeholder="0.00" style="padding: 9px; border: 1px solid #ccc; font-weight: 700; border-radius: 4px; text-align: right; background: white;">
+        </div>
+
+        <div style="display: flex; gap: 10px; flex: 1; min-width: 320px;">
+          <button type="button" class="btn-toggle" (click)="aplicarNovedadMasiva()" [disabled]="procesando || !cursoSeleccionadoId" style="background-color: #1a5d3b; border-color: #113f28; color: white; flex: 1; padding: 10px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">
+            ✔ AGREGAR
+          </button>
+          <button type="button" class="btn-deudas-clasico" (click)="eliminarNovedadMasiva()" [disabled]="procesando || !cursoSeleccionadoId" style="background-color: #9a2e22; border-color: #6e1c13; color: white; flex: 1; padding: 10px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; margin: 0;">
+            ❌ ANULAR
+          </button>
+        </div>
+      </div>
+    </section>
+
+    @if (procesando) {
+      <div class="info-alumno-banner" style="justify-content: center; background: #fff3cd; margin-top: 15px;">
+        <span class="nombre-resaltado">Comunicando lote masivo con el servidor de la escuela...</span>
+      </div>
+    }
+
+    <div class="info-alumno-banner" style="margin-top: 20px; display: flex; justify-content: space-between;">
+      <label>DETALLE</label>
+      <span class="nombre-resaltado" style="font-size: 0.9rem;">{{ listaVistaPrevia.length }} NOVEDADES EXISTENTES</span>
+    </div>
+
+    <div class="tabla-container-amplio seccion-ficha" style="margin-top: 0;">
+      <table class="tabla-retro">
+        <thead>
+          <tr>
+            <th class="text-center" style="width: 12%">Legajo</th>
+            <th style="width: 33%">Apellido y Nombre</th>
+            <th class="text-center" style="width: 15%">Estado Arancel</th>
+            <th style="width: 25%">Concepto Devengado</th>
+            <th class="text-right" style="width: 15%">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (cargandoTabla) {
+            <tr><td colspan="5" class="text-center" style="padding: 30px; font-weight: 600;">Consultando novedades masivas aplicadas...</td></tr>
+          } @else {
+            @for (item of listaVistaPrevia; track $index) {
+              <tr>
+                <td class="text-center bold-cell">{{ item.legajo }}</td>
+                <td class="nombre-cell font-bold">{{ item.alumno }}</td>
+                <td class="text-center">
+                  <span class="badge-proceso" [class.badge-procesado]="item.estado === 'Concepto FACTURADO'">
+                    {{ item.estado }}
+                  </span>
+                </td>
+                <td class="nombre-cell" style="color: #555;">{{ item.concepto }}</td>
+                <td class="money-center font-bold" style="text-align: right; padding-right: 15px; color: #b7950b;">$ {{ item.importe | number:'1.2-2' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center" style="padding: 45px; color: #555; font-weight: 700;">
+                  ℹ No se registran novedades cargadas para este curso en el período seleccionado.
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

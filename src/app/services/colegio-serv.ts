@@ -26,6 +26,9 @@ import {
   providedIn: 'root',
 })
 export class ColegioServ {
+  findNovedadesPorCursoYPeriodo(arg0: number, periodoSeleccionadoDescripcion: string, cicloSeleccionadoNombre: string) {
+    throw new Error('Method not implemented.');
+  }
   private http = inject(HttpClient);
   
   // Base URL centralizada para evitar repeticiones
@@ -300,18 +303,24 @@ agregarNovedadManual(dto: { alumnoId: number; periodoNombre: string; conceptoId:
   }
 
   // 4. Obtener novedades cargadas por curso (para ver qué se aplicó)
-  getNovedadesPorCurso(cursoId: number, periodoId: number): Observable<NovedadCursoDto[]> {
-    return this.http.get<NovedadCursoDto[]>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}`);
+  getNovedadesPorCurso(cursoId: number, periodo: string, ciclo: string): Observable<NovedadCursoDto[]> {
+    const params = { cursoId: cursoId.toString(), periodo, ciclo };
+    return this.http.get<NovedadCursoDto[]>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}`, { params });
   }
-
+ 
   // 5. Grabar novedad masiva por curso
-  guardarNovedadCurso(cursoId:number,novedadCurso: NovedadCargaDto): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}/agregar-todos`, novedadCurso);
+  guardarNovedadCurso(cursoId: number, novedadCurso: NovedadCargaDto): Observable<void> {
+    const params = { ciclo: (novedadCurso as any).ciclo || '' };
+    return this.http.post<void>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}/agregar-todos`, novedadCurso, { params });
   }
-
+ 
   // 6. Eliminar novedades en bloque de un curso
-  eliminarNovedadCurso(cursoId: number, periodoId: number, conceptoId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}/anular-todos`);
+  eliminarNovedadCurso(cursoId: number, payload: any): Observable<void> {
+    const params = {
+      periodoNombre: payload.periodoNombre,
+      ciclo: payload.ciclo
+    };
+    return this.http.post<void>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}/anular-todos`, null, { params });
   }
 }
 

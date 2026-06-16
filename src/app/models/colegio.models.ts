@@ -12,7 +12,6 @@ export interface CursoDetalleResponse {
   alumnos: AlumnoDto[];
 }
 
-// AGREGÁ ESTO PARA LA HOME:
 export interface CursoDto {
   cursoId: number;
   descripcion: string;
@@ -114,8 +113,6 @@ export interface Anotador {
   anotacion: string;
   transaccionId: number;
 }
-
-// app/models/colegio.models.ts
 
 export interface HistoriaFacturacionDto {
   legajo: number;
@@ -252,29 +249,23 @@ export interface DeudaCursoResponseDto {
   detalles: DeudaCursoDetalleDto[];
 }
 
-// src/app/models/colegio.models.ts
-
 export interface NovedadCargaDto {
+  alumnoId?: number;
+  periodoNombre?: string;
   conceptoId?: number;
-  nombreConcepto: string;
+  importe?: number;
+  ciclo?: string;
+  nombreConcepto?: string;
   periodoId?: number;
-  nombrePeriodo: string;
-  fechaRegistro: string;
-  importe: number;
-  procesado: boolean;
+  nombrePeriodo?: string;
+  fechaRegistro?: string;
+  procesado?: boolean;
 }
 
 export interface NovedadesAlumnoResponseDto {
   alumnoId: number;
   nombreCompleto: string;
   novedades: NovedadCargaDto[];
-}
-
-export interface NovedadCargaDto {
-  alumnoId: number;
-  periodoNombre: string;
-  conceptoId? : number;
-  importe : number;
 }
 
 export interface NovedadCursoDto {
