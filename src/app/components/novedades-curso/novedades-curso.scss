@@ -1,0 +1,252 @@
+@use "sass:color";
+
+// VARIABLES INSTITUCIONALES (REPLICANDO TU CORE)
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$gris-fondo: #f9f9f9;
+$rojo-deuda: #d9534f;
+
+// ESTRUCTURA GENERAL
+.page-container { 
+  padding: 1rem 0; 
+  background-color: #ffffff;
+}
+
+.section-header {
+  margin: 1rem 2rem 2rem 2rem;
+  border-bottom: 3px double $dorado-diploma;
+  padding-bottom: 1.2rem;
+
+  .header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h1 {
+      color: $verde-colegial;
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin: 0;
+    }
+  }
+}
+
+.form-retro-container {
+  padding: 0 2rem 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+// SECCIONES TIPO FICHA (ESTILO SAUCE)
+.seccion-ficha {
+  background: white;
+  border: 2px solid $verde-colegial;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.2);
+}
+
+.search-bg { background-color: $gris-fondo; }
+
+// BANNERS INFORMATIVOS DE ACCESO OFICIAL
+.info-alumno-banner {
+  background: $crema-papel;
+  padding: 1rem;
+  border-left: 5px solid $dorado-diploma;
+  margin-bottom: 0; // Ajustado para unirse orgánicamente a la tabla
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 4px 4px 0 0;
+  border-top: 1px solid rgba($verde-colegial, 0.1);
+  border-right: 1px solid rgba($verde-colegial, 0.1);
+
+  label { 
+    font-weight: 800; 
+    color: $verde-colegial; 
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+  }
+  .nombre-resaltado { 
+    font-size: 1.1rem; 
+    font-weight: 700; 
+    color: #333; 
+    font-family: 'Courier New', Courier, monospace;
+  }
+}
+
+// COMPONENTES DE FORMULARIO RETRO SELECTS/INPUTS
+select, input[type="number"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 24px 8px 12px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background-color: white;
+  color: #333;
+  outline: none;
+  transition: all 0.2s;
+
+  &:focus { 
+    border-color: $verde-colegial; 
+    box-shadow: 0 0 0 3px rgba($verde-colegial, 0.1);
+  }
+
+  &:disabled {
+    background-color: #f2f2f2;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+// BOTONERA CON ESTILOS CLÁSICOS DE LA APP
+.btn-toggle {
+  background: white;
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 10px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.15);
+  
+  &:hover:not(:disabled) {
+    background: $verde-colegial;
+    color: white;
+  }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-deudas-clasico {
+  background: white;
+  color: $rojo-deuda;
+  border: 2px solid $rojo-deuda;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba($rojo-deuda, 0.2);
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: $rojo-deuda;
+    color: white;
+    box-shadow: 2px 2px 0px rgba($rojo-deuda, 0.1);
+  }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+// TABLA PRINCIPAL RETRO (AUDITORÍA DE REGISTROS MASIVOS)
+.tabla-container-amplio { 
+  overflow-x: auto; 
+  padding: 0 !important;
+  border-radius: 0 0 8px 8px;
+  border-bottom: 2px solid $verde-colegial;
+  border-left: 2px solid $verde-colegial;
+  border-right: 2px solid $verde-colegial;
+}
+
+.tabla-retro {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  
+  thead th {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    padding: 15px 12px !important; // Holgados
+    text-align: left;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border: 1px solid color.adjust($verde-colegial, $lightness: -5%);
+    font-weight: 700;
+  }
+
+  tbody tr {
+    background-color: white;
+    transition: background-color 0.15s ease;
+
+    td {
+      padding: 18px 12px !important; // 🌟 FILAS ULTRA HOLGADAS E IDENTICAS A TUS MODALES
+      border-bottom: 1px solid #f0f0f0;
+      color: #444;
+      font-size: 0.95rem;
+      vertical-align: middle;
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+
+    &:hover { 
+      background-color: #f9fbf7; 
+    }
+  }
+
+  // CLASES PARTICULARES DE CELDAS REPLICADAS
+  .bold-cell {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 800;
+    color: $verde-colegial;
+    font-size: 1rem;
+  }
+
+  .nombre-cell {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.3px;
+  }
+
+  .money-center {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: #b7950b; // Dorado para importes cargados
+    text-align: right !important;
+    padding-right: 20px !important;
+  }
+
+  // BADGES DE PROCESAMIENTO
+  .badge-proceso {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    border: 1px solid #f5c6cb;
+    text-transform: uppercase;
+    font-family: 'Courier New', Courier, monospace;
+
+    &.badge-procesado {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+  }
+
+  .badge-concepto {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.8rem;
+    background: #f0f0f0;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    text-transform: uppercase;
+  }
+}
+
+// UTILITARIOS AUXILIARES
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
