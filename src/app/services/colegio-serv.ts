@@ -322,6 +322,21 @@ agregarNovedadManual(dto: { alumnoId: number; periodoNombre: string; conceptoId:
     };
     return this.http.post<void>(`${this.baseUrl}/concepto/novedades/curso/${cursoId}/anular-todos`, null, { params });
   }
+
+  // 🌟 CORREGIDO: Consulta alumnos usando tu filtro real por curso (pasamos "" para traer los libres)
+  getAlumnosPorCursoFiltro(cursoNombre: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/alumno/filtrar-por-curso?cursoNombre=${encodeURIComponent(cursoNombre)}`);
+  }
+
+  // 🌟 CORREGIDO: POST oficial para el botón (+) 
+  asignarAlumnoACurso(alumnoId: number, cursoNombre: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/alumno/${alumnoId}/asignar?cursoNombre=${encodeURIComponent(cursoNombre)}`, {});
+  }
+
+  // 🌟 CORREGIDO: POST oficial para el botón (-)
+  quitarAlumnoDeCurso(alumnoId: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/alumno/${alumnoId}/quitar`, {});
+  }
 }
 
 

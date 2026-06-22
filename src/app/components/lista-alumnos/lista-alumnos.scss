@@ -1,15 +1,13 @@
 @use "sass:color";
 
-// Variables institucionales actualizadas
 $verde-colegial: #1a5d3b;
 $dorado-diploma: #d4af37;
 $crema-papel: #f4e9d9;
 $blanco-puro: #ffffff;
 $rojo-pdf: #cf222e;
 
-// ✅ CAMBIO: Usamos las mismas fuentes sans-serif modernas
 $fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-$fuente-datos: $fuente-moderna; // Usamos la misma para datos
+$fuente-datos: $fuente-moderna;
 
 .nav-actions {
   margin-bottom: 2rem;
@@ -19,21 +17,44 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   background: transparent;
   border: 2px solid $verde-colegial; 
   color: $verde-colegial;
-  // ✅ Fuente moderna para el botón
   font-family: $fuente-moderna; 
   padding: 10px 25px;
-  font-weight: 600; // Un poco menos pesado que bold para sans-serif
+  font-weight: 600;
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: all 0.3s ease;
-  border-radius: 4px; // Añadimos bordes ligeramente redondeados para modernizar
+  border-radius: 4px;
 
   &:hover {
     background: $verde-colegial;
     color: $blanco-puro;
-    transform: translateY(-2px); // Cambio sutil de dirección
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); // Sombra más moderna
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+}
+
+.cabecera-principal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.grupo-botones-acciones {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-verde-matricular {
+  background-color: $verde-colegial !important;
+  color: white !important;
+  border-color: color.adjust($verde-colegial, $lightness: -5%) !important;
+  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.2) !important;
+
+  &:hover {
+    background-color: color.adjust($verde-colegial, $lightness: -8%) !important;
   }
 }
 
@@ -41,20 +62,18 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   border-left: 6px solid $dorado-diploma;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  background: rgba($crema-papel, 0.2); // Un poco más sutil
-  border-radius: 0 4px 4px 0; // Bordes redondeados
+  background: rgba($crema-papel, 0.2);
+  border-radius: 0 4px 4px 0; 
   
   h2 { 
     margin: 0; 
     text-transform: uppercase; 
-    // ✅ Fuente moderna y peso para títulos
     font-family: $fuente-moderna;
     font-weight: 700;
     color: $verde-colegial;
     letter-spacing: 0.5px;
   }
   .institucion { 
-    // ✅ Fuente moderna para datos secundarios
     font-family: $fuente-datos; 
     font-size: 0.85rem; 
     color: #777;
@@ -66,7 +85,6 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
     margin-top: 1rem;
     p {
       margin: 5px 0;
-      // ✅ Fuente moderna
       font-family: $fuente-datos;
       color: #555;
       font-size: 0.9rem;
@@ -75,7 +93,6 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
 }
 
 .tabla-container {
-  // ✅ Ocupa casi todo el ancho y se pega a la izquierda
   width: 96%; 
   margin: 0 0 0 1rem; 
   background: white;
@@ -85,27 +102,62 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
+.tabla-ancho-fijo {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.th-legajo { width: 15%; text-align: center; }
+.th-nombre { width: 65%; text-align: left; }
+.th-acciones { width: 20%; text-align: center; }
+
+// 🌟 CLAVE: Nueva clase para centrar de forma absoluta los botones dentro de la columna
+.td-acciones-center {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  border-bottom: 1px solid #eee;
+  min-height: 45px;
+}
+
+.font-bold { font-weight: 700; }
+.font-semi-bold { font-weight: 600; }
+.text-uppercase { text-transform: uppercase; }
+
+.btn-quitar-tabla {
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.td-vacio-alerta {
+  padding: 40px;
+  font-weight: 700;
+  color: #666;
+  background-color: #fafafa;
+}
+
 .tabla-retro {
   width: 100%;
   border-collapse: collapse;
-  // ✅ Ya no es tipografía monoespaciada
   font-family: $fuente-datos; 
 
   th {
     background: $verde-colegial; 
     color: $dorado-diploma; 
-    padding: 14px 12px; // Un poco más de padding vertical
+    padding: 14px 12px;
     text-transform: uppercase;
-    font-size: 0.8rem; // Sans-serif se ve más grande, ajustamos tamaño
+    font-size: 0.8rem;
     font-weight: 600;
     letter-spacing: 1px;
-    // ✅ color.adjust corregido
     border: 1px solid color.adjust($verde-colegial, $lightness: -10%); 
   }
 
   td {
-    padding: 12px 15px; // Padding ajustado
-    border-bottom: 1px solid #eee; // Solo borde inferior para limpieza
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
     color: #444;
     font-size: 0.9rem;
   }
@@ -115,23 +167,23 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   }
 
   tr:hover {
-    background-color: rgba($dorado-diploma, 0.08); // Hover más sutil
+    background-color: rgba($dorado-diploma, 0.08);
   }
 
   .legajo-cell {
     font-weight: 600;
     color: $verde-colegial;
-    width: 120px; // Un poco más de ancho
+    width: 120px;
     text-align: center;
   }
 }
 
-// BOTÓN PDF ROJO INSTITUCIONAL UNIFICADO
 .btn-pdf-descarga {
   background: #ffffff;
   color: $rojo-pdf;
   border: 2px solid $rojo-pdf;
   padding: 10px 20px;
+  font-family: $fuente-moderna;
   font-weight: 800;
   font-size: 0.75rem;
   border-radius: 4px;
@@ -139,7 +191,6 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   transition: all 0.2s ease-in-out;
   height: 42px;
   box-sizing: border-box;
-  margin-left: auto; // Lo empuja de forma limpia a la derecha de la barra de filtros
 
   &:hover { 
     background: $rojo-pdf; 
@@ -154,30 +205,6 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   }
 }
 
-// BOTÓN DE DEUDA GLOBAL DEL CURSO (ESTILO ADAPTADO SAUCE)
-.btn-mora-curso {
-  background: #ffffff;
-  color: #cf222e; // Rojo de deuda exigible
-  border: 2px solid #cf222e;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  padding: 10px 25px;
-  font-weight: 600;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-radius: 4px;
-  box-shadow: 4px 4px 0px rgba(#cf222e, 0.15);
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #cf222e;
-    color: #ffffff;
-    box-shadow: 2px 2px 0px rgba(#cf222e, 0.05);
-    transform: translateY(1px);
-  }
-}
-
-// === ESTILOS UNIFICADOS PARA EL MODAL INTERNO DE MORA (DESAPRETADOS) ===
 .btn-mora-curso {
   background: #ffffff;
   color: #cf222e;
@@ -191,11 +218,103 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   border-radius: 4px;
   box-shadow: 4px 4px 0px rgba(#cf222e, 0.15);
   transition: all 0.2s ease;
+  height: 42px;
+  box-sizing: border-box;
 
   &:hover {
     background: #cf222e;
     color: #ffffff;
+    box-shadow: 2px 2px 0px rgba(#cf222e, 0.05);
+    transform: translateY(1px);
   }
+}
+
+.modal-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-box-matriculacion {
+  width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-box-mora {
+  width: 750px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-borde-verde {
+  border-bottom: 3px double $verde-colegial !important;
+  background: #f4f9f4;
+}
+
+.titulo-matricula-verde {
+  margin: 0;
+  color: $verde-colegial;
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.contenedor-buscador-modal {
+  padding: 15px 20px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+}
+
+.input-buscador-retro {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  outline: none;
+  font-family: $fuente-moderna;
+}
+
+.max-height-matricula {
+  max-height: 380px;
+}
+
+.th-modal-legajo { width: 25%; text-align: center; padding: 8px; }
+.th-modal-alumno { width: 55%; text-align: left; padding: 8px; }
+.th-modal-accion { width: 20%; text-align: center; padding: 8px; }
+
+.td-cargando-padding { padding: 30px; font-weight: 600; color: #555; }
+.td-vacio-padding { padding: 40px; font-weight: 700; color: #777; }
+.padding-reducido { padding: 0 !important; }
+.text-sm { font-size: 0.85rem; }
+
+.btn-unir-accion {
+  padding: 5px 16px;
+  background-color: $verde-colegial;
+  border-color: color.adjust($verde-colegial, $lightness: -5%);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin: 0;
+  width: auto;
+  box-shadow: none;
+  color: white;
+
+  &:hover {
+    background-color: color.adjust($verde-colegial, $lightness: -8%);
+    color: white;
+  }
+}
+
+.legajo-verde {
+  font-weight: 700;
+  color: $verde-colegial;
 }
 
 .modal-mora-overlay {
@@ -206,22 +325,16 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   height: 100vh;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 2000;
 }
 
 .modal-mora-box {
   background: white;
-  width: 85%;
-  max-width: 950px;
-  max-height: 85vh;
   border-radius: 8px;
   padding: 2.5rem !important;
-  display: flex;
-  flex-direction: column;
   border: 2px solid $verde-colegial;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  box-sizing: border-box;
 
   .modal-mora-header {
     display: flex;
@@ -236,18 +349,6 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
       align-items: center;
       gap: 1.5rem;
       h2 { margin: 0; color: #cf222e; font-size: 1.3rem; font-weight: 800; }
-      
-      .btn-pdf-mora {
-        background: white;
-        color: #cf222e;
-        border: 2px solid #cf222e;
-        padding: 6px 15px;
-        font-weight: 800;
-        font-size: 0.75rem;
-        border-radius: 4px;
-        cursor: pointer;
-        &:hover:not(:disabled) { background: #cf222e; color: white; }
-      }
     }
 
     .btn-close-modal {
@@ -256,6 +357,7 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
       color: #666;
       font-weight: 700;
       cursor: pointer;
+      font-family: $fuente-moderna;
       &:hover { color: black; }
     }
   }
@@ -276,7 +378,7 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
       }
       
       td {
-        padding: 18px 12px !important; /* HOLGURA PERFECTA SOLICITADA */
+        padding: 14px 12px !important; 
         border-bottom: 1px solid #f0f0f0 !important;
         font-size: 0.95rem;
       }
@@ -290,41 +392,69 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
       }
     }
   }
+}
 
-  .caja-total-global-mora {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px dashed #ccc;
+.th-mora-legajo { width: 15%; }
+.th-mora-alumno { width: 50%; }
+.th-mora-venc { width: 15%; }
+.th-mora-monto { width: 20%; }
+.td-procesando-asientos { padding: 40px; font-weight: 600; }
+.td-exito-obligaciones { padding: 50px; color: $verde-colegial; font-weight: 700; }
+.btn-pdf-margen-superior { margin-top: 5px; }
 
-    .total-mora-block {
-      background: $verde-colegial;
-      color: white;
-      padding: 15px 35px;
-      border-radius: 6px;
-      box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.3);
-      text-align: right;
-      min-width: 320px;
+.box-total-mora-borde {
+  border-top: 2px dashed $dorado-diploma !important;
+}
 
-      .total-mora-label {
-        display: block;
-        color: $dorado-diploma;
-        font-size: 0.75rem;
-        font-weight: 800;
-        margin-bottom: 4px;
-      }
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-      .total-mora-valor {
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 1.8rem;
-        font-weight: 900;
-      }
+.total-label-bold {
+  font-weight: 800;
+  color: $dorado-diploma;
+  font-size: 0.95rem;
+}
+
+.total-valor-bold {
+  font-size: 1.5rem !important;
+  font-weight: 900;
+}
+
+.caja-total-global-mora {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #ccc;
+
+  .total-mora-block {
+    background: $verde-colegial;
+    color: white;
+    padding: 15px 35px;
+    border-radius: 6px;
+    box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.3);
+    text-align: right;
+    min-width: 320px;
+
+    .total-mora-label {
+      display: block;
+      color: $dorado-diploma;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .total-mora-valor {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.8rem;
+      font-weight: 900;
     }
   }
 }
 
-// Botón Retro para saltar a Novedades Masivas por Curso
 .btn-novedades-retro {
   background: white;
   color: #1a5d3b;
@@ -336,10 +466,29 @@ $fuente-datos: $fuente-moderna; // Usamos la misma para datos
   cursor: pointer;
   box-shadow: 4px 4px 0px rgba(26, 93, 59, 0.15);
   transition: all 0.2s ease;
+  height: 42px;
+  box-sizing: border-box;
 
   &:hover {
     background: #1a5d3b;
     color: white;
     box-shadow: 2px 2px 0px rgba(26, 93, 59, 0.05);
+  }
+}
+
+.btn-trash-retro {
+  background: transparent;
+  border: 2px solid $rojo-pdf;
+  color: $rojo-pdf;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 30px;
+  line-height: 14px;
+
+  &:hover {
+    background: $rojo-pdf;
+    color: white;
   }
 }

@@ -7,15 +7,15 @@
     <div class="cabecera">
       <p class="institucion">COLEGIO FRANCISCO PASCASIO MORENO</p>
       
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h2 style="margin: 0;">CURSO: {{ datosCurso.nombreCurso }}</h2>
+      <div class="cabecera-principal-row">
+        <h2>CURSO: {{ datosCurso.nombreCurso }}</h2>
         
-        <div style="display: flex; gap: 12px; align-items: center;">
-          <button 
-            type="button" 
-            class="btn-novedades-retro" 
-            [routerLink]="['/novedades-curso']" 
-            [queryParams]="{ cursoId: datosCurso.nombreCurso }">
+        <div class="grupo-botones-acciones">
+          <button type="button" class="btn-novedades-retro btn-verde-matricular" (click)="abrirModalAgregar()">
+            ➕ MATRICULAR ALUMNO
+          </button>
+
+          <button type="button" class="btn-novedades-retro" [routerLink]="['/novedades-curso']" [queryParams]="{ cursoNombre: nombreCursoUrl }">
             📋 NOVEDADES MASIVAS
           </button>
 
@@ -24,11 +24,7 @@
           </button>
 
           @if (datosCurso.alumnos && datosCurso.alumnos.length > 0) {
-            <button 
-              type="button" 
-              class="btn-pdf-descarga" 
-              (click)="imprimirLista()"
-              [disabled]="generandoPdf">
+            <button type="button" class="btn-pdf-descarga" (click)="imprimirLista()" [disabled]="generandoPdf">
               {{ generandoPdf ? '⏳ GENERANDO...' : '📥 IMPRIMIR LISTA PDF' }}
             </button>
           }
@@ -43,18 +39,30 @@
     </div>
 
     <div class="tabla-container">
-      <table class="tabla-retro" style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+      <table class="tabla-retro tabla-ancho-fijo">
         <thead>
           <tr>
-            <th class="text-center" style="width: 20%; text-align: center;">Legajo</th>
-            <th style="width: 80%; text-align: left;">Nombre Completo</th>
+            <th class="text-center th-legajo">Legajo</th>
+            <th class="th-nombre">Nombre Completo</th>
+            <th class="text-center th-acciones">Acciones</th>
           </tr>
         </thead>
         <tbody>
           @for (alumno of datosCurso.alumnos; track alumno.alumnoId) {
             <tr>
-              <td class="legajo-cell text-center" style="text-align: center; font-weight: 700;"># {{ alumno.alumnoId }}</td>
-              <td class="nombre-cell" style="text-transform: uppercase; font-weight: 600;">{{ alumno.nombreCompleto }}</td>
+              <td class="legajo-cell text-center font-bold"># {{ alumno.alumnoId }}</td>
+              <td class="nombre-cell text-uppercase font-semi-bold">{{ alumno.nombreCompleto }}</td>
+              <td class="td-acciones-center">
+                <button type="button" class="btn-trash-retro btn-quitar-tabla" (click)="desvincularAlumno(alumno)" title="Quitar alumno de este curso">
+                  ❌ QUITAR
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="3" class="text-center td-vacio-alerta">
+                ⚠ No se registran alumnos matriculados en esta división.
+              </td>
             </tr>
           }
         </tbody>
@@ -66,14 +74,73 @@
     </div>
   }
 
+  @if (mostrarModalAgregarAlumno) {
+    <div class="modal-mora-overlay modal-flex-center">
+      <div class="modal-mora-box modal-box-matriculacion seccion-ficha">
+        
+        <div class="modal-mora-header header-borde-verde">
+          <h2 class="titulo-matricula-verde">➕ Matricular Alumno Vacante</h2>
+          <button type="button" class="btn-close-modal" (click)="mostrarModalAgregarAlumno = false">❌ CERRAR</button>
+        </div>
+
+        <div class="contenedor-buscador-modal">
+          <input 
+            type="text" 
+            [(ngModel)]="terminoBusquedaAlumno" 
+            placeholder="🔍 Filtrar por Apellido, Nombre o N° Legajo..." 
+            class="input-buscador-retro">
+        </div>
+
+        <div class="modal-mora-body max-height-matricula">
+          <table class="tabla-retro modal-table">
+            <thead>
+              <tr>
+                <th class="th-modal-legajo">Legajo</th>
+                <th class="th-modal-alumno">Alumno</th>
+                <th class="text-center th-modal-accion">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (cargandoAlumnosLibres) {
+                <tr>
+                  <td colspan="3" class="text-center td-cargando-padding">
+                    Buscando legajos sin división asignada...
+                  </td>
+                </tr>
+              } @else {
+                @for (al of alumnosLibresFiltrados; track al.alumnoId) {
+                  <tr>
+                    <td class="text-center legajo-verde"># {{ al.alumnoId }}</td>
+                    <td class="text-uppercase font-semi-bold text-sm">{{ al.nombreCompleto || (al.apellido + ', ' + al.nombre) }}</td>
+                    <td class="td-acciones-center padding-reducido">
+                      <button type="button" class="btn-novedades-retro btn-unir-accion" (click)="matricularAlumno(al)">
+                        ➕ UNIR
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="3" class="text-center td-vacio-padding">
+                      No se localizan alumnos vacantes que coincidan con la búsqueda.
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+
   @if (mostrarModalDeuda) {
-    <div class="modal-mora-overlay">
-      <div class="modal-mora-box seccion-ficha">
+    <div class="modal-mora-overlay modal-flex-center">
+      <div class="modal-mora-box modal-box-mora seccion-ficha">
         <div class="modal-mora-header">
           <div class="header-titulos">
             <h2>⚠️ DEUDAS DEL CURSO</h2>
             @if (reporteDeudaCurso?.detalles?.length) {
-              <button type="button" class="btn-pdf-mora" (click)="descargarPdfMora()" [disabled]="generandoPdfMora">
+              <button type="button" class="btn-pdf-mora btn-pdf-margen-superior" (click)="descargarPdfMora()" [disabled]="generandoPdfMora">
                 {{ generandoPdfMora ? '⏳ COMPILANDO...' : '📄 EXPORTAR PDF OFICIAL' }}
               </button>
             }
@@ -85,38 +152,30 @@
           <table class="tabla-retro modal-table">
             <thead>
               <tr>
-                <th class="text-center" style="width: 15%">Legajo</th>
-                <th style="width: 50%">Nombre Completo Alumno</th>
-                <th class="text-center" style="width: 15%">F. Vencimiento</th>
-                <th class="text-right" style="width: 20%">Monto Adeudado</th>
+                <th class="text-center th-mora-legajo">Legajo</th>
+                <th class="th-mora-alumno">Nombre Completo Alumno</th>
+                <th class="text-center th-mora-venc">F. Vencimiento</th>
+                <th class="text-right th-mora-monto">Monto Adeudado</th>
               </tr>
             </thead>
             <tbody>
               @if (cargandoDeuda) {
                 <tr>
-                  <td colspan="4" class="text-center" style="padding: 40px; font-weight: 600;">
+                  <td colspan="4" class="text-center td-procesando-asientos">
                     Procesando asientos contables...
                   </td>
                 </tr>
               } @else {
                 @for (item of reporteDeudaCurso?.detalles; track item.alumnoId) {
                   <tr>
-                    <td class="text-center" style="font-weight: 700; color: #1a5d3b;">
-                      # {{ item.alumnoId }}
-                    </td>
-                    <td style="text-transform: uppercase; font-weight: 600;">
-                      {{ item.nombreCompleto }}
-                    </td>
-                    <td class="text-center">
-                      {{ item.fechaVencimiento | date:'dd/MM/yyyy' }}
-                    </td>
-                    <td class="money-right-deuda">
-                      $ {{ item.totalDeuda | number:'1.2-2' }}
-                    </td>
+                    <td class="text-center legajo-verde"># {{ item.alumnoId }}</td>
+                    <td class="text-uppercase font-semi-bold text-sm">{{ item.nombreCompleto }}</td>
+                    <td class="text-center">{{ item.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
+                    <td class="money-right-deuda">$ {{ item.totalDeuda | number:'1.2-2' }}</td>
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="4" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700;">
+                    <td colspan="4" class="text-center td-exito-obligaciones">
                       ✅ El curso no registra obligaciones arancelarias pendientes.
                     </td>
                   </tr>
@@ -127,10 +186,10 @@
         </div>
 
         @if (!cargandoDeuda && reporteDeudaCurso?.detalles?.length) {
-          <div class="caja-total-global-mora">
-            <div class="total-mora-block">
-              <span class="total-mora-label">TOTAL DEUDA DEL CURSO</span>
-              <span class="total-mora-valor">$ {{ reporteDeudaCurso?.totalDeudaCurso | number:'1.2-2' }}</span>
+          <div class="caja-total-global-mora box-total-mora-borde">
+            <div class="total-mora-block flex-space-between">
+              <span class="total-mora-label total-label-bold">TOTAL DEUDA DEL CURSO</span>
+              <span class="total-mora-valor total-valor-bold">$ {{ reporteDeudaCurso?.totalDeudaCurso | number:'1.2-2' }}</span>
             </div>
           </div>
         }

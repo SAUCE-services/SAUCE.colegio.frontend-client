@@ -2,12 +2,16 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ColegioServ } from '../../services/colegio-serv'; 
-import { CursoDetalleResponse } from '../../models/colegio.models';
+import { FormsModule } from '@angular/forms'; // 🌟 CLAVE 1: Módulo requerido para utilizar [(ngModel)] en componentes Standalone
 
 @Component({
   selector: 'app-lista-alumnos',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [
+    CommonModule, 
+    RouterLink, 
+    FormsModule // 🌟 CLAVE 2: Habilita el bindeo bidireccional y el parser de plantillas del buscador
+  ],
   templateUrl: './lista-alumnos.html',
   styleUrl: './lista-alumnos.scss'
 })
@@ -16,15 +20,21 @@ export class ListaAlumnosComponent implements OnInit {
   private route = inject(ActivatedRoute); 
   private cdr = inject(ChangeDetectorRef);
   
-  datosCurso?: CursoDetalleResponse;
+  datosCurso?: any; // Tipado flexible para el bindeo dinámico seguro
   generandoPdf = false;
   nombreCursoUrl: string = '';
 
-  // 🌟 NUEVAS VARIABLES PARA EL MODAL DE DEUDA GLOBAL DEL CURSO
+  // VARIABLES PARA EL MODAL DE MORA GLOBAL DEL CURSO
   mostrarModalDeuda = false;
   cargandoDeuda = false;
   reporteDeudaCurso: any = null;
   generandoPdfMora = false;
+
+  // VARIABLES PARA EL MODAL DE MATRICULACIÓN (+)
+  mostrarModalAgregarAlumno = false;
+  cargandoAlumnosLibres = false;
+  alumnosLibres: any[] = []; 
+  terminoBusquedaAlumno: string = '';
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -36,7 +46,7 @@ export class ListaAlumnosComponent implements OnInit {
     });
   }
 
-  private cargarDatos(nombreCurso: string) {
+  cargarDatos(nombreCurso: string) {
     this.datosCurso = undefined; 
     
     this.colegioService.getAlumnosPorCurso(nombreCurso).subscribe({
@@ -44,6 +54,7 @@ export class ListaAlumnosComponent implements OnInit {
         if (data) {
           const nombreValidado = data.nombreCurso || data.descripcion || data.nombre || this.nombreCursoUrl;
           this.datosCurso = {
+            idCurso: data.idCurso || data.id || data.cursoId || 0,
             nombreCurso: nombreValidado,
             nombreMaestro: data.nombreMaestro || 'Docente no asignado',
             nombreEstablecimiento: data.nombreEstablecimiento || 'SGA',
@@ -56,23 +67,82 @@ export class ListaAlumnosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar el curso:', err);
-        this.datosCurso = {
-          nombreCurso: this.nombreCursoUrl,
-          nombreMaestro: 'No disponible',
-          nombreEstablecimiento: 'Error de conexión',
-          nombreTurno: 'N/A',
-          nombreCiclo: 'N/A',
-          alumnos: []
-        };
         this.cdr.detectChanges();
       }
     });
   }
 
-  // 🌟 NUEVO MÉTODO: Abre el modal y consulta la API de deudas arancelarias
-  // En tu lista-alumnos.ts verificá que esté así:
+  // Abre el modal y consulta los alumnos vacantes pasando un string vacío "" al filtro real
+  abrirModalAgregar() {
+    this.mostrarModalAgregarAlumno = true;
+    this.cargandoAlumnosLibres = true;
+    this.terminoBusquedaAlumno = '';
+    this.alumnosLibres = [];
+    this.cdr.detectChanges();
 
-abrirModalDeudaCurso() {
+    this.colegioService.getAlumnosPorCursoFiltro("").subscribe({
+      next: (data: any[]) => {
+        this.alumnosLibres = data || [];
+        this.cargandoAlumnosLibres = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Error al traer alumnos sin curso:", err);
+        this.cargandoAlumnosLibres = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // 🌟 CLAVE 3: PROPIEDAD COMPUTADA REQUERIDA POR EL @FOR DEL MODAL EN EL HTML
+  get alumnosLibresFiltrados() {
+    if (!this.terminoBusquedaAlumno.trim()) return this.alumnosLibres;
+    const txt = this.terminoBusquedaAlumno.toLowerCase().trim();
+    return this.alumnosLibres.filter(a => 
+      String(a.alumnoId || a.id).includes(txt) || 
+      (a.nombreCompleto || a.alumno || '').toLowerCase().includes(txt)
+    );
+  }
+
+  // Guarda la matrícula usando el POST individual de tu AlumnoController (+)
+  matricularAlumno(alumno: any) {
+    const idAlumno = alumno.alumnoId || alumno.id;
+    const nombreCompleto = alumno.nombreCompleto || alumno.alumno || `${alumno.apellido}, ${alumno.nombre}`;
+    
+    if (!idAlumno) return;
+    if (!confirm(`¿Desea incorporar a ${nombreCompleto.toUpperCase()} a este curso?`)) return;
+
+    this.colegioService.asignarAlumnoACurso(Number(idAlumno), this.nombreCursoUrl).subscribe({
+      next: () => {
+        alert("¡Alumno incorporado con éxito!");
+        this.mostrarModalAgregarAlumno = false;
+        this.cargarDatos(this.nombreCursoUrl); // Recarga automáticamente la lista de preceptoría
+      },
+      error: (err) => alert("Error al matricular alumno en la base de datos.")
+    });
+  }
+
+  // Quita al alumno del aula usando el POST individual de tu AlumnoController (-)
+  desvincularAlumno(alumno: any) {
+    const idAlumno = alumno.alumnoId || alumno.id;
+    const nombreCompleto = alumno.nombreCompleto || alumno.alumno;
+    
+    if (!idAlumno) return;
+    if (!confirm(`💥 ADVERTENCIA:\n¿Está seguro de quitar a ${nombreCompleto.toUpperCase()} de este curso?\nQuedará como alumno sin división asignada.`)) {
+      return;
+    }
+
+    this.colegioService.quitarAlumnoDeCurso(Number(idAlumno)).subscribe({
+      next: () => {
+        alert("Alumno desvinculado correctamente.");
+        this.cargarDatos(this.nombreCursoUrl); // Recarga la grilla contable del aula
+      },
+      error: (err) => alert("Error al remover el alumno de la división.")
+    });
+  }
+
+  // Consulta la mora del aula cruzando los datos contables
+  abrirModalDeudaCurso() {
     if (!this.nombreCursoUrl) return;
     this.mostrarModalDeuda = true;
     this.cargandoDeuda = true;
@@ -86,12 +156,9 @@ abrirModalDeudaCurso() {
           
           const detallesProcesados = listaCruda.map((item: any) => {
             const idValidado = item.alumnoId ?? item.alumno_id ?? item.id_alumno ?? item.legajo ?? 0;
-            const nombreValidado = item.nombreCompleto ?? item.nombre_completo ?? item.apellido_y_nombre ??  item.alumno ??'';
-            
-            // 🌟 Con primerVenc / primer_venc nos aseguramos de capturar la fecha del Back
-            const vencimientoValidado = item.fechaVencimiento ?? item.fecha_vencimiento ?? item.primerVenc ?? item.primer_venc ?? item.fecha_venc ?? item.vencimiento ?? item.fecha_estado ?? item.fecha ?? null;
-            
-            const deudaValidada = item.totalDeuda ?? item.total_deuda ?? item.importe ?? item.saldo ?? 0;
+            const nombreValidado = item.nombreCompleto ?? item.nombre_completo ?? item.apellido_y_nombre ?? item.alumno ?? '';
+            const vencimientoValidado = item.fechaVencimiento ?? item.fecha_vencimiento ?? item.primerVenc ?? item.primer_venc ?? null;
+            const deudaValidada = item.totalDeuda ?? item.total_deuda ?? item.importe ?? 0;
 
             return {
               alumnoId: idValidado,
@@ -101,7 +168,7 @@ abrirModalDeudaCurso() {
             };
           });
 
-          const totalCursoMapeado = data.totalDeudaCurso ?? data.total_deuda_curso ?? data.total ?? 
+          const totalCursoMapeado = data.totalDeudaCurso ?? data.total_deuda_curso ?? 
                                     detallesProcesados.reduce((acc: number, i: any) => acc + i.totalDeuda, 0);
 
           this.reporteDeudaCurso = {
@@ -126,7 +193,6 @@ abrirModalDeudaCurso() {
     });
   }
 
-  // 🌟 NUEVO MÉTODO: Descarga el PDF holgado de la mora del aula
   descargarPdfMora() {
     if (!this.nombreCursoUrl) return;
     this.generandoPdfMora = true;
