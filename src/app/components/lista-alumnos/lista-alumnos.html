@@ -9,16 +9,16 @@
       
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
         <h2 style="margin: 0;">CURSO: {{ datosCurso.nombreCurso }}</h2>
-
-        <button 
+        
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button 
             type="button" 
             class="btn-novedades-retro" 
             [routerLink]="['/novedades-curso']" 
             [queryParams]="{ cursoId: datosCurso.nombreCurso }">
             📋 NOVEDADES MASIVAS
           </button>
-        
-        <div style="display: flex; gap: 12px;">
+
           <button type="button" class="btn-mora-curso" (click)="abrirModalDeudaCurso()">
             ⚠️ DEUDA DEL CURSO
           </button>
@@ -83,47 +83,47 @@
 
         <div class="modal-mora-body">
           <table class="tabla-retro modal-table">
-  <thead>
-    <tr>
-      <th class="text-center" style="width: 15%">Legajo</th>
-      <th style="width: 50%">Nombre Completo Alumno</th>
-      <th class="text-center" style="width: 15%">F. Vencimiento</th>
-      <th class="text-right" style="width: 20%">Monto Adeudado</th>
-    </tr>
-  </thead>
-  <tbody>
-    @if (cargandoDeuda) {
-      <tr>
-        <td colspan="4" class="text-center" style="padding: 40px; font-weight: 600;">
-          Procesando asientos contables...
-        </td>
-      </tr>
-    } @else {
-      @for (item of reporteDeudaCurso?.detalles; track item.alumnoId) {
-        <tr>
-          <td class="text-center" style="font-weight: 700; color: #1a5d3b;">
-            # {{ item.alumnoId }}
-          </td>
-          <td style="text-transform: uppercase; font-weight: 600;">
-            {{ item.nombreCompleto }}
-          </td>
-          <td class="text-center">
-            {{ item.fechaVencimiento | date:'dd/MM/yyyy' }}
-          </td>
-          <td class="money-right-deuda">
-            $ {{ item.totalDeuda | number:'1.2-2' }}
-          </td>
-        </tr>
-      } @empty {
-        <tr>
-          <td colspan="4" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700;">
-            ✅ El curso no registra obligaciones arancelarias pendientes.
-          </td>
-        </tr>
-      }
-    }
-  </tbody>
-</table>
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 15%">Legajo</th>
+                <th style="width: 50%">Nombre Completo Alumno</th>
+                <th class="text-center" style="width: 15%">F. Vencimiento</th>
+                <th class="text-right" style="width: 20%">Monto Adeudado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (cargandoDeuda) {
+                <tr>
+                  <td colspan="4" class="text-center" style="padding: 40px; font-weight: 600;">
+                    Procesando asientos contables...
+                  </td>
+                </tr>
+              } @else {
+                @for (item of reporteDeudaCurso?.detalles; track item.alumnoId) {
+                  <tr>
+                    <td class="text-center" style="font-weight: 700; color: #1a5d3b;">
+                      # {{ item.alumnoId }}
+                    </td>
+                    <td style="text-transform: uppercase; font-weight: 600;">
+                      {{ item.nombreCompleto }}
+                    </td>
+                    <td class="text-center">
+                      {{ item.fechaVencimiento | date:'dd/MM/yyyy' }}
+                    </td>
+                    <td class="money-right-deuda">
+                      $ {{ item.totalDeuda | number:'1.2-2' }}
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700;">
+                      ✅ El curso no registra obligaciones arancelarias pendientes.
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
         </div>
 
         @if (!cargandoDeuda && reporteDeudaCurso?.detalles?.length) {
