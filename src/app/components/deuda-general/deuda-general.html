@@ -1,0 +1,111 @@
+<div class="main-content">
+  <header class="section-header">
+    <div class="header-main-row">
+      <h1>Reporte de Deuda General Consolidada</h1>
+      
+      <div class="header-actions">
+        <button 
+          type="button" 
+          class="btn-pdf-descarga" 
+          (click)="imprimirPdfGeneral()"
+          [disabled]="cargando() || descargandoPdf() || listaDeudores().length === 0">
+          {{ descargandoPdf() ? '⏳ COMPILANDO PDF...' : '📥 IMPRIMIR REPORTE GENERAL PDF' }}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="form-retro-container search-bg border-sauce">
+    <div class="row-search">
+      <label class="lbl-filtro">Buscador de Alumnos:</label>
+      <input 
+        type="text" 
+        [(ngModel)]="terminoBusqueda" 
+        placeholder="🔍 Filtrar por Legajo, Apellido y Nombre, o N° de Documento..." 
+        class="input-retro-search">
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <div class="info-alumno-banner alert-cargando">
+      <span class="nombre-resaltado">Accediendo a los balances generales del sistema...</span>
+    </div>
+  }
+
+  @if (!cargando() && listaDeudores().length > 0) {
+    <div class="tabla-container-completo seccion-ficha">
+      <table class="tabla-retro">
+        <thead>
+          <tr>
+            <th class="text-center col-legajo">Legajo</th>
+            <th class="text-center col-dni">Documento</th>
+            <th class="col-nombre">Apellido y Nombre del Alumno</th>
+            <th class="text-center col-cant">Facturas Vencidas</th>
+            <th class="text-right col-monto">Monto Acumulado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (deudor of deudoresFiltrados; track deudor.idAlumno) {
+            <tr class="fila-padre-deuda">
+              <td class="text-center legajo-cell"># {{ deudor.legajo || deudor.idAlumno }}</td>
+              <td class="text-center text-muted">{{ deudor.dni || '---' }}</td>
+              <td class="nombre-cell font-bold text-uppercase">{{ deudor.nombreAlumno }}</td>
+              <td class="text-center">
+                <span class="badge-facturas-cant">
+                  {{ deudor.facturas?.length || 0 }} comprobantes
+                </span>
+              </td>
+              <td class="money-center texto-rojo font-black">
+                $ {{ deudor.totalDeudaAlumno | number:'1.2-2' }}
+              </td>
+            </tr>
+
+            <tr class="fila-desglose-comprobantes">
+              <td colspan="5" class="td-sin-padding">
+                <div class="contenedor-comprobantes-interno">
+                  <table class="subtabla-facturas-detalles">
+                    <thead>
+                      <tr>
+                        <th class="text-center">Nro Factura</th>
+                        <th class="text-center">Período Contable</th>
+                        <th class="text-center">Fecha de Vencimiento</th>
+                        <th class="text-right">Importe Adeudado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (fact of deudor.facturas; track fact.nroFactura) {
+                        <tr>
+                          <td class="text-center bold-cell"># {{ fact.nroFactura }}</td>
+                          <td class="text-center font-bold text-verde">{{ fact.periodo }}</td>
+                          <td class="text-center">{{ fact.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
+                          <td class="money-right-subtabla">$ {{ fact.importe | number:'1.2-2' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center td-vacio-mora">
+                No se encontraron morosos que coincidan con los criterios de búsqueda actuales.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="caja-total-global-mora box-total-general-deuda">
+      <div class="total-mora-block flex-space-between-row">
+        <span class="total-mora-label label-total-style">TOTAL MORA INSTITUCIONAL ACUMULADA</span>
+        <span class="total-mora-valor valor-total-style">$ {{ totalGlobalMora | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  } @else if (!cargando() && listaDeudores().length === 0) {
+    <div class="info-alumno-banner alert-exito">
+      <span class="nombre-resaltado">✅ ¡Felicidades! La institución no registra deudas ni comprobantes vencidos en el sistema.</span>
+    </div>
+  }
+</div>
