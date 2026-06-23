@@ -349,6 +349,16 @@ agregarNovedadManual(dto: { alumnoId: number; periodoNombre: string; conceptoId:
       responseType: 'blob'
     });
   }
+
+  // Lista todos los ciclos lectivos registrados en la BD
+  listarCiclosLectivosCompletos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/ciclos-lectivos`);
+  }
+
+// 🌟 CORREGIDO: Único endpoint POST que guarda o actualiza según si viaja el cicloId
+  guardarOCorregirCicloLectivo(ciclo: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/ciclos-lectivos/guardar`, ciclo);
+  }
 }
 
 
