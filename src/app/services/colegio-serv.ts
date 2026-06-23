@@ -337,6 +337,18 @@ agregarNovedadManual(dto: { alumnoId: number; periodoNombre: string; conceptoId:
   quitarAlumnoDeCurso(alumnoId: number): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/alumno/${alumnoId}/quitar`, {});
   }
+
+  // Obtiene el listado completo de deudores de la institución
+  getDeudaGeneral(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/facturacion/reportes/deuda-general`);
+  }
+
+  // Descarga el reporte consolidado en formato PDF
+  descargarPdfDeudaGeneral(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/facturacion/reportes/deuda-general-pdf`, {
+      responseType: 'blob'
+    });
+  }
 }
 
 

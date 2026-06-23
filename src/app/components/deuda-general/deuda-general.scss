@@ -1,0 +1,230 @@
+@use "sass:color";
+
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$blanco-puro: #ffffff;
+$rojo-pdf: #cf222e;
+$fuente-titulo: 'Georgia', serif;
+
+$fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+.header-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-family: $fuente-moderna;
+
+  h1 {
+    margin: 0;
+    color: $verde-colegial;
+    font-weight: 800;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    font-family: $fuente-titulo;
+  }
+}
+
+.border-sauce {
+  border-left: 5px solid $verde-colegial;
+  border-radius: 4px;
+}
+
+.row-search {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  font-family: $fuente-moderna;
+
+  .lbl-filtro {
+    font-weight: 700;
+    color: #444;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+  }
+
+  .input-retro-search {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    outline: none;
+    background-color: white;
+
+    &:focus {
+      border-color: $verde-colegial;
+    }
+  }
+}
+
+.alert-cargando { background-color: #fff3cd; text-align: center; padding: 15px; border-radius: 4px; margin-bottom: 1.5rem; font-family: $fuente-moderna;}
+.alert-exito { background-color: #d4edda; color: #155724; padding: 25px; border-radius: 6px; text-align: center; font-weight: 700; font-family: $fuente-moderna;}
+.nombre-resaltado { font-weight: 700; font-size: 1rem; }
+
+.tabla-container-completo {
+  width: 100%;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 1.5rem;
+}
+
+.col-legajo { width: 12%; }
+.col-dni { width: 15%; }
+.col-nombre { width: 45%; text-align: left; }
+.col-cant { width: 13%; }
+.col-monto { width: 15%; text-align: right; }
+
+.font-black { font-weight: 900; }
+.font-bold { font-weight: 700; }
+.font-semi-bold { font-weight: 600; }
+.text-uppercase { text-transform: uppercase; }
+.text-muted { color: #777; }
+.texto-rojo { color: $rojo-pdf !important; }
+.text-verde { color: $verde-colegial !important; }
+.bold-cell { font-weight: 700; color: #333; }
+
+.fila-padre-deuda {
+  background-color: #fcfcfc;
+  td {
+    font-size: 0.95rem;
+    font-family: $fuente-moderna;
+    padding: 14px 16px !important;
+    border-bottom: none !important;
+  }
+}
+
+.badge-facturas-cant {
+  background: #fdf2f2;
+  color: $rojo-pdf;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border: 1px solid rgba($rojo-pdf, 0.15);
+}
+
+.td-sin-padding {
+  padding: 0 !important;
+}
+
+// 🌟 Contenedor interno del desglose de deudas del alumno
+.contenedor-comprobantes-interno {
+  background: #fafbfc;
+  padding: 10px 30px 20px 30px;
+  border-bottom: 1px solid #eee;
+
+  .subtabla-facturas-detalles {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid #eef0f2;
+    border-radius: 4px;
+
+    th {
+      background: #f1f3f5 !important;
+      color: #555 !important;
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 8px 12px !important;
+      border: 1px solid #eef0f2 !important;
+    }
+
+    td {
+      padding: 10px 12px !important;
+      font-size: 0.88rem !important;
+      border: 1px solid #f1f3f5 !important;
+    }
+
+    .money-right-subtabla {
+      text-align: right;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 700;
+      color: #444;
+      font-size: 1rem;
+    }
+  }
+}
+
+.td-vacio-mora {
+  padding: 50px;
+  font-weight: 700;
+  color: #666;
+  font-family: $fuente-moderna;
+}
+
+.box-total-general-deuda {
+  border-top: 3px double $verde-colegial !important;
+  background-color: #fff9f9;
+  border-radius: 6px;
+  padding: 20px;
+}
+
+.flex-space-between-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label-total-style {
+  font-weight: 800;
+  color: $rojo-pdf;
+  font-size: 1rem;
+}
+
+.valor-total-style {
+  font-size: 1.6rem !important;
+  font-weight: 900;
+  color: $rojo-pdf;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.btn-pdf-descarga {
+  background: white;
+  color: $rojo-pdf;
+  border: 2px solid $rojo-pdf;
+  padding: 10px 25px;
+  font-family: $fuente-moderna;
+  font-weight: 800;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+
+  &:hover:not(:disabled) { 
+    background: $rojo-pdf; 
+    color: white; 
+    box-shadow: 0 4px 10px rgba($rojo-pdf, 0.2);
+  }
+  
+  &:disabled {
+    background: #eaeaea;
+    color: #999;
+    border-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+.tabla-retro {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $fuente-moderna; 
+
+  th {
+    background: $verde-colegial; 
+    color: $dorado-diploma; 
+    padding: 14px 12px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border: 1px solid color.adjust($verde-colegial, $lightness: -10%); 
+  }
+}

@@ -12,6 +12,7 @@ import { FacturacionPeriodoComponent } from './components/facturacion-periodo/fa
 import { RecaudacionPeriodoComponent } from './components/recaudacion-periodo/recaudacion-periodo';
 import { RecaudacionFechasComponent } from './components/recaudacion-fechas/recaudacion-fechas';
 import { NovedadesCursoComponent } from './components/novedades-curso/novedades-curso';
+import { DeudaGeneralComponent } from './components/deuda-general/deuda-general';
 
 export const routes: Routes = [
   // 1. Ruta por defecto: Carga la Home
@@ -30,6 +31,7 @@ export const routes: Routes = [
   { path: 'recaudacion-periodo', component: RecaudacionPeriodoComponent }, 
   { path: 'recaudacion-fechas', component: RecaudacionFechasComponent },
   { path: 'novedades-curso', component: NovedadesCursoComponent},
+  { path: 'deuda-general', component: DeudaGeneralComponent},
   
   // 3. Comodín: Si escriben cualquier cosa mal, vuelve a la Home
   { path: '**', redirectTo: '' }
