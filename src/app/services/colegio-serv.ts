@@ -96,6 +96,11 @@ buscarPeriodos(primerVenc?: string, segundoVenc?: string, ciclo?: string, page: 
   return this.http.get<PageResponse<PeriodoDto>>(`${this.baseUrl}/periodo/buscar`, { params });
 }
 
+// Registra un nuevo período contable de facturación (POST)
+  guardarPeriodo(periodo: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/periodo/`, periodo);
+  }
+
   // --- MÓDULO: CONCEPTOS ---
   listarConceptos(page: number = 0, size: number = 15): Observable<PageResponse<ConceptoDto>> {
     return this.http.get<PageResponse<ConceptoDto>>(`${this.baseUrl}/concepto/paginado`, {

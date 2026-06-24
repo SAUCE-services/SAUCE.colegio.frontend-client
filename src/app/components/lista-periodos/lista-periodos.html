@@ -1,64 +1,148 @@
-<div class="page-container">
+<div class="page-container container-completo-periodos">
   <header class="section-header">
-    <h1>Períodos de Facturación</h1>
-    
-   <div class="filtros-periodo">
-  <div class="grupo-input">
-    <label>1° Vencimiento</label>
-    <input type="date" [(ngModel)]="filtroVenc1" (change)="onFiltrar()">
-  </div>
-  <div class="grupo-input">
-    <label>2° Vencimiento</label>
-    <input type="date" [(ngModel)]="filtroVenc2" (change)="onFiltrar()">
-  </div>
-  
-  <div class="grupo-input">
-    <label>Ciclo Lectivo</label>
-    <input type="text" [(ngModel)]="filtroCiclo" (keyup.enter)="onFiltrar()" placeholder="Ej: 2026">
-  </div>
+    <div class="header-main-top-row">
+      <h1>Períodos de Facturación</h1>
+    </div>
 
-  <button class="btn-limpiar" (click)="limpiarFiltros()">
-    LIMPIAR FILTROS
-  </button>
-</div>
+    <!-- Panel de Filtros Históricos -->
+    <div class="filtros-periodo search-bg border-sauce-filtro">
+      <div class="grupo-input">
+        <label>1° Vencimiento</label>
+        <input type="date" [(ngModel)]="filtroVenc1" (change)="onFiltrar()">
+      </div>
+      <div class="grupo-input">
+        <label>2° Vencimiento</label>
+        <input type="date" [(ngModel)]="filtroVenc2" (change)="onFiltrar()">
+      </div>
+      <div class="grupo-input">
+        <label>Ciclo Lectivo</label>
+        <input type="text" [(ngModel)]="filtroCiclo" (keyup.enter)="onFiltrar()" placeholder="Ej: 2026">
+      </div>
+      <button class="btn-limpiar" (click)="limpiarFiltros()">
+        LIMPIAR FILTROS
+      </button>
+    </div>
   </header>
 
-  <div class="tabla-container">
-    <table class="tabla-retro">
-      <thead>
-        <tr>
-          <th># ID</th>
-          <th>Descripción del Período</th>
-          <th>Ciclo Lectivo</th>
-          <th>Primer Vencimiento</th>
-          <th>Segundo Vencimiento</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (p of periodos; track p.periodoId) {
-          <tr>
-            <td class="legajo-cell">{{ p.periodoId }}</td>
-            <td class="descripcion-cell">{{ p.descripcion }}</td>
-            <td>{{ p.nombreCiclo }}</td>
-            <td>{{ p.mes | date:'dd/MM/yyyy' }}</td>
-            <td>{{ p.fechaSegundo | date:'dd/MM/yyyy' }}</td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="5" class="sin-datos">No se encontraron folios en este rango de fechas.</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <!-- Layout de doble panel simétrico desapretado -->
+  <div class="panel-doble-layout">
+    
+    <!-- PANEL IZQUIERDO: LISTADO COMPLETO (60%) -->
+    <div class="panel-tabla seccion-ficha flex-tabla-completa">
+      <div class="cabecera-panel-tabla">
+        <h3>Balances y Cierres Registrados</h3>
+        <button type="button" class="btn-toggle btn-nuevo-periodo-top" (click)="activarNuevoPeriodo()">
+          ➕ NUEVO PERÍODO
+        </button>
+      </div>
+
+      <div class="tabla-container">
+        <table class="tabla-retro tabla-anchura-total">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 12%"># ID</th>
+              <th style="width: 38%">Descripción del Período</th>
+              <th style="width: 18%">Ciclo</th>
+              <th class="text-center" style="width: 16%">1° Venc.</th>
+              <th class="text-center" style="width: 16%">2° Venc.</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of periodos; track p.periodoId) {
+              <tr (click)="seleccionarPeriodo(p)" 
+                  [class.fila-activa-seleccion]="idPeriodoSeleccionado === p.periodoId && !esNuevoMode" 
+                  class="pointer">
+                <td class="legajo-cell text-center font-bold"># {{ p.periodoId }}</td>
+                <td class="descripcion-cell text-uppercase">{{ p.descripcion }}</td>
+                <td class="font-semi-bold">{{ p.nombreCiclo }}</td>
+                <td class="text-center">{{ p.mes | date:'dd/MM/yyyy' }}</td>
+                <td class="text-center">{{ p.fechaSegundo | date:'dd/MM/yyyy' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="sin-datos text-center padding-holgado">No se encontraron folios en el rango de fechas.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="paginacion-retro">
+        <button [disabled]="paginaActual === 0" (click)="cargarPeriodos(paginaActual - 1)">
+          ANTERIOR
+        </button>
+        <span class="info-pagina">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
+        <button [disabled]="paginaActual >= totalPaginas - 1" (click)="cargarPeriodos(paginaActual + 1)">
+          SIGUIENTE
+        </button>
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO: EDICIÓN / ALTA INTEGRADO (40%) -->
+    @if (mostrarFormulario) {
+      <div class="panel-formulario seccion-ficha" [class.borde-formulario-nuevohidden]="esNuevoMode">
+        <div class="cabecera-form-ficha">
+          <h3>{{ esNuevoMode ? '🔥 REGISTRAR NUEVO PERÍODO' : '📝 MODIFICAR DATOS DEL PERÍODO' }}</h3>
+        </div>
+
+        <div class="form-retro-body">
+          <div class="campo-retro-group">
+            <label>Descripción / Nombre del Mes:</label>
+            <input type="text" [(ngModel)]="nuevoDescripcion" placeholder="Ej: JULIO - 2026" class="input-form-retro-style text-uppercase">
+          </div>
+
+          <div class="campo-retro-group">
+            <label>Ciclo Lectivo Vinculado:</label>
+            <select [(ngModel)]="nuevoCicloId" class="select-retro-colegio">
+              <option [ngValue]="null" disabled>[ Seleccione el año ]</option>
+              @for (ciclo of ciclosDisponibles(); track ciclo.cicloId) {
+                <option [value]="ciclo.cicloId">{{ ciclo.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="campo-retro-group">
+            <label>Primer Vencimiento:</label>
+            <input type="date" [(ngModel)]="nuevoMes" class="input-form-retro-style">
+          </div>
+
+          <div class="campo-retro-group">
+            <label>Segundo Vencimiento:</label>
+            <input type="date" [(ngModel)]="nuevoFechaSegundo" class="input-form-retro-style">
+          </div>
+
+          <div class="botones-form-row">
+            <button class="btn-mora-curso btn-guardar-ciclo-style" (click)="solicitarConfirmacion()" [disabled]="guardandoPeriodo">
+              {{ guardandoPeriodo ? '⏳ GUARDANDO...' : '💾 GUARDAR CAMBIOS' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
   </div>
 
-  <div class="paginacion-retro">
-    <button [disabled]="paginaActual === 0" (click)="cargarPeriodos(paginaActual - 1)">
-      « ANTERIOR
-    </button>
-    <span class="info-pagina">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
-    <button [disabled]="paginaActual >= totalPaginas - 1" (click)="cargarPeriodos(paginaActual + 1)">
-      SIGUIENTE »
-    </button>
-  </div>
+  <!-- CARTEL DE DIÁLOGO CUSTOM SAUCE -->
+  @if (mostrarCartelMensaje) {
+    <div class="cartel-dialogo-overlay">
+      <div class="cartel-dialogo-box border-sauce-alerta">
+        <div class="cartel-dialogo-header">
+          <h3>❓ {{ cartelTitulo }}</h3>
+        </div>
+        <div class="cartel-dialogo-body">
+          <p>{{ cartelMensaje }}</p>
+        </div>
+        <div class="cartel-dialogo-footer">
+          @if (cartelTitulo === 'Confirmar Operación') {
+            <button type="button" class="btn-confirmar-custom" (click)="confirmarGuardado()">
+              ✔ ACEPTAR
+            </button>
+          }
+          <button type="button" class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">
+            ❌ {{ cartelTitulo === 'Confirmar Operación' ? 'CANCELAR' : 'ENTENDIDO' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
