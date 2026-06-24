@@ -48,7 +48,7 @@ export class ListaPeriodosComponent implements OnInit {
     this.cargarCiclosCombo();
   }
 
-  cargarPeriodos(page: number) {
+cargarPeriodos(page: number) {
     const formatearParaBack = (fecha?: string) => {
       if (!fecha) return undefined;
       const [anio, mes, dia] = fecha.split('-');
@@ -68,9 +68,16 @@ export class ListaPeriodosComponent implements OnInit {
         this.totalPaginas = response.totalPages;
         this.paginaActual = response.number;
 
-        // Preselecciona el primer registro contable si no hay selección activa
+        // 🌟 CORREGIDO: Al limpiar o cargar, marcamos cuál es el período activo de la grilla,
+        // pero NO le clavamos el "this.mostrarFormulario = true" para que no se abra la ventana sola.
         if (this.periodos.length > 0 && !this.idPeriodoSeleccionado && !this.esNuevoMode) {
-          this.seleccionarPeriodo(this.periodos[0]);
+          const primerPeriodo = this.periodos[0];
+          this.idPeriodoSeleccionado = primerPeriodo.periodoId;
+          this.nuevoDescripcion = String(primerPeriodo.descripcion || '');
+          this.nuevoMes = primerPeriodo.mes ? String(primerPeriodo.mes).split('T')[0] : '';
+          this.nuevoFechaSegundo = primerPeriodo.fechaSegundo ? String(primerPeriodo.fechaSegundo).split('T')[0] : '';
+          const cicloMatch = this.ciclosDisponibles().find(c => c.nombre === primerPeriodo.nombreCiclo);
+          this.nuevoCicloId = cicloMatch ? cicloMatch.cicloId : null;
         }
         this.cdr.detectChanges();
       },
@@ -87,24 +94,34 @@ export class ListaPeriodosComponent implements OnInit {
     });
   }
 
-  // 🌟 NUEVO MÉTODO: Carga los datos del período seleccionado en la ficha de la derecha
-  seleccionarPeriodo(p: PeriodoDto) {
-    this.esNuevoMode = false;
-    this.mostrarFormulario = true; // Forzamos a mostrar la ficha de edición
-    this.idPeriodoSeleccionado = p.periodoId;
-    this.nuevoDescripcion = String(p.descripcion || '');
-    
-    // Parseo seguro de fechas ISO para los controles nativos date
-    this.nuevoMes = p.mes ? String(p.mes).split('T')[0] : '';
-    this.nuevoFechaSegundo = p.fechaSegundo ? String(p.fechaSegundo).split('T')[0] : '';
-
-    // Buscamos el ciclo correspondiente en nuestra lista para pre-marcarlo en el combo
-    const cicloMatch = this.ciclosDisponibles().find(c => c.nombre === p.nombreCiclo);
-    this.nuevoCicloId = cicloMatch ? cicloMatch.cicloId : null;
-
+  // 🌟 RESTAURADO: Método para abrir/cerrar el modal del formulario y limpiar estados
+  toggleFormulario() {
+    this.mostrarFormulario = !this.mostrarFormulario;
+    if (!this.mostrarFormulario) {
+      this.resetearCamposForm();
+    }
     this.cdr.detectChanges();
   }
 
+  // 🌟 NUEVO MÉTODO: Carga los datos del período seleccionado en la ficha de la derecha
+  // 🌟 CORREGIDO: Este método ahora se ejecuta exclusivamente cuando el usuario hace CLIC REAL en la tabla
+  seleccionarPeriodo(p: PeriodoDto) {
+    this.esNuevoMode = false;
+    this.idPeriodoSeleccionado = p.periodoId;
+    this.nuevoDescripcion = String(p.descripcion || '');
+    
+    this.nuevoMes = p.mes ? String(p.mes).split('T')[0] : '';
+    this.nuevoFechaSegundo = p.fechaSegundo ? String(p.fechaSegundo).split('T')[0] : '';
+
+    const cicloMatch = this.ciclosDisponibles().find(c => c.nombre === p.nombreCiclo);
+    this.nuevoCicloId = cicloMatch ? cicloMatch.cicloId : null;
+
+    // 🌟 CLAVE: Solo acá forzamos la apertura del modal flotante porque hubo un clic intencional
+    this.mostrarFormulario = true; 
+
+    this.cdr.detectChanges();
+  }
+  
   activarNuevoPeriodo() {
     this.esNuevoMode = true;
     this.idPeriodoSeleccionado = null;

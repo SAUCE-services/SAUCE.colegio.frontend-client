@@ -24,105 +24,108 @@
     </div>
   </header>
 
-  <!-- Layout de doble panel simétrico desapretado -->
-  <div class="panel-doble-layout">
-    
-    <!-- PANEL IZQUIERDO: LISTADO COMPLETO (60%) -->
-    <div class="panel-tabla seccion-ficha flex-tabla-completa">
-      <div class="cabecera-panel-tabla">
-        <h3>Balances y Cierres Registrados</h3>
-        <button type="button" class="btn-toggle btn-nuevo-periodo-top" (click)="activarNuevoPeriodo()">
-          ➕ NUEVO PERÍODO
-        </button>
-      </div>
-
-      <div class="tabla-container">
-        <table class="tabla-retro tabla-anchura-total">
-          <thead>
-            <tr>
-              <th class="text-center" style="width: 12%"># ID</th>
-              <th style="width: 38%">Descripción del Período</th>
-              <th style="width: 18%">Ciclo</th>
-              <th class="text-center" style="width: 16%">1° Venc.</th>
-              <th class="text-center" style="width: 16%">2° Venc.</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (p of periodos; track p.periodoId) {
-              <tr (click)="seleccionarPeriodo(p)" 
-                  [class.fila-activa-seleccion]="idPeriodoSeleccionado === p.periodoId && !esNuevoMode" 
-                  class="pointer">
-                <td class="legajo-cell text-center font-bold"># {{ p.periodoId }}</td>
-                <td class="descripcion-cell text-uppercase">{{ p.descripcion }}</td>
-                <td class="font-semi-bold">{{ p.nombreCiclo }}</td>
-                <td class="text-center">{{ p.mes | date:'dd/MM/yyyy' }}</td>
-                <td class="text-center">{{ p.fechaSegundo | date:'dd/MM/yyyy' }}</td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="5" class="sin-datos text-center padding-holgado">No se encontraron folios en el rango de fechas.</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-
-      <div class="paginacion-retro">
-        <button [disabled]="paginaActual === 0" (click)="cargarPeriodos(paginaActual - 1)">
-          ANTERIOR
-        </button>
-        <span class="info-pagina">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
-        <button [disabled]="paginaActual >= totalPaginas - 1" (click)="cargarPeriodos(paginaActual + 1)">
-          SIGUIENTE
-        </button>
-      </div>
+  <!-- LISTADO COMPLETO EN ANCHO COMPLETO (100%) -->
+  <div class="panel-tabla seccion-ficha">
+    <div class="cabecera-panel-tabla">
+      <h3>Balances y Cierres Registrados</h3>
+      <button type="button" class="btn-toggle btn-nuevo-periodo-top" (click)="activarNuevoPeriodo()">
+        ➕ NUEVO PERÍODO
+      </button>
     </div>
 
-    <!-- PANEL DERECHO: EDICIÓN / ALTA INTEGRADO (40%) -->
-    @if (mostrarFormulario) {
-      <div class="panel-formulario seccion-ficha" [class.borde-formulario-nuevohidden]="esNuevoMode">
-        <div class="cabecera-form-ficha">
-          <h3>{{ esNuevoMode ? '🔥 REGISTRAR NUEVO PERÍODO' : '📝 MODIFICAR DATOS DEL PERÍODO' }}</h3>
-        </div>
+    <div class="tabla-container">
+      <table class="tabla-retro tabla-anchura-total">
+        <thead>
+          <tr>
+            <th class="text-center" style="width: 10%"># ID</th>
+            <th style="width: 45%">Descripción del Período</th>
+            <th style="width: 15%">Ciclo</th>
+            <th class="text-center" style="width: 15%">1° Venc.</th>
+            <th class="text-center" style="width: 15%">2° Venc.</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of periodos; track p.periodoId) {
+            <tr (click)="seleccionarPeriodo(p)" class="pointer">
+              <td class="legajo-cell text-center font-bold"># {{ p.periodoId }}</td>
+              <td class="descripcion-cell text-uppercase">{{ p.descripcion }}</td>
+              <td class="font-semi-bold">{{ p.nombreCiclo }}</td>
+              <td class="text-center">{{ p.mes | date:'dd/MM/yyyy' }}</td>
+              <td class="text-center">{{ p.fechaSegundo | date:'dd/MM/yyyy' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="sin-datos text-center padding-holgado">No se encontraron folios en el archivo oficial.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
-        <div class="form-retro-body">
-          <div class="campo-retro-group">
-            <label>Descripción / Nombre del Mes:</label>
-            <input type="text" [(ngModel)]="nuevoDescripcion" placeholder="Ej: JULIO - 2026" class="input-form-retro-style text-uppercase">
-          </div>
-
-          <div class="campo-retro-group">
-            <label>Ciclo Lectivo Vinculado:</label>
-            <select [(ngModel)]="nuevoCicloId" class="select-retro-colegio">
-              <option [ngValue]="null" disabled>[ Seleccione el año ]</option>
-              @for (ciclo of ciclosDisponibles(); track ciclo.cicloId) {
-                <option [value]="ciclo.cicloId">{{ ciclo.nombre }}</option>
-              }
-            </select>
-          </div>
-
-          <div class="campo-retro-group">
-            <label>Primer Vencimiento:</label>
-            <input type="date" [(ngModel)]="nuevoMes" class="input-form-retro-style">
-          </div>
-
-          <div class="campo-retro-group">
-            <label>Segundo Vencimiento:</label>
-            <input type="date" [(ngModel)]="nuevoFechaSegundo" class="input-form-retro-style">
-          </div>
-
-          <div class="botones-form-row">
-            <button class="btn-mora-curso btn-guardar-ciclo-style" (click)="solicitarConfirmacion()" [disabled]="guardandoPeriodo">
-              {{ guardandoPeriodo ? '⏳ GUARDANDO...' : '💾 GUARDAR CAMBIOS' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    }
-
+    <div class="paginacion-retro">
+      <button [disabled]="paginaActual === 0" (click)="cargarPeriodos(paginaActual - 1)">
+        ANTERIOR
+      </button>
+      <span class="info-pagina">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
+      <button [disabled]="paginaActual >= totalPaginas - 1" (click)="cargarPeriodos(paginaActual + 1)">
+        SIGUIENTE
+      </button>
+    </div>
   </div>
 
-  <!-- CARTEL DE DIÁLOGO CUSTOM SAUCE -->
+  <!-- 🌟 NUEVO: VENTANA MODAL FLOTANTE DE REGISTRO / EDICIÓN -->
+  @if (mostrarFormulario) {
+    <div class="modal-mora-overlay modal-flex-center">
+      <div class="modal-box-periodo seccion-ficha animate-pop-in">
+        
+        <div class="modal-mora-header header-borde-verde">
+          <h2 class="titulo-matricula-verde">
+            {{ esNuevoMode ? '🔥 REGISTRAR NUEVO PERÍODO' : '📝 MODIFICAR DATOS DEL PERÍODO' }}
+          </h2>
+          <button type="button" class="btn-close-modal" (click)="toggleFormulario()">❌ </button>
+        </div>
+
+        <div class="modal-mora-body-custom">
+          <div class="form-retro-body">
+            <div class="campo-retro-group">
+              <label>Descripción / Nombre del Mes:</label>
+              <input type="text" [(ngModel)]="nuevoDescripcion" placeholder="Ej: JULIO - 2026" class="input-form-retro-style text-uppercase">
+            </div>
+
+            <div class="campo-retro-group">
+              <label>Ciclo Lectivo Vinculado:</label>
+              <select [(ngModel)]="nuevoCicloId" class="select-retro-colegio">
+                <option [ngValue]="null" disabled>[ Seleccione el año ]</option>
+                @for (ciclo of ciclosDisponibles(); track ciclo.cicloId) {
+                  <option [value]="ciclo.cicloId">{{ ciclo.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="campo-retro-group">
+              <label>Primer Vencimiento:</label>
+              <input type="date" [(ngModel)]="nuevoMes" class="input-form-retro-style">
+            </div>
+
+            <div class="campo-retro-group">
+              <label>Segundo Vencimiento:</label>
+              <input type="date" [(ngModel)]="nuevoFechaSegundo" class="input-form-retro-style">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-acciones">
+          <button type="button" class="btn-cancelar-custom-retro" (click)="toggleFormulario()">CANCELAR</button>
+          <button class="btn-mora-curso btn-guardar-periodo-modal" (click)="solicitarConfirmacion()" [disabled]="guardandoPeriodo">
+            {{ guardandoPeriodo ? '⏳ GUARDANDO...' : '💾 GUARDAR CAMBIOS' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- CARTEL DE DIÁLOGO DE CONFIRMACIÓN -->
   @if (mostrarCartelMensaje) {
     <div class="cartel-dialogo-overlay">
       <div class="cartel-dialogo-box border-sauce-alerta">
