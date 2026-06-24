@@ -114,7 +114,6 @@ export class ListaAlumnosComponent implements OnInit {
 
     this.colegioService.asignarAlumnoACurso(Number(idAlumno), this.nombreCursoUrl).subscribe({
       next: () => {
-        alert("¡Alumno incorporado con éxito!");
         this.mostrarModalAgregarAlumno = false;
         this.cargarDatos(this.nombreCursoUrl); // Recarga automáticamente la lista de preceptoría
       },
@@ -134,7 +133,6 @@ export class ListaAlumnosComponent implements OnInit {
 
     this.colegioService.quitarAlumnoDeCurso(Number(idAlumno)).subscribe({
       next: () => {
-        alert("Alumno desvinculado correctamente.");
         this.cargarDatos(this.nombreCursoUrl); // Recarga la grilla contable del aula
       },
       error: (err) => alert("Error al remover el alumno de la división.")

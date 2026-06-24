@@ -178,7 +178,6 @@ cargarPeriodos(page: number) {
 
     this.colegioService.guardarPeriodo(payload).subscribe({
       next: () => {
-        alert(this.esNuevoMode ? "¡Período creado con éxito!" : "¡Período modificado correctamente!");
         this.esNuevoMode = false;
         this.idPeriodoSeleccionado = null;
         this.guardandoPeriodo = false;

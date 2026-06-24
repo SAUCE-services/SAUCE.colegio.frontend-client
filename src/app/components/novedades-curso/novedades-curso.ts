@@ -365,7 +365,6 @@ export class NovedadesCursoComponent implements OnInit {
   }
 
   private finalizarProcesoBajaMasiva(cantidad: number) {
-    alert(`¡Baja masiva finalizada! Se procesaron las anulaciones del curso en el sistema.`);
     this.procesando = false;
     this.consultarNovedadesExistentes();
   }
