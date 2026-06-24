@@ -6,6 +6,8 @@ $dorado-diploma: #d4af37;
 $crema-papel: #f4e9d9;
 $gris-fondo: #f9f9f9;
 $rojo-deuda: #d9534f;
+$fuente-titulo: 'Georgia', serif;
+$fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
 // ESTRUCTURA GENERAL
 .page-container { padding: 1rem 0; }
@@ -22,6 +24,7 @@ $rojo-deuda: #d9534f;
       font-weight: 800;
       text-transform: uppercase;
       margin: 0;
+        font-family: $fuente-titulo;
     }
   }
 }
@@ -214,16 +217,37 @@ td:nth-child(5) { // Columna F.Registro
   letter-spacing: 1px;
   border-radius: 4px;
   cursor: pointer;
-  box-shadow: 4px 4px 0px rgba($rojo-deuda, 0.2);
+  // 🌟 CORRECCIÓN: Agregamos el canal alfa (0.2)
+  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.2); 
   transition: all 0.2s ease;
 
   &:hover {
+    // Si querés que el botón sea rojo al pasar el mouse, está perfecto:
     background: $rojo-deuda;
     color: white;
-    box-shadow: 2px 2px 0px rgba($rojo-deuda, 0.1);
+    // La sombra al hacer hover debe ser más pequeña para simular que el botón "baja"
+    box-shadow: 2px 2px 0px rgba($verde-colegial, 0.1);
   }
 }
 
+.btn-alta-novedad-manual {
+  // 🌟 CAMBIADO: Estilo verde institucional Sauce
+  background-color: $verde-colegial !important; 
+  border-color: color.adjust($verde-colegial, $lightness: -5%) !important;
+  color: white !important;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.2) !important;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: color.adjust($verde-colegial, $lightness: -8%) !important;
+    color: white !important;
+  }
+}
 // === ESTILOS OPTIMIZADOS PARA EL MODAL DE DEUDA DESAPRETADO ===
 .modal-deuda-overlay {
   position: fixed;
@@ -489,4 +513,292 @@ td:nth-child(5) { // Columna F.Registro
       }
     }
   }
+}
+
+// =======================================================================
+// 🌟 SISTEMA UNIFICADO DE CARTEL FLOTANTE (ESTILO RETRO-SAUCE)
+// =======================================================================
+.cartel-dialogo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000; // Por encima de cualquier modal de desglose
+}
+
+.cartel-dialogo-box {
+  background: white;
+  width: 440px;
+  border: 3px double $verde-colegial;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popInCC 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+
+  .cartel-dialogo-header {
+    background: rgba($crema-papel, 0.25);
+    padding: 12px 18px;
+    border-bottom: 2px dashed #ccc;
+
+    h3 {
+      margin: 0;
+      color: $verde-colegial;
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .cartel-dialogo-body {
+    padding: 22px 18px;
+    background: white;
+
+    p {
+      margin: 0;
+      color: #333;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+  }
+
+  .cartel-dialogo-footer {
+    padding: 12px 18px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+// Botonera de Control del Diálogo
+.btn-confirmar-custom {
+  background: $verde-colegial;
+  color: white;
+  border: 2px solid color.adjust($verde-colegial, $lightness: -5%);
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    background: color.adjust($verde-colegial, $lightness: -8%);
+  }
+}
+
+.btn-cancelar-custom {
+  background: white;
+  color: #555;
+  border: 2px solid #ccc;
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    background: #f0f0f0;
+    color: black;
+    border-color: #999;
+  }
+}
+
+@keyframes popInCC {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+// =======================================================================
+// 🌟 COMPLEMENTO DE ALTA MANUAL DE NOVEDADES Y CLASES DE COLUMNAS (SAUCE)
+// =======================================================================
+
+// Contenedores del formulario de alta dentro del modal
+.contenedor-alta-novedad-trigger {
+  margin-bottom: 1.2rem;
+}
+
+.filtro-periodo-modal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9f9f9;
+  padding: 12px 18px;
+  border-radius: 4px;
+  border: 1px dashed $verde-colegial;
+  width: fit-content;
+  margin-bottom: 1.5rem;
+  font-family: $fuente-moderna;
+
+  label {
+    font-weight: 700;
+    color: $verde-colegial;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.select-periodo-modal, .select-concepto-form {
+  padding: 8px 16px;
+  border: 2px solid $verde-colegial;
+  border-radius: 4px;
+  font-weight: 700;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  min-width: 200px;
+  outline: none;
+  font-family: $fuente-moderna;
+}
+
+.panel-formulario-alta-novedad {
+  margin: 0 0 1.5rem 0;
+  background: #fffcf4;
+  border: 2px solid $dorado-diploma;
+  padding: 20px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: $fuente-moderna;
+
+  h3 {
+    margin-top: 0;
+    color: color.adjust($dorado-diploma, $lightness: -20%);
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-bottom: 1px dashed $dorado-diploma;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .periodo-underlined {
+    text-decoration: underline;
+  }
+}
+
+.flex-form-row-novedad {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+
+  .campo-novedad-select {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 2;
+    min-width: 250px;
+  }
+
+  .campo-novedad-input {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .campo-novedad-btn {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  label {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #555;
+    text-transform: uppercase;
+  }
+
+  .input-importe-form {
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-weight: 700;
+    border-radius: 4px;
+    text-align: right;
+    background: white;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: $fuente-moderna;
+    font-size: 1rem;
+    outline: none;
+    
+    &:focus { border-color: $verde-colegial; }
+  }
+}
+
+.btn-asentar-registro-manual {
+  width: 100%;
+  background-color: color.adjust($dorado-diploma, $lightness: -10%) !important;
+  border-color: color.adjust($dorado-diploma, $lightness: -15%) !important;
+  color: white !important;
+  padding: 11px !important;
+  font-weight: 800;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.5px;
+  margin: 0;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.1) !important;
+
+  &:hover {
+    background-color: color.adjust($dorado-diploma, $lightness: -15%) !important;
+  }
+}
+
+// 📏 CONTROL DE ANCHOS DE COLUMNAS (TABLAS PRINCIPALES Y INTERNAS)
+.col-factura { width: 10%; }
+.col-estado { width: 15%; }
+.col-fecha { width: 13%; }
+.col-monto { width: 12%; }
+
+.subcol-fecha { width: 15%; }
+.subcol-concepto { width: 35%; }
+.subcol-estado { width: 15%; }
+.subcol-monto { width: 15%; }
+.subcol-periodo { width: 10%; }
+
+.col-modal-fecha { width: 15%; }
+.col-modal-concepto { width: 40%; }
+.col-modal-estado { width: 15%; }
+.col-modal-monto { width: 15%; }
+
+.col-nov-fecha { width: 15%; }
+.col-nov-concepto { width: 35%; }
+.col-nov-periodo { width: 15%; }
+.col-nov-estado { width: 15%; }
+.col-nov-monto { width: 12%; }
+.col-nov-accion { width: 8%; }
+
+// Clases de utilidad para centrar celdas de carga vacías
+.celda-aviso-carga, .celda-aviso-vacio, .celda-modal-espera {
+  padding: 25px !important;
+  font-weight: 600;
+  color: #666;
+}
+
+.celda-modal-vacio-verde, .celda-modal-vacio-institucional {
+  padding: 50px !important;
+  color: $verde-colegial;
+  font-weight: 700;
+  font-size: 1.1rem;
 }
