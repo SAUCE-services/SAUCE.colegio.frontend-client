@@ -1,7 +1,12 @@
-<div class="page-container">
+<div class="page-container container-completo-cursos">
   <header class="section-header">
-    <h1>Listado de Cursos</h1>
-    
+    <div class="header-main-top-row">
+      <h1>Listado de Cursos </h1>
+      <button type="button" class="btn-toggle btn-nuevo-curso-top" (click)="activarNuevoCurso()">
+        ➕ NUEVA DIVISIÓN
+      </button>
+    </div>
+         
     <div class="filtro-container">
       <label for="cicloFilter">Filtrar por Ciclo:</label>
       <select id="cicloFilter" (change)="onFiltrarPorCiclo($any($event.target).value)">
@@ -13,14 +18,22 @@
     </div>
   </header>
 
+  <!-- Grilla de Tarjetas Escolares -->
   <div class="card-grid">
     @for (curso of cursos; track curso.cursoId) {
       <div class="curso-card" [routerLink]="['/curso', curso.descripcion]">
         <div class="card-content">
-          <h3>{{ curso.descripcion }}</h3>
+          <div class="titulo-row-card-flex">
+            <h3>{{ curso.descripcion }}</h3>
+            <!-- Botón interno para disparar la ficha de edición custom sin pisar la navegación -->
+            <button type="button" class="btn-editar-interno-card" (click)="abrirEditorCurso(curso, $event)" title="Modificar asignación del curso">
+              ✏️ MODIFICAR
+            </button>
+          </div>
           <div class="detalles-fila">
-            <span><strong>Profesor:</strong> <span class="maestro-bold">{{ curso.nombreMaestro }}</span></span>
+            <span><strong>Profesor/a:</strong> <span class="maestro-bold">{{ curso.nombreMaestro || 'Sin Asignar' }}</span></span>
             <span><strong>Ciclo:</strong> {{ curso.nombreCiclo }}</span>
+            <span class="est-name-span"><strong>Establecimiento:</strong> {{ curso.nombreEstablecimiento }}</span>
           </div>
         </div>
         <span class="badge">{{ curso.nombreTurno }}</span>
@@ -34,13 +47,111 @@
 
   <div class="paginacion-retro">
     <button [disabled]="paginaActual === 0" (click)="cargarCursos(paginaActual - 1)">
-      « ANTERIOR
+      ANTERIOR
     </button>
-    
+         
     <span class="info-pagina">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
-    
+         
     <button [disabled]="paginaActual >= totalPaginas - 1" (click)="cargarCursos(paginaActual + 1)">
-      SIGUIENTE »
+      SIGUIENTE 
     </button>
   </div>
+
+  <!-- 🌟 VENTANA MODAL FLOTANTE DE CONTROL ABM CURSOS (OVERLAY) -->
+  @if (mostrarFormulario) {
+    <div class="modal-mora-overlay modal-flex-center">
+      <div class="modal-box-curso-abm seccion-ficha animate-pop-in">
+        
+        <div class="modal-mora-header header-borde-verde">
+          <h2 class="titulo-matricula-verde">
+            {{ esNuevoMode ? '🔥 REGISTRAR NUEVA DIVISIÓN ACADÉMICA' : '📝 MODIFICAR ASIGNACIÓN DE CURSO' }}
+          </h2>
+          <button type="button" class="btn-close-modal" (click)="mostrarFormulario = false">❌ CERRAR</button>
+        </div>
+
+        <div class="modal-body-scroll-abm">
+          <div class="form-retro-body">
+            
+            <div class="campo-retro-group">
+              <label>Nombre de la División / Descripción:</label>
+              <input type="text" [(ngModel)]="nuevoDescripcion" placeholder="Ej: 1° AÑO - SECUNDARIA" class="input-form-retro-style text-uppercase" [disabled]="procesandoForm">
+            </div>
+
+            <div class="campo-retro-group">
+              <label>Turno Escolar:</label>
+              <select [(ngModel)]="nuevoTurnoId" class="select-retro-colegio" [disabled]="procesandoForm">
+                <option [ngValue]="null" disabled>[ Seleccione el Turno ]</option>
+                @for (t of turnosCombo(); track t.turnoId) {
+                  <option [value]="t.turnoId">{{ t.descripcion }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="campo-retro-group">
+              <label>Docente / Maestro Asignado:</label>
+              <select [(ngModel)]="nuevoMaestroId" class="select-retro-colegio" [disabled]="procesandoForm">
+                <option [ngValue]="null" disabled>[ Seleccione el Docente ]</option>
+                @for (m of maestrosCombo(); track m.id) {
+                  <option [value]="m.id">{{ m.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="campo-retro-group">
+              <label>Nivel / Establecimiento:</label>
+              <select [(ngModel)]="nuevoEstablecimientoId" class="select-retro-colegio" [disabled]="procesandoForm">
+                <option [ngValue]="null" disabled>[ Seleccione Nivel ]</option>
+                @for (e of establecimientosCombo(); track e.establecimientoId) {
+                  <option [value]="e.establecimientoId">{{ e.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="campo-retro-group">
+              <label>Ciclo Lectivo Operativo:</label>
+              <select [(ngModel)]="nuevoCicloId" class="select-retro-colegio" [disabled]="procesandoForm">
+                <option [ngValue]="null" disabled>[ Seleccione Ciclo ]</option>
+                @for (ci of ciclosEntidadCombo(); track ci.cicloId) {
+                  <option [value]="ci.cicloId">{{ ci.nombre }}</option>
+                }
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer-acciones-custom">
+          <button type="button" class="btn-cancelar-custom-retro" (click)="mostrarFormulario = false" [disabled]="procesandoForm">CANCELAR</button>
+          <button class="btn-mora-curso btn-guardar-curso-modal-style" (click)="solicitarConfirmacion()" [disabled]="procesandoForm">
+            {{ procesandoForm ? '⏳ REGISTRANDO...' : '💾 GUARDAR CAMBIOS' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- CARTEL DE DIÁLOGO CUSTOM SAUCE -->
+  @if (mostrarCartelMensaje) {
+    <div class="cartel-dialogo-overlay">
+      <div class="cartel-dialogo-box border-sauce-alerta">
+        <div class="cartel-dialogo-header">
+          <h3>❓ {{ cartelTitulo }}</h3>
+        </div>
+        <div class="cartel-dialogo-body">
+          <p>{{ cartelMensaje }}</p>
+        </div>
+        <div class="cartel-dialogo-footer">
+          @if (cartelTitulo === 'Confirmar Registro') {
+            <button type="button" class="btn-confirmar-custom" (click)="confirmarGuardado()">
+              ✔ EMITIR
+            </button>
+          }
+          <button type="button" class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">
+            ❌ {{ cartelTitulo === 'Confirmar Registro' ? 'CANCELAR' : 'ENTENDIDO' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

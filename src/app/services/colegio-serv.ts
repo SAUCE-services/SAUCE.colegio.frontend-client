@@ -62,6 +62,11 @@ export class ColegioServ {
     });
   }
 
+  // Registra o modifica una división/curso en el servidor (POST)
+  guardarOModificarCurso(cursoCarga: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/curso/guardar`, cursoCarga);
+  }
+
   filtrarCursosPorCiclo(anio: string, page: number = 0, size: number = 10): Observable<PageResponse<CursoDto>> {
     return this.http.get<PageResponse<CursoDto>>(`${this.baseUrl}/curso/ciclo/${anio}`, {
       params: { page: page.toString(), size: size.toString() }
@@ -163,6 +168,22 @@ getActividades(): Observable<any[]> {
 
   getDepartamentos(): Observable<ComboItem[]> { 
     return this.http.get<ComboItem[]>(`${this.baseUrl}/combos/departamentos`); 
+  }
+
+  getTurnosCombo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/combos/turnos`);
+  }
+
+  getMaestrosCombo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/combos/maestros`);
+  }
+
+  getEstablecimientosCombo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/combos/establecimientos`);
+  }
+
+  getCiclosComboEntidades(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/combos/ciclos`);
   }
 
   getAlumnoPorId(id: number): Observable<AlumnoCompletoDto> {
