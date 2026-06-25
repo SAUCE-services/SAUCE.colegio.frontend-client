@@ -30,6 +30,11 @@ export class FormAlumnoComponent implements OnInit {
   actividades$ = this.service.getActividades();
   departamentos$ = this.service.getDepartamentos();
 
+  mostrarCartelMensaje = false;
+  cartelTitulo = '';
+  cartelMensaje = '';
+  cartelTipo: 'exito' | 'error' = 'exito';
+
   // ✅ Formulario con la estructura exacta del DTO
   form = this.fb.group({
     // Datos Alumno
@@ -105,65 +110,73 @@ ngOnInit(): void {
     });
   }
 
-  // app/components/form-alumno/form-alumno.ts
-
-// src/app/components/form-alumno/form-alumno.ts
-
 enviar() {
-  if (this.form.valid) {
-    // Obtenemos todos los valores, incluso los deshabilitados
-    const rawValues = this.form.getRawValue();
+    if (this.form.valid) {
+      const rawValues = this.form.getRawValue();
+      const cleanData = JSON.parse(JSON.stringify(rawValues, (key, value) => {
+        if (value === undefined || value === "undefined") return null;
+        return value;
+      }));
 
-    // Función de limpieza para asegurar que los IDs sean null y no "undefined"
-    const cleanData = JSON.parse(JSON.stringify(rawValues, (key, value) => {
-      // Si el valor es undefined o una cadena que dice "undefined", devolver null
-      if (value === undefined || value === "undefined") return null;
-      return value;
-    }));
+      const dataParaEnviar: AlumnoCompletoDto = {
+        ...cleanData,
+        curso: cleanData.curso || "",
+        uuid: cleanData.uuid || ""
+      };
 
-    // Forzamos campos que el DTO de Java requiere y podrían estar vacíos
-    const dataParaEnviar: AlumnoCompletoDto = {
-      ...cleanData,
-      curso: cleanData.curso || "",
-      uuid: cleanData.uuid || ""
-    };
+      this.service.guardarAlumnoCompleto(dataParaEnviar).subscribe({
+        next: (res) => {
+          // 🌟 REEMPLAZO DE ALERT POR CARTEL ÉXITO
+          this.cartelTipo = 'exito';
+          this.cartelTitulo = 'Guardado Exitoso';
+          this.cartelMensaje = '¡Guardado con éxito!';
+          this.mostrarCartelMensaje = true;
+          
+          this.form.reset({ 
+            presentePadre: true, 
+            presenteMadre: true, 
+            padeceEnfermedad: false 
+          });
+          this.ngOnInit(); 
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error detallado:', err);
+          // 🌟 REEMPLAZO DE ALERT POR CARTEL ERROR
+          this.cartelTipo = 'error';
+          this.cartelTitulo = 'Error de Servidor';
+          this.cartelMensaje = 'Error 400: El servidor rechazó los datos. Verifica que todos los campos de selección tengan una opción válida.';
+          this.mostrarCartelMensaje = true;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      this.form.markAllAsTouched();
+      // 🌟 REEMPLAZO DE ALERT POR CARTEL VALIDACIÓN
+      this.cartelTipo = 'error';
+      this.cartelTitulo = 'Campos Faltantes';
+      this.cartelMensaje = 'Por favor, completa los campos obligatorios.';
+      this.mostrarCartelMensaje = true;
+      this.cdr.detectChanges();
+    }
+  }
 
-    console.log('Enviando este JSON:', dataParaEnviar);
-
-    this.service.guardarAlumnoCompleto(dataParaEnviar).subscribe({
-      next: (res) => {
-        alert("¡Guardado con éxito!");
-        this.form.reset({ 
-          presentePadre: true, 
-          presenteMadre: true, 
-          padeceEnfermedad: false 
-        });
-        // Volver a poner la fecha de hoy tras el reset
-        this.ngOnInit(); 
+  buscarAlumno(id: number) {
+    if (!id) return;
+    this.service.getAlumnoPorId(id).subscribe({
+      next: (data) => {
+        this.form.patchValue(data as any); 
       },
+      // 🌟 REEMPLAZO DE ALERT POR CARTEL ERROR
       error: (err) => {
-        console.error('Error detallado:', err);
-        alert('Error 400: El servidor rechazó los datos. Verifica que todos los campos de selección tengan una opción válida.');
+        this.cartelTipo = 'error';
+        this.cartelTitulo = 'Error';
+        this.cartelMensaje = 'No se encontró el legajo.';
+        this.mostrarCartelMensaje = true;
+        this.cdr.detectChanges();
       }
     });
-  } else {
-    this.form.markAllAsTouched();
-    alert('Por favor, completa los campos obligatorios.');
   }
-}
-
-buscarAlumno(id: number) {
-  if (!id) return;
-
-  this.service.getAlumnoPorId(id).subscribe({
-    next: (data) => {
-      // Usamos 'as any' para que Angular ignore discrepancias menores de campos opcionales
-      this.form.patchValue(data as any); 
-      alert("Datos cargados. Legajo: " + data.alumnoId);
-    },
-    error: (err) => alert("No se encontró el legajo.")
-  });
-}
 }
 
 
