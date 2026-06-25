@@ -3,7 +3,7 @@
     <div class="header-main-top-row">
       <h1>Listado de Cursos </h1>
       <button type="button" class="btn-toggle btn-nuevo-curso-top" (click)="activarNuevoCurso()">
-        ➕ NUEVA DIVISIÓN
+        ➕ NUEVO CURSO
       </button>
     </div>
          
@@ -64,16 +64,16 @@
         
         <div class="modal-mora-header header-borde-verde">
           <h2 class="titulo-matricula-verde">
-            {{ esNuevoMode ? '🔥 REGISTRAR NUEVA DIVISIÓN ACADÉMICA' : '📝 MODIFICAR ASIGNACIÓN DE CURSO' }}
+            {{ esNuevoMode ? ' REGISTRAR CURSO NUEVO' : '📝 MODIFICAR ASIGNACIÓN DE CURSO' }}
           </h2>
-          <button type="button" class="btn-close-modal" (click)="mostrarFormulario = false">❌ CERRAR</button>
+          <button type="button" class="btn-close-modal" (click)="mostrarFormulario = false">❌ </button>
         </div>
 
         <div class="modal-body-scroll-abm">
           <div class="form-retro-body">
             
             <div class="campo-retro-group">
-              <label>Nombre de la División / Descripción:</label>
+              <label>Nombre del Curso / Descripción:</label>
               <input type="text" [(ngModel)]="nuevoDescripcion" placeholder="Ej: 1° AÑO - SECUNDARIA" class="input-form-retro-style text-uppercase" [disabled]="procesandoForm">
             </div>
 

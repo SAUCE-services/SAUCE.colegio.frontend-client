@@ -14,12 +14,17 @@
       <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
         <div style="display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 180px;">
           <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Curso / División:</label>
-          <select [(ngModel)]="cursoSeleccionadoId" (change)="consultarNovedadesExistentes()" style="padding: 8px; border: 2px solid #1a5d3b; font-weight: 700; border-radius: 4px; background: white; text-transform: uppercase;">
-            <option [ngValue]="null" disabled>[ Seleccione una división ]</option>
-            @for (c of cursos(); track (c.id || c.cursoId)) {
-              <option [ngValue]="c.id || c.cursoId">{{ c.descripcion || c.nombre }}</option>
-            }
-          </select>
+          <select 
+  [(ngModel)]="cursoSeleccionadoId" 
+  (change)="consultarNovedadesExistentes()" 
+  [disabled]="cursoSeleccionadoId !== null" 
+  style="padding: 8px; border: 2px solid #1a5d3b; font-weight: 700; border-radius: 4px; background: #f2f2f2; text-transform: uppercase;">
+    
+    <option [ngValue]="null" disabled>[ Seleccione una división ]</option>
+    @for (c of cursos(); track (c.id || c.cursoId)) {
+      <option [ngValue]="c.id || c.cursoId">{{ c.descripcion || c.nombre }}</option>
+    }
+</select>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 180px;">
@@ -123,4 +128,27 @@
       </table>
     </div>
   </div>
+  @if (mostrarCartelMensaje) {
+  <div class="cartel-dialogo-overlay">
+    <div class="cartel-dialogo-box">
+      <div class="cartel-dialogo-header">
+        <h3>
+          {{ cartelTipo === 'pregunta' ? '❓' : (cartelTipo === 'exito' ? '✅' : '❌') }} 
+          {{ cartelTitulo }}
+        </h3>
+      </div>
+      <div class="cartel-dialogo-body">
+        <p>{{ cartelMensaje }}</p>
+      </div>
+      <div class="cartel-dialogo-footer">
+        @if (cartelTipo === 'pregunta') {
+          <button class="btn-confirmar-custom" (click)="ejecutarAccionConfirmada()">✔ ACEPTAR</button>
+          <button class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">❌ CANCELAR</button>
+        } @else {
+          <button class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">ENTENDIDO</button>
+        }
+      </div>
+    </div>
+  </div>
+}
 </div>

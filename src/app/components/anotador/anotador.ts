@@ -20,6 +20,7 @@ export class AnotadorComponent implements OnInit {
   nuevaNota: string = '';
   legajoBusqueda: number | null = null;
   nombreAlumno: string = '';
+  mostrarCartel: boolean = false; // 🌟 Controla la visibilidad de la notificación
 
   ngOnInit() {
     if (this.alumnoId) {
@@ -49,9 +50,8 @@ export class AnotadorComponent implements OnInit {
     }
   }
 
-  guardarNota() {
-    if (!this.nuevaNota.trim() || !this.legajoBusqueda) {
-      alert("Debe ingresar un legajo y una anotación.");
+guardarNota() {
+    if (this.legajoBusqueda == null || !this.nuevaNota.trim()) {
       return;
     }
 
@@ -63,11 +63,13 @@ export class AnotadorComponent implements OnInit {
 
     this.service.agregarAnotacion(nota).subscribe({
       next: () => {
-        alert("Anotación registrada con éxito.");
         this.nuevaNota = '';
-        this.cargarTodas(); // Al guardar, refrescamos la lista general
+        this.cargarTodas(); // Refrescamos la grilla
+        this.mostrarCartel = true; // 🌟 Activamos el cartel (se cerrará solo al dar clic en Entendido)
       },
-      error: () => alert("Error al guardar la anotación.")
+      error: (err) => {
+        console.error("Error al guardar en el servidor:", err);
+      }
     });
   }
 }

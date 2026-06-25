@@ -180,3 +180,62 @@ $fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetic
   border-radius: 4px;
   &:hover { background: #cc0000; color: white; }
 }
+
+// 🌟 NUEVOS ESTILOS PARA EL CARTEL TIPO OBSERVACIÓN/CURSOS
+.modal-toast-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); // Fondo oscuro atenuado para centrar la atención
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  
+  .toast-ficha {
+    margin: 0;
+    width: 450px; // Tamaño controlado para el mensaje
+    animation: popUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    .seccion-ficha {
+      background: $blanco-puro;
+      box-shadow: 8px 8px 0px rgba($verde-colegial, 0.3); // Sombra sólida estilo tu app
+    }
+
+    .contenido-exito {
+      padding: 1rem 0;
+      p {
+        color: #333;
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+
+    .btn-entendido {
+      background: $verde-colegial !important;
+      color: $blanco-puro !important;
+      border: 2px solid $verde-colegial !important;
+      box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.4) !important;
+      transition: transform 0.1s ease;
+
+      &:hover {
+        background: white !important;
+        color: $verde-colegial !important;
+      }
+      &:active {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0px rgba($dorado-diploma, 0.4) !important;
+      }
+    }
+  }
+}
+
+// Animación de entrada limpia
+@keyframes popUp {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

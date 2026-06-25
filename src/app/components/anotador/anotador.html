@@ -15,7 +15,7 @@
             (blur)="buscarYConsultar()" 
             (keyup.enter)="buscarYConsultar()"
             placeholder="Ej: 105">
-          <button type="button" class="btn-buscar-accion" (click)="buscarYConsultar()">🔍</button>
+          <button type="button" class="btn-buscar-accion" (click)="buscarYConsultar()">🔍 BUSCAR </button>
         </div>
       </div>
 
@@ -35,21 +35,43 @@
   @if (nombreAlumno && nombreAlumno !== 'Alumno no encontrado') {
     <div class="anotacion-form-box">
       <fieldset class="seccion-ficha">
-        <legend>📝 REGISTRAR NUEVA OBSERVACIÓN PARA EL LEGADO #{{legajoBusqueda}}</legend>
-        <div class="area-anotacion">
-          <textarea 
-            [(ngModel)]="nuevaNota" 
-            placeholder="Escriba aquí la observación para el folio del alumno...">
-          </textarea>
-          <div class="acciones-nota">
-            <button class="btn-guardar-grande" (click)="guardarNota()" [disabled]="!nuevaNota">
-              💾 REGISTRAR EN FOLIO
-            </button>
-          </div>
+        <legend>📝 REGISTRAR NUEVA OBSERVACIÓN PARA EL LEGAJO #{{legajoBusqueda}}</legend>
+        
+        <textarea 
+          [(ngModel)]="nuevaNota" 
+          placeholder="Escriba aquí la observación para el folio del alumno...">
+        </textarea>
+        
+        <div class="acciones-nota">
+          <button 
+            class="btn-guardar-grande" 
+            (click)="guardarNota()" 
+            [disabled]="!nuevaNota.trim()">
+            GUARDAR OBSERVACIÓN
+          </button>
         </div>
       </fieldset>
     </div>
   }
 
+  @if (mostrarCartel) {
+    <div class="modal-toast-container">
+      <div class="anotacion-form-box toast-ficha">
+        <fieldset class="seccion-ficha">
+          <legend>✅ OPERACIÓN EXITOSA</legend>
+          
+          <div class="contenido-exito">
+            <p>La observación se registró correctamente en el folio del alumno.</p>
+          </div>
+          
+          <div class="acciones-nota">
+            <button class="btn-guardar-grande btn-entendido" (click)="mostrarCartel = false">
+              ENTENDIDO
+            </button>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  }
   
 </div>
