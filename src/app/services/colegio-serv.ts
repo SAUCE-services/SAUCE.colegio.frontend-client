@@ -225,11 +225,12 @@ getRecaudacionDiaria(fecha: string): Observable<ReporteRecaudacionDto> {
 descargarPdfRecaudacion(fecha: string): Observable<Blob> {
   // El back espera formato ISO (yyyy-mm-dd) para el PDF según el controlador
   const fechaIso = fecha.split('-').reverse().join('-'); 
-  return this.http.get(`${this.baseUrl}/facturacion/recaudacion-pdf`, {
+  return this.http.get(`${this.baseUrl}/facturacion/recaudacion-diaria-pdf`, {
     params: { fecha: fechaIso },
     responseType: 'blob'
   });
 }
+
 getFacturasPorPeriodo(periodo: string): Observable<ReporteFacturaPeriodoDto> {
   return this.http.get<ReporteFacturaPeriodoDto>(`${this.baseUrl}/facturacion/facturas-periodo`, {
     params: { periodo }
