@@ -62,6 +62,11 @@ export class ColegioServ {
     });
   }
 
+  // Registra o modifica una división/curso en el servidor (POST)
+  guardarOModificarCurso(cursoCarga: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/curso/guardar`, cursoCarga);
+  }
+
   filtrarCursosPorCiclo(anio: string, page: number = 0, size: number = 10): Observable<PageResponse<CursoDto>> {
     return this.http.get<PageResponse<CursoDto>>(`${this.baseUrl}/curso/ciclo/${anio}`, {
       params: { page: page.toString(), size: size.toString() }
@@ -95,6 +100,11 @@ buscarPeriodos(primerVenc?: string, segundoVenc?: string, ciclo?: string, page: 
 
   return this.http.get<PageResponse<PeriodoDto>>(`${this.baseUrl}/periodo/buscar`, { params });
 }
+
+// Registra un nuevo período contable de facturación (POST)
+  guardarPeriodo(periodo: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/periodo/`, periodo);
+  }
 
   // --- MÓDULO: CONCEPTOS ---
   listarConceptos(page: number = 0, size: number = 15): Observable<PageResponse<ConceptoDto>> {
@@ -160,6 +170,22 @@ getActividades(): Observable<any[]> {
     return this.http.get<ComboItem[]>(`${this.baseUrl}/combos/departamentos`); 
   }
 
+  getTurnosCombo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/combos/turnos`);
+  }
+
+  getMaestrosCombo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/combos/maestros`);
+  }
+
+  getEstablecimientosCombo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/combos/establecimientos`);
+  }
+
+  getCiclosComboEntidades(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/combos/ciclos`);
+  }
+
   getAlumnoPorId(id: number): Observable<AlumnoCompletoDto> {
     return this.http.get<AlumnoCompletoDto>(`${this.baseUrl}/alumno/${id}`);
   }
@@ -199,11 +225,12 @@ getRecaudacionDiaria(fecha: string): Observable<ReporteRecaudacionDto> {
 descargarPdfRecaudacion(fecha: string): Observable<Blob> {
   // El back espera formato ISO (yyyy-mm-dd) para el PDF según el controlador
   const fechaIso = fecha.split('-').reverse().join('-'); 
-  return this.http.get(`${this.baseUrl}/facturacion/recaudacion-pdf`, {
+  return this.http.get(`${this.baseUrl}/facturacion/recaudacion-diaria-pdf`, {
     params: { fecha: fechaIso },
     responseType: 'blob'
   });
 }
+
 getFacturasPorPeriodo(periodo: string): Observable<ReporteFacturaPeriodoDto> {
   return this.http.get<ReporteFacturaPeriodoDto>(`${this.baseUrl}/facturacion/facturas-periodo`, {
     params: { periodo }
@@ -348,6 +375,16 @@ agregarNovedadManual(dto: { alumnoId: number; periodoNombre: string; conceptoId:
     return this.http.get(`${this.baseUrl}/facturacion/reportes/deuda-general-pdf`, {
       responseType: 'blob'
     });
+  }
+
+  // Lista todos los ciclos lectivos registrados en la BD
+  listarCiclosLectivosCompletos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/ciclos-lectivos`);
+  }
+
+// 🌟 CORREGIDO: Único endpoint POST que guarda o actualiza según si viaja el cicloId
+  guardarOCorregirCicloLectivo(ciclo: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/ciclos-lectivos/guardar`, ciclo);
   }
 }
 

@@ -65,7 +65,6 @@ export class ListaConceptosComponent implements OnInit {
         this.nuevoConcepto = { conceptoId: undefined, descripcion: '', importe: 0 };
         this.cargarConceptos(0); 
         this.mostrarFormulario = false; 
-        alert("Concepto creado con éxito.");
       },
       error: (err) => console.error("Error al guardar:", err)
     });

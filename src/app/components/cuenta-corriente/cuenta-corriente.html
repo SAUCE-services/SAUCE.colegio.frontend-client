@@ -10,18 +10,18 @@
       <div class="row-search">
         <label>Legajo:</label>
         <div class="input-mixto">
-          <input 
-            type="number" 
-            [(ngModel)]="legajo" 
-            [ngModelOptions]="{updateOn: 'blur'}"
-            (keyup.enter)="consultarCuenta()" 
-            placeholder="Ej: 1484">
-          
-          <button 
-            type="button"
-            class="btn-toggle" 
-            (click)="consultarCuenta()" 
-            [disabled]="cargando">
+          <input
+             type="number"
+             [(ngModel)]="legajo"
+             [ngModelOptions]="{updateOn: 'blur'}"
+             (keyup.enter)="consultarCuenta()"
+             placeholder="Ej: 1484">
+                  
+          <button
+             type="button"
+             class="btn-toggle"
+             (click)="consultarCuenta()"
+             [disabled]="cargando">
             {{ cargando ? 'BUSCANDO...' : 'CONSULTAR' }}
           </button>
         </div>
@@ -29,23 +29,23 @@
     </section>
 
     @if (cargando) {
-      <div class="info-alumno-banner" style="justify-content: center; background: #fff3cd;">
+      <div class="info-alumno-banner banner-estado-espera">
         <span class="nombre-resaltado">Accediendo a los registros oficiales...</span>
       </div>
     }
 
     @if (movimientos && !cargando) {
-      <div class="info-alumno-banner" style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <label style="padding-right: 8px;">ALUMNO:</label>
+      <div class="info-alumno-banner banner-control-alumno">
+        <div class="bloque-datos-alumno">
+          <label>ALUMNO:</label>
           <span class="nombre-resaltado">{{ movimientos.nombreCompleto }}</span>
         </div>
-        <div style="display: flex; gap: 10px;">
+        <div class="bloque-acciones-alumno">
           <button type="button" class="btn-novedades-retro" (click)="abrirModalNovedades()">
-            📋 NOVEDADES
+              NOVEDADES
           </button>
           <button type="button" class="btn-deudas-clasico" (click)="abrirModalDeudas()">
-            ⚠️ DEUDAS
+              DEUDAS
           </button>
         </div>
       </div>
@@ -54,19 +54,19 @@
         <table class="tabla-retro">
           <thead>
             <tr>
-              <th class="text-center" style="width: 10%">Factura</th>
-              <th class="text-center" style="width: 15%">Estado</th>
-              <th class="text-center" style="width: 13%">F.Estado</th>
-              <th class="text-center" style="width: 13%">1er Venc</th>
-              <th class="text-center" style="width: 13%">F.Pago</th>
-              <th class="text-center" style="width: 12%">Imp.Adeudac</th>
-              <th class="text-center" style="width: 12%">Imp.Pagado</th>
-              <th class="text-center" style="width: 12%">Saldo</th>
+              <th class="text-center col-factura">Factura</th>
+              <th class="text-center col-estado">Estado</th>
+              <th class="text-center col-fecha">F.Estado</th>
+              <th class="text-center col-fecha">1er Venc</th>
+              <th class="text-center col-fecha">F.Pago</th>
+              <th class="text-center col-monto">Imp.Adeudado</th>
+              <th class="text-center col-monto">Imp.Pagado</th>
+              <th class="text-center col-monto">Saldo</th>
             </tr>
           </thead>
           <tbody>
             @for (f of movimientos.facturas; track f.nroFactura) {
-              <tr (click)="seleccionarFactura(f)" 
+              <tr (click)="seleccionarFactura(f)"
                   [class.fila-seleccionada]="facturaSeleccionada?.nroFactura === f.nroFactura"
                   class="pointer">
                 <td class="text-center bold-cell"># {{ f.nroFactura }}</td>
@@ -86,17 +86,17 @@
                       <table class="tabla-detalle-interna">
                         <thead>
                           <tr>
-                            <th class="text-center" style="width: 15%">F.Estado</th>
-                            <th style="width: 35%">Concepto</th>
-                            <th class="text-center" style="width: 15%">Estado</th>
-                            <th class="text-center" style="width: 15%">Importe</th>
-                            <th class="text-center" style="width: 10%">F.Registro</th>
-                            <th class="text-center" style="width: 10%">Periodo</th> 
-                          </tr>
+                            <th class="text-center subcol-fecha">F.Estado</th>
+                            <th class="subcol-concepto">Concepto</th>
+                            <th class="text-center subcol-estado">Estado</th>
+                            <th class="text-center subcol-monto">Importe</th>
+                            <th class="text-center subcol-fecha">F.Registro</th>
+                            <th class="text-center subcol-periodo">Periodo</th>
+                           </tr>
                         </thead>
                         <tbody>
                           @if (cargandoDetalle) {
-                            <tr><td colspan="6" class="text-center" style="padding: 20px;">Buscando desglose...</td></tr>
+                            <tr><td colspan="6" class="text-center celda-aviso-carga">Buscando desglose...</td></tr>
                           } @else {
                             @for (linea of lineasDetalle; track $index) {
                               <tr>
@@ -108,7 +108,7 @@
                                 <td class="text-center bold-cell">{{ linea.periodo }}</td>
                               </tr>
                             } @empty {
-                              <tr><td colspan="6" class="text-center" style="padding: 25px;">No hay detalles registrados.</td></tr>
+                              <tr><td colspan="6" class="text-center celda-aviso-vacio">No hay detalles registrados.</td></tr>
                             }
                           }
                         </tbody>
@@ -129,31 +129,31 @@
       <div class="modal-deuda-box seccion-ficha">
         <div class="modal-deuda-header">
           <div class="header-titulos">
-            <h2>⚠️ DESGLOSE DE DEUDA INDIVIDUAL EXIGIBLE</h2>
+            <h2>DESGLOSE DE DEUDA INDIVIDUAL EXIGIBLE</h2>
             @if (movimientos && !cargandoDeudaModal && reporteDeudaIndividual?.detalles?.length) {
               <button type="button" class="btn-pdf-deuda" (click)="descargarPdfDeuda()">
-                📄 DESCARGAR PDF OFICIAL
+                  DESCARGAR PDF OFICIAL
               </button>
             }
           </div>
-          <button type="button" class="btn-close-modal" (click)="mostrarModalDeudas = false">❌ CERRAR</button>
+          <button type="button" class="btn-close-modal" (click)="mostrarModalDeudas = false"> X </button>
         </div>
-
+        
         <div class="modal-deuda-body">
           <div class="tabla-container-amplio">
             <table class="tabla-retro modal-table">
               <thead>
                 <tr>
-                  <th class="text-center" style="width: 15%">F. Estado</th>
-                  <th style="width: 40%">Concepto / Descripción</th>
-                  <th class="text-center" style="width: 15%">Estado</th>
-                  <th class="text-center" style="width: 15%">F. Registro</th>
-                  <th class="text-right" style="width: 15%">Importe</th>
+                  <th class="text-center col-modal-fecha">F. Estado</th>
+                  <th class="col-modal-concepto">Concepto / Descripción</th>
+                  <th class="text-center col-modal-estado">Estado</th>
+                  <th class="text-center col-modal-fecha">F. Registro</th>
+                  <th class="text-right col-modal-monto">Importe</th>
                 </tr>
               </thead>
               <tbody>
                 @if (cargandoDeudaModal) {
-                  <tr><td colspan="5" class="text-center" style="padding: 40px; font-weight: 600;">Consultando saldos exigibles...</td></tr>
+                  <tr><td colspan="5" class="text-center celda-modal-espera">Consultando saldos exigibles...</td></tr>
                 } @else {
                   @for (d of reporteDeudaIndividual?.detalles; track $index) {
                     <tr>
@@ -165,8 +165,8 @@
                     </tr>
                   } @empty {
                     <tr>
-                      <td colspan="5" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700; font-size: 1.1rem;">
-                        ✅ El alumno no registra deudas exigibles pendientes en este legajo.
+                      <td colspan="5" class="text-center celda-modal-vacio-verde">
+                          El alumno no registra deudas exigibles pendientes en este legajo.
                       </td>
                     </tr>
                   }
@@ -175,7 +175,7 @@
             </table>
           </div>
         </div>
-
+        
         @if (!cargandoDeudaModal && reporteDeudaIndividual?.detalles?.length) {
           <div class="caja-total-deuda-exigible">
             <div class="total-deuda-block">
@@ -192,28 +192,28 @@
     <div class="modal-novedades-overlay">
       <div class="modal-novedades-box seccion-ficha">
         
-        <div class="modal-novedades-header" style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px double #d4af37; padding-bottom: 1rem; margin-bottom: 1rem;">
+        <div class="modal-novedades-header">
           <div class="header-titulos">
-            <h2 style="margin: 0; color: #1a5d3b; font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">📋 Novedades por Alumno</h2>
+            <h2>Novedades por Alumno</h2>
             @if (reporteNovedades?.nombreCompleto) {
-              <span class="subtitulo-alumno" style="font-size: 0.95rem; font-weight: 700; color: #555; text-transform: uppercase; display: block; margin-top: 4px;">
-                <label style="padding-right: 8px;">ALUMNO:</label> {{ reporteNovedades?.nombreCompleto }}
+              <span class="subtitulo-alumno">
+                <label>ALUMNO:</label> {{ reporteNovedades?.nombreCompleto }}
               </span>
             }
           </div>
-          <button type="button" class="btn-close-modal" (click)="mostrarModalNovedades = false" style="background: transparent; border: none; color: #666; font-weight: 700; cursor: pointer; font-size: 0.95rem;">❌ CERRAR</button>
+          <button type="button" class="btn-close-modal" (click)="mostrarModalNovedades = false"> X </button>
         </div>
 
-        <div style="margin-bottom: 1.2rem;">
-          <button type="button" class="btn-deudas-clasico" (click)="toggleFormularioAlta()" style="background-color: #1a5d3b; border-color: #113f28; color: white; padding: 8px 16px; font-size: 0.85rem; font-weight: 700; margin: 0; cursor: pointer;">
-            {{ mostrarFormularioAlta ? '❌ CANCELAR ALTA MANUAL' : '➕ REGISTRAR NOVEDAD MANUAL' }}
+        <div class="contenedor-alta-novedad-trigger">
+          <button type="button" class="btn-deudas-clasico btn-alta-novedad-manual" (click)="toggleFormularioAlta()">
+            {{ mostrarFormularioAlta ? 'CANCELAR ALTA MANUAL' : 'REGISTRAR NOVEDAD MANUAL' }}
           </button>
         </div>
 
         @if (periodosDisponibles.length > 0) {
-          <div class="filtro-periodo-modal" style="display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 12px 18px; border-radius: 4px; border: 1px dashed #1a5d3b; width: fit-content; margin-bottom: 1.5rem;">
-            <label style="font-weight: 700; color: #1a5d3b; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Seleccionar Período:</label>
-            <select [(ngModel)]="periodoFiltro" (change)="cargarNovedadesDelServidor()" style="padding: 8px 16px; border: 2px solid #1a5d3b; border-radius: 4px; font-weight: 700; background-color: white; color: #333; cursor: pointer; min-width: 200px;">
+          <div class="filtro-periodo-modal">
+            <label>Seleccionar Periodo:</label>
+            <select [(ngModel)]="periodoFiltro" (change)="cargarNovedadesDelServidor()" class="select-periodo-modal">
               @for (p of periodosDisponibles; track p) {
                 <option [value]="p">{{ p }}</option>
               }
@@ -222,41 +222,28 @@
         }
 
         @if (mostrarFormularioAlta) {
-          <div class="seccion-ficha" style="margin: 0 0 1.5rem 0; background: #fffcf4; border: 2px solid #d4af37; padding: 20px; border-radius: 4px; width: 100%; box-sizing: border-box;">
-            <h3 style="margin-top: 0; color: #7d6608; font-size: 1.1rem; font-weight: 800; border-bottom: 1px dashed #d4af37; padding-bottom: 8px; text-transform: uppercase;">
-              Novedad Manual para el período: <span style="text-decoration: underline;">{{ periodoFiltro }}</span>
+          <div class="seccion-ficha panel-formulario-alta-novedad">
+            <h3>
+              Novedad Manual para el periodo: <span class="periodo-underlined">{{ periodoFiltro }}</span>
             </h3>
-            
-            <div style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
-              <div style="display: flex; flex-direction: column; gap: 6px; flex: 2; min-width: 250px;">
-                <label style="font-weight: 700; font-size: 0.85rem; color: #555;">Concepto Contable:</label>
-                <select [(ngModel)]="conceptoSeleccionadoId" 
-                      (change)="onConceptoChange()" 
-                      style="padding: 9px; border: 1px solid #ccc; font-weight: 600; border-radius: 4px; background: white; color: #333; cursor: pointer;">
+                       
+            <div class="flex-form-row-novedad">
+              <div class="campo-novedad-select">
+                <label>Concepto Contable:</label>
+                <select [(ngModel)]="conceptoSeleccionadoId" (change)="onConceptoChange()" class="select-concepto-form">
                   <option [ngValue]="null" disabled>[ Seleccione un concepto / arancel ]</option>
                   @for (c of conceptosDisponibles; track c.id) {
                     <option [ngValue]="c.id">{{ c.nombre }}</option>
-                }
-              </select>
+                  }
+                </select>
               </div>
-
-              <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 150px;">
-                <label style="font-weight: 700; font-size: 0.85rem; color: #555;">Importe ($):</label>
-                <input 
-                  type="number" 
-                  [(ngModel)]="importeNovedad" 
-                  placeholder="0.00" 
-                  style="padding: 10px; border: 1px solid #ccc; font-weight: 700; border-radius: 4px; text-align: right; background: white; width: 100%; box-sizing: border-box;">
+              <div class="campo-novedad-input">
+                <label>Importe ($):</label>
+                <input type="number" [(ngModel)]="importeNovedad" placeholder="0.00" class="input-importe-form">
               </div>
-
-              <div style="flex: 1; min-width: 180px;">
-                <button 
-                  type="button" 
-                  class="btn-toggle" 
-                  (click)="guardarNuevaNovedad()"
-                  [disabled]="guardandoNovedad"
-                  style="width: 100%; background-color: #b7950b; border-color: #9a7d0a; color: white; padding: 11px; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; margin: 0; cursor: pointer;">
-                  {{ guardandoNovedad ? 'PROCESANDO...' : '✔ ASENTAR REGISTRO' }}
+              <div class="campo-novedad-btn">
+                <button type="button" class="btn-toggle btn-asentar-registro-manual" (click)="guardarNuevaNovedad()" [disabled]="guardandoNovedad">
+                  {{ guardandoNovedad ? 'PROCESANDO...' : 'ASENTAR REGISTRO' }}
                 </button>
               </div>
             </div>
@@ -267,17 +254,17 @@
           <table class="tabla-retro modal-table">
             <thead>
               <tr>
-                <th class="text-center" style="width: 15%">F. Registro</th>
-                <th style="width: 35%">Concepto Devengado</th>
-                <th class="text-center" style="width: 15%">Período</th>
-                <th class="text-center" style="width: 15%">Estado Proceso</th>
-                <th class="text-right" style="width: 12%">Importe</th>
-                <th class="text-center" style="width: 8%">Acciones</th>
+                <th class="text-center col-nov-fecha">F. Registro</th>
+                <th class="col-nov-concepto">Concepto Devengado</th>
+                <th class="text-center col-nov-periodo">Período</th>
+                <th class="text-center col-nov-estado">Estado Proceso</th>
+                <th class="text-right col-nov-monto">Importe</th>
+                <th class="text-center col-nov-accion">Acciones</th>
               </tr>
             </thead>
             <tbody>
               @if (cargandoNovedades) {
-                <tr><td colspan="6" class="text-center" style="padding: 40px; font-weight: 600;">Consultando novedades contables para el período {{ periodoFiltro }}...</td></tr>
+                <tr><td colspan="6" class="text-center celda-modal-espera">Consultando novedades contables para el período {{ periodoFiltro }}...</td></tr>
               } @else {
                 @for (nov of novedadesFiltradas; track $index) {
                   <tr>
@@ -293,25 +280,47 @@
                       $ {{ nov.importe | number:'1.2-2' }}
                     </td>
                     <td class="text-center">
-                      <button 
-                        type="button"
-                        class="btn-trash-retro"
-                        (click)="eliminarNovedad(nov)"
-                        title="Anular / Eliminar esta novedad del legajo">
-                        ❌
+                      <button type="button" class="btn-trash-retro" (click)="eliminarNovedad(nov)" title="Anular / Eliminar esta novedad del legajo">
+                          ✕
                       </button>
                     </td>
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="6" class="text-center" style="padding: 50px; color: #1a5d3b; font-weight: 700;">
-                      ✅ El alumno no registra novedades cargadas para el período {{ periodoFiltro }}.
+                    <td colspan="6" class="text-center celda-modal-vacio-institucional">
+                        El alumno no registra novedades cargadas para el período {{ periodoFiltro }}.
                     </td>
                   </tr>
                 }
               }
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (mostrarCartelMensaje) {
+    <div class="cartel-dialogo-overlay">
+      <div class="cartel-dialogo-box border-sauce-alerta">
+        
+        <div class="cartel-dialogo-header">
+          <h3>{{ cartelTipo === 'pregunta' ? '❓' : '🔔' }} {{ cartelTitulo }}</h3>
+        </div>
+        
+        <div class="cartel-dialogo-body">
+          <p>{{ cartelMensaje }}</p>
+        </div>
+
+        <div class="cartel-dialogo-footer">
+          @if (cartelTipo === 'pregunta') {
+            <button type="button" class="btn-confirmar-custom" (click)="ejecutarAnulacionConfirmada()">
+              ✔ ACEPTAR
+            </button>
+          }
+          <button type="button" class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">
+            {{ cartelTipo === 'pregunta' ? '❌ CANCELAR' : 'ENTENDIDO' }}
+          </button>
         </div>
 
       </div>

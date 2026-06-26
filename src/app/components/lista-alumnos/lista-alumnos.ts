@@ -19,6 +19,13 @@ export class ListaAlumnosComponent implements OnInit {
   private colegioService = inject(ColegioServ);
   private route = inject(ActivatedRoute); 
   private cdr = inject(ChangeDetectorRef);
+
+mostrarCartelMensaje = false;
+  cartelTitulo = '';
+  cartelMensaje = '';
+  cartelTipo: 'pregunta' | 'alerta' = 'alerta';
+  alumnoPendienteAccion: any = null;
+  accionActual: 'matricular' | 'desvincular' = 'matricular';
   
   datosCurso?: any; // Tipado flexible para el bindeo dinámico seguro
   generandoPdf = false;
@@ -105,40 +112,28 @@ export class ListaAlumnosComponent implements OnInit {
   }
 
   // Guarda la matrícula usando el POST individual de tu AlumnoController (+)
-  matricularAlumno(alumno: any) {
-    const idAlumno = alumno.alumnoId || alumno.id;
-    const nombreCompleto = alumno.nombreCompleto || alumno.alumno || `${alumno.apellido}, ${alumno.nombre}`;
+ matricularAlumno(alumno: any) {
+    this.alumnoPendienteAccion = alumno;
+    this.accionActual = 'matricular';
+    const nombre = alumno.nombreCompleto || alumno.alumno || `${alumno.apellido}, ${alumno.nombre}`;
     
-    if (!idAlumno) return;
-    if (!confirm(`¿Desea incorporar a ${nombreCompleto.toUpperCase()} a este curso?`)) return;
-
-    this.colegioService.asignarAlumnoACurso(Number(idAlumno), this.nombreCursoUrl).subscribe({
-      next: () => {
-        alert("¡Alumno incorporado con éxito!");
-        this.mostrarModalAgregarAlumno = false;
-        this.cargarDatos(this.nombreCursoUrl); // Recarga automáticamente la lista de preceptoría
-      },
-      error: (err) => alert("Error al matricular alumno en la base de datos.")
-    });
+    this.cartelTipo = 'pregunta';
+    this.cartelTitulo = 'Matricular Alumno';
+    this.cartelMensaje = `¿Desea incorporar a ${nombre.toUpperCase()} a este curso?`;
+    this.mostrarCartelMensaje = true;
+    this.cdr.detectChanges();
   }
 
-  // Quita al alumno del aula usando el POST individual de tu AlumnoController (-)
   desvincularAlumno(alumno: any) {
-    const idAlumno = alumno.alumnoId || alumno.id;
-    const nombreCompleto = alumno.nombreCompleto || alumno.alumno;
+    this.alumnoPendienteAccion = alumno;
+    this.accionActual = 'desvincular';
+    const nombre = alumno.nombreCompleto || alumno.alumno;
     
-    if (!idAlumno) return;
-    if (!confirm(`💥 ADVERTENCIA:\n¿Está seguro de quitar a ${nombreCompleto.toUpperCase()} de este curso?\nQuedará como alumno sin división asignada.`)) {
-      return;
-    }
-
-    this.colegioService.quitarAlumnoDeCurso(Number(idAlumno)).subscribe({
-      next: () => {
-        alert("Alumno desvinculado correctamente.");
-        this.cargarDatos(this.nombreCursoUrl); // Recarga la grilla contable del aula
-      },
-      error: (err) => alert("Error al remover el alumno de la división.")
-    });
+    this.cartelTipo = 'pregunta';
+    this.cartelTitulo = 'Confirmar Quita';
+    this.cartelMensaje = `💥 ADVERTENCIA: ¿Está seguro de quitar a ${nombre.toUpperCase()} de este curso? Quedará sin división asignada.`;
+    this.mostrarCartelMensaje = true;
+    this.cdr.detectChanges();
   }
 
   // Consulta la mora del aula cruzando los datos contables
@@ -236,4 +231,35 @@ export class ListaAlumnosComponent implements OnInit {
       }
     });
   }
+
+  // Nuevo método centralizador que ejecuta la lógica real tras el "SÍ"
+ejecutarAccionConfirmada() {
+  this.mostrarCartelMensaje = false;
+  if (!this.alumnoPendienteAccion) return;
+
+  const id = this.alumnoPendienteAccion.alumnoId || this.alumnoPendienteAccion.id;
+
+  if (this.accionActual === 'matricular') {
+    // Asegúrate de que este servicio coincida con el nombre en tu ColegioServ
+    this.colegioService.asignarAlumnoACurso(Number(id), this.nombreCursoUrl).subscribe({
+      next: () => {
+        this.mostrarModalAgregarAlumno = false;
+        this.cargarDatos(this.nombreCursoUrl);
+      },
+      error: (err) => {
+        console.error("Error en asignación:", err);
+        alert("Error al matricular el alumno.");
+      }
+    });
+  } else if (this.accionActual === 'desvincular') {
+    this.colegioService.quitarAlumnoDeCurso(Number(id)).subscribe({
+      next: () => this.cargarDatos(this.nombreCursoUrl),
+      error: (err) => {
+        console.error("Error en desvinculación:", err);
+        alert("Error al remover el alumno.");
+      }
+    });
+  }
+  this.alumnoPendienteAccion = null;
+}
 }

@@ -186,3 +186,96 @@ $blanco-puro: #ffffff;
     grid-template-columns: 1fr 1fr;
   }
 }
+
+// =======================================================================
+// 🌟 SISTEMA DE CARTEL FLOTANTE (ESTILO RETRO-SAUCE)
+// =======================================================================
+.cartel-dialogo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.cartel-dialogo-box {
+  background: white;
+  width: 440px;
+  border: 3px double #1a5d3b; // $verde-colegial
+  border-radius: 4px;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+
+  .cartel-dialogo-header {
+    background: rgba(#f4e9d9, 0.25); // $crema-papel
+    padding: 12px 18px;
+    border-bottom: 2px dashed #ccc;
+
+    h3 {
+      margin: 0;
+      color: #1a5d3b; // $verde-colegial
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .cartel-dialogo-body {
+    padding: 22px 18px;
+    background: white;
+
+    p {
+      margin: 0;
+      color: #333;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+  }
+
+  .cartel-dialogo-footer {
+    padding: 12px 18px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+.btn-cancelar-custom {
+  background: white;
+  color: #555;
+  border: 2px solid #ccc;
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    background: #f0f0f0;
+    color: black;
+    border-color: #999;
+  }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

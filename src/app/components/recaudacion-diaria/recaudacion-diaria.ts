@@ -28,17 +28,37 @@ export class RecaudacionDiariaComponent {
     });
   }
 
-  descargarPdf() {
-    if (!this.fechaInput) return;
-    const [y, m, d] = this.fechaInput.split('-');
-    const fechaFormateada = `${d}-${m}-${y}`;
-
-    this.service.descargarPdfRecaudacion(fechaFormateada).subscribe(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `recaudacion_${this.fechaInput}.pdf`;
-      a.click();
-    });
+descargarPdf() {
+  if (!this.fechaInput) {
+    alert("Por favor, seleccione una fecha primero.");
+    return;
   }
+  
+  const [y, m, d] = this.fechaInput.split('-');
+  const fechaFormateada = `${d}-${m}-${y}`;
+
+  this.service.descargarPdfRecaudacion(fechaFormateada).subscribe({
+    next: (blob: Blob) => {
+      if (blob.size === 0) {
+        console.error("El archivo PDF recibido está vacío.");
+        alert("Error: El archivo generado está vacío.");
+        return;
+      }
+      
+      // 1. Crear la URL del objeto Blob
+      const url = window.URL.createObjectURL(blob);
+      
+      // 2. Abrir directamente en una nueva pestaña para visualización
+      // Al no incluir el atributo 'download', el navegador usará su visor de PDF predeterminado
+      window.open(url, '_blank');
+      
+      // Opcional: Liberar la URL después de un tiempo para no ocupar memoria innecesaria
+      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+    },
+    error: (err) => {
+      console.error("Error al descargar el PDF:", err);
+      alert("No se pudo cargar el archivo. Verifique la conexión o el servidor.");
+    }
+  });
+}
 }

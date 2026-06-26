@@ -5,20 +5,23 @@
       <button class="btn-toggle" routerLink="/">« VOLVER AL INICIO</button>
     </div>
 
+
     <div class="filtros-periodo">
       <div class="grupo-input">
-        <label>Descripción del Período</label>
+        <label>Seleccione Fecha del Informe</label>
         <div class="input-mixto-search">
-          <input 
-            type="text" 
-            [(ngModel)]="periodoInput" 
-            placeholder="Ej: MAYO - 2026"
-            (keyup.enter)="consultar()">
-          <button type="button" class="btn-buscar-accion" (click)="consultar()">
-            🔍 CONSULTAR COBROS
-          </button>
-        </div>
-      </div>
+          <select class="select-sauce" [(ngModel)]="periodoInput">
+            <option [ngValue]="null" disabled>[ Seleccione un período ]</option>
+              @for (p of periodosDisponibles(); track p.descripcion) {
+            <option [value]="p.descripcion">{{ p.descripcion }}</option>
+            }
+          </select>
+      
+      <button type="button" class="btn-buscar-accion" (click)="consultar()">
+        CONSULTAR COBROS
+      </button>
+    </div>
+  </div>
       
       @if (reporte) {
         <button class="btn-descarga-pdf" (click)="descargarPdf()">
@@ -28,8 +31,10 @@
     </div>
   </header>
 
-  @if (reporte) {
+  
+   @if (reporte) {
     <div class="reporte-container">
+      <h2 style="margin-left: 2rem; color: #666;">Período: {{ periodoInput }}</h2>
       @for (est of reporte.establecimientos; track est.nombre) {
         <div class="establecimiento-card">
           <h2 class="est-titulo">{{ est.nombre }}</h2>

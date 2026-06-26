@@ -1,0 +1,131 @@
+<div class="main-content">
+  <header class="section-header">
+    <div class="header-main-row">
+      <h1>📅 Administración de Ciclos Lectivos</h1>
+    </div>
+  </header>
+
+  <div class="panel-doble-layout container-completo-ciclos">
+    
+    <div class="panel-tabla seccion-ficha flex-tabla-completa">
+      <div class="cabecera-panel-tabla">
+        <h3>Historial de Ciclos Activos</h3>
+        <button type="button" class="btn-novedades-retro btn-nuevo-ciclo" (click)="activarNuevoCiclo()">
+          ➕ NUEVO CICLO
+        </button>
+      </div>
+
+      @if (cargando()) {
+        <div class="cargando-interno">Buscando ciclos en el archivo general...</div>
+      } @else {
+        <div class="tabla-container-scroll">
+          <table class="tabla-retro tabla-anchura-total">
+            <thead>
+              <tr>
+                <th class="th-ciclo-anio">Año Ciclo</th>
+                <th class="th-ciclo-fecha">Fecha Desde</th>
+                <th class="th-ciclo-fecha">Fecha Hasta</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of ciclos(); track c.cicloId) {
+                <tr (click)="seleccionarCiclo(c)" 
+                    [class.fila-activa-seleccion]="idCicloSeleccionado === c.cicloId && !esNuevoMode" 
+                    class="pointer">
+                  <td class="text-center font-bold text-verde-ciclo">
+                    {{ c.nombre.startsWith('Ciclo') ? c.nombre : 'Ciclo ' + c.nombre }}
+                  </td>
+                  <td class="text-center">{{ c.desde | date:'dd/MM/yyyy' }}</td>
+                  <td class="text-center">{{ c.hasta | date:'dd/MM/yyyy' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <div class="panel-formulario seccion-ficha" [class.borde-formulario-nuevohidden]="esNuevoMode">
+      <div class="cabecera-form-ficha">
+        <h3>
+          {{ esNuevoMode ? '🔥 REGISTRAR NUEVO CICLO ' + (descripcionCiclo.replace('Ciclo', '').trim()) : '📝 EDITAR VIGENCIA CICLO ' + (descripcionCiclo.replace('Ciclo', '').trim()) }}
+        </h3>
+      </div>
+
+      <div class="form-retro-body">
+        
+        <div class="campo-retro-group">
+          <label>Año Lectivo / Descripción:</label>
+          <input 
+            type="text" 
+            [value]="descripcionCiclo.replace('Ciclo', '').trim()" 
+            readonly 
+            class="input-bloqueado-retro font-bold text-center">
+          <small class="aviso-autocalculo">
+            * El año se calcula de forma automática para asegurar la consistencia.
+          </small>
+        </div>
+
+        <div class="campo-retro-group">
+          <label>Fecha de Inicio (Desde):</label>
+          <input 
+            type="date" 
+            [(ngModel)]="fechaDesde" 
+            class="input-fecha-retro">
+        </div>
+
+        <div class="campo-retro-group">
+          <label>Fecha de Finalización (Hasta):</label>
+          <input 
+            type="date" 
+            [(ngModel)]="fechaHasta" 
+            class="input-fecha-retro">
+        </div>
+
+        <div class="botones-form-row">
+          <button 
+            type="button" 
+            class="btn-mora-curso btn-guardar-ciclo-style" 
+            (click)="solicitarConfirmacionGuardar()"
+            [disabled]="procesandoForm()">
+            {{ procesandoForm() ? '⏳ PROCESANDO...' : '💾 GUARDAR CAMBIOS' }}
+          </button>
+          
+          @if (esNuevoMode) {
+            <button 
+              type="button" 
+              class="btn-trash-retro btn-cancelar-alta" 
+              (click)="obtenerCiclos()">
+              ❌ CANCELAR
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (mostrarCartelMensaje) {
+    <div class="cartel-dialogo-overlay">
+      <div class="cartel-dialogo-box border-sauce-alerta">
+        
+        <div class="cartel-dialogo-header">
+          <h3>❓ {{ cartelTitulo }}</h3>
+        </div>
+        
+        <div class="cartel-dialogo-body">
+          <p>{{ cartelMensaje }}</p>
+        </div>
+
+        <div class="cartel-dialogo-footer">
+          <button type="button" class="btn-confirmar-custom" (click)="confirmarAccionFormulario()">
+            ✔ ACEPTE
+          </button>
+          <button type="button" class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">
+            ❌ CANCELAR
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

@@ -6,19 +6,21 @@
     </div>
 
     <div class="filtros-periodo">
-      <div class="grupo-input">
-        <label>Descripción del Período</label>
-        <div class="input-mixto-search">
-          <input 
-            type="text" 
-            [(ngModel)]="periodoInput" 
-            placeholder="Ej: ABRIL - 2026"
-            (keyup.enter)="consultar()">
-          <button type="button" class="btn-buscar-accion" (click)="consultar()">
-            🔍 BUSCAR FACTURAS
-          </button>
-        </div>
-      </div>
+  <div class="grupo-input">
+    <label>Seleccione Fecha del Informe</label>
+    <div class="input-mixto-search">
+      <select class="select-sauce" [(ngModel)]="periodoInput">
+  <option [ngValue]="null" disabled>[ Seleccione un período ]</option>
+  @for (p of periodosDisponibles(); track p.descripcion) {
+    <option [value]="p.descripcion">{{ p.descripcion }}</option>
+  }
+</select>
+      
+      <button type="button" class="btn-buscar-accion" (click)="consultar()">
+        CONSULTAR
+      </button>
+    </div>
+  </div>
       
       @if (reporte) {
         <button class="btn-pdf-descarga" (click)="descargarPdf()">

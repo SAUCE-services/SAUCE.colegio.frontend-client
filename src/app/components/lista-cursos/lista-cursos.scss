@@ -1,187 +1,227 @@
-// ✅ VARIABLES UNIFICADAS
+@use "sass:color";
+
 $verde-colegial: #1a5d3b;
 $dorado-diploma: #d4af37;
 $crema-papel: #f4e9d9;
 $blanco-puro: #ffffff;
+$rojo-pdf: #cf222e;
 $fuente-titulo: 'Georgia', serif;
 $fuente-retro: 'Courier New', monospace;
 $fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-.page-container {
-  max-width: 1100px;
-  margin: 3rem auto;
-  padding: 0 1rem;
+.container-completo-cursos {
+  max-width: 95% !important;
+  margin: 2rem auto !important;
+  font-family: $fuente-moderna;
 }
 
-.section-header {
-  text-align: center;
-  margin-bottom: 4rem;
+.header-main-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
   
-  h1 { 
-    font-family: $fuente-titulo; 
-    color: $verde-colegial; 
-    font-size: 2.5rem;
+  h1 {
+    margin: 0;
+    font-family: $fuente-titulo;
+    color: $verde-colegial;
+    font-size: 2.3rem;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-  
-  &::after { 
-    content: '';
-    display: block;
-    width: 60px;
-    height: 3px;
-    background: $dorado-diploma;
-    margin: 0 auto;
   }
 }
 
-// ✅ LISTADO HORIZONTAL (A LO LARGO)
+.titulo-row-card-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.btn-editar-interno-card {
+  background: white;
+  border: 1.5px solid $verde-colegial;
+  color: $verde-colegial;
+  font-family: $fuente-retro;
+  font-weight: bold;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $verde-colegial;
+    color: white;
+  }
+}
+
+.section-header::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: $dorado-diploma;
+  margin: 1rem 0 2rem 0;
+}
+
 .card-grid {
   display: flex;
-  flex-direction: column; 
-  gap: 1.5rem; 
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 100%;
 }
 
 .curso-card {
   background: white;
   border: 1px solid #e0e0e0;
-  border-left: 8px solid $dorado-diploma; // Solo acento lateral
+  border-left: 8px solid $dorado-diploma;
   border-radius: 4px;
-  display: flex; 
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2.5rem;
+  padding: 1.2rem 2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+  transition: all 0.25s ease;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.04);
 
   &:hover {
-    transform: translateX(10px); // Desplazamiento lateral al elegirlo
-    box-shadow: 8px 8px 0px rgba($dorado-diploma, 0.2);
+    transform: translateX(6px);
+    box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.2);
     border-color: $verde-colegial;
   }
 
-  .card-content {
-    flex: 1;
-    
-    h3 { 
-      margin: 0 0 0.5rem 0; 
-      color: $verde-colegial; 
-      font-family: $fuente-titulo;
-      font-size: 1.8rem;
-    }
-    
-    .maestro { 
-      font-size: 0.95rem; 
-      color: #555; 
-      margin: 0;
-      font-family: $fuente-retro;
-    }
-    
-    .ciclo { 
-      font-family: $fuente-retro; 
-      font-size: 0.8rem; 
-      color: #999;
-      text-transform: uppercase;
-      display: block;
-      margin-top: 5px;
-    }
-  }
-
-  .badge {
-    background: $verde-colegial;
-    color: $dorado-diploma;
-    padding: 8px 15px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-family: $fuente-retro;
-  }
-
-  .detalles-fila span + span {
-  margin-left: 10px;
-}
-}
-
-// ✅ PAGINACIÓN RETRO MEJORADA (FUERA DE LAS TARJETAS)
-.paginacion-retro {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2.5rem;
-  margin-top: 5rem;
-  padding: 2rem;
-  border-top: 2px solid $dorado-diploma;
-  background: rgba($crema-papel, 0.2);
-
-  button {
-    background: $blanco-puro;
-    border: 3px solid $verde-colegial; 
+  .card-content h3 {
+    margin: 0;
     color: $verde-colegial;
-    font-family: $fuente-retro;
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 12px 30px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: all 0.3s ease;
-    box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.4); // Sombra dorada tipo cartel
-
-    &:disabled { 
-      opacity: 0.3; 
-      cursor: not-allowed; 
-      border-color: #ccc;
-      color: #999;
-      box-shadow: none; 
-    }
-
-    &:hover:not(:disabled) { 
-      background: $verde-colegial; 
-      color: $blanco-puro; 
-      transform: translate(-3px, -3px); // Movimiento físico
-      box-shadow: 10px 10px 0px $dorado-diploma; 
-    }
-    
-    &:active:not(:disabled) {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px $dorado-diploma;
-    }
-  }
-
-  .info-pagina {
     font-family: $fuente-titulo;
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: $verde-colegial;
-    letter-spacing: 1px;
-    background: $crema-papel;
-    padding: 5px 20px;
-    border: 1px solid $dorado-diploma;
+    font-size: 1.5rem;
   }
+}
+
+.detalles-fila {
+  display: flex;
+  gap: 20px;
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #555;
+
+  .maestro-bold { font-weight: 700; color: #333; }
+  .est-name-span { color: #666; font-style: italic; }
+}
+
+.badge {
+  background: $verde-colegial;
+  color: $dorado-diploma;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: $fuente-retro;
+}
+
+// 🌟 ESTILOS DE LA VENTANA MODAL ABM OVERLAY
+.modal-mora-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; z-index: 2000;
+}
+
+.modal-box-curso-abm {
+  background: white;
+  width: 520px;
+  border: 2px solid $verde-colegial;
+  border-radius: 6px;
+  padding: 2rem !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  box-sizing: border-box;
+
+  .modal-mora-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px double $dorado-diploma; padding-bottom: 0.8rem; margin-bottom: 1.5rem;
+
+    .titulo-matricula-verde { margin: 0; color: $verde-colegial; font-size: 1.2rem; font-weight: 850; }
+    .btn-close-modal { background: transparent; border: none; font-weight: 700; color: #666; cursor: pointer; &:hover { color: black; } }
+  }
+}
+
+.modal-body-scroll-abm { max-height: 400px; overflow-y: auto; padding-right: 5px; }
+
+.campo-retro-group {
+  display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.2rem;
+  label { font-weight: 700; color: #444; font-size: 0.8rem; text-transform: uppercase; }
+  .input-form-retro-style, .select-retro-colegio {
+    width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 4px;
+    font-size: 0.95rem; font-weight: 600; outline: none; background-color: white; box-sizing: border-box;
+    &:focus { border-color: $verde-colegial; }
+  }
+}
+
+.modal-footer-acciones-custom {
+  display: flex; justify-content: flex-end; gap: 12px; border-top: 1px dashed #ccc; padding-top: 1.2rem; margin-top: 0.5rem;
+}
+
+.btn-guardar-curso-modal-style {
+  background-color: $verde-colegial !important; color: white !important;
+  border: 2px solid color.adjust($verde-colegial, $lightness: -5%) !important;
+  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.15) !important; padding: 10px 22px;
+  font-size: 0.85rem; font-weight: 800; cursor: pointer; text-transform: uppercase; border-radius: 4px;
+}
+
+.btn-cancelar-custom-retro {
+  background: white; color: #555; border: 2px solid #ccc; padding: 10px 18px;
+  font-size: 0.85rem; font-weight: 700; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+  &:hover { background: #f0f0f0; color: black; }
+}
+
+// BOTONERA GLOBAL Y UTILS
+.btn-toggle {
+  background: white; border: 2px solid $verde-colegial; color: $verde-colegial; font-family: $fuente-moderna;
+  padding: 10px 20px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
+  cursor: pointer; border-radius: 4px; box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.4); transition: all 0.2s ease;
+  &:hover { background: $verde-colegial; color: white; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px $dorado-diploma; }
 }
 
 .filtro-container {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  font-family: $fuente-moderna;
-
-  select {
-    padding: 8px 15px;
-    border: 2px solid $verde-colegial;
-    border-radius: 4px;
-    background: white;
-    font-family: $fuente-moderna;
-    color: $verde-colegial;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba($dorado-diploma, 0.3);
-    }
-  }
+  margin-top: 1rem; display: flex; align-items: center; gap: 1rem;
+  select { padding: 8px 15px; border: 2px solid $verde-colegial; border-radius: 4px; font-weight: 600; color: $verde-colegial; cursor: pointer; }
 }
+
+.paginacion-retro {
+  display: flex; justify-content: center; align-items: center; gap: 2.5rem; margin-top: 3rem; padding: 1.5rem;
+  border-top: 2px solid $dorado-diploma; background: rgba($crema-papel, 0.15);
+  button {
+    background: white; border: 3px solid $verde-colegial; color: $verde-colegial; font-family: $fuente-retro; font-weight: bold; padding: 10px 25px; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px rgba($dorado-diploma, 0.3);
+    &:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+    &:hover:not(:disabled) { background: $verde-colegial; color: white; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px $dorado-diploma; }
+  }
+  .info-pagina { font-weight: bold; font-size: 1.1rem; color: $verde-colegial; background: $crema-papel; padding: 5px 15px; border: 1px solid $dorado-diploma; }
+}
+
+// CARTEL DE DIÁLOGO CONFIRMACIÓN
+.cartel-dialogo-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 3000;
+}
+.cartel-dialogo-box {
+  background: white; width: 420px; border: 3px double $verde-colegial; border-radius: 4px; box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; overflow: hidden; animation: popIn 0.18s ease-out;
+  .cartel-dialogo-header {
+    background: rgba($crema-papel, 0.25); padding: 12px 18px; border-bottom: 2px dashed #ccc;
+    h3 { margin: 0; color: $verde-colegial; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; }
+  }
+  .cartel-dialogo-body { padding: 22px 18px; background: white; p { margin: 0; color: #333; font-size: 0.95rem; font-weight: 600; line-height: 1.4; } }
+  .cartel-dialogo-footer { padding: 12px 18px; background: #fafafa; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px; }
+}
+.btn-confirmar-custom {
+  background: $verde-colegial; color: white; border: 2px solid color.adjust($verde-colegial, $lightness: -5%); padding: 8px 18px; font-size: 0.85rem; font-weight: 700; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+  &:hover { background: color.adjust($verde-colegial, $lightness: -8%); }
+}
+.btn-cancelar-custom {
+  background: white; color: #555; border: 2px solid #ccc; padding: 8px 18px; font-size: 0.85rem; font-weight: 700; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+  &:hover { background: #f0f0f0; color: black; }
+}
+
+.animate-pop-in { animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.12); }
+@keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.text-center { text-align: center !important; }
+.font-bold { font-weight: 700; }
+.text-uppercase { text-transform: uppercase; }

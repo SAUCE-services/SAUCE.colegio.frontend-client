@@ -8,17 +8,17 @@
 
   <form [formGroup]="form" (ngSubmit)="enviar()" class="form-retro-container">
     <fieldset class="seccion-ficha search-bg">
-  <legend>BUSCAR ALUMNO (ACTUALIZACIÓN)</legend>
-  <div class="grupo-input row-search">
-    <label>Nro. de Legajo</label>
-    <div class="input-mixto">
-      <input type="number" #legajoInput placeholder="Ingrese legajo...">
-      <button type="button" class="btn-toggle" (click)="buscarAlumno(legajoInput.valueAsNumber)">
-        🔍 BUSCAR Y CARGAR
-      </button>
-    </div>
-  </div>
-</fieldset>
+      <legend>BUSCAR ALUMNO (ACTUALIZACIÓN)</legend>
+      <div class="grupo-input row-search">
+        <label>Nro. de Legajo</label>
+        <div class="input-mixto">
+          <input type="number" #legajoInput placeholder="Ingrese legajo...">
+          <button type="button" class="btn-toggle" (click)="buscarAlumno(legajoInput.valueAsNumber)">
+            🔍 BUSCAR Y CARGAR
+          </button>
+        </div>
+      </div>
+    </fieldset>
     
     <fieldset class="seccion-ficha">
       <legend>I. DATOS PERSONALES DEL ASPIRANTE</legend>
@@ -46,14 +46,14 @@
             }
           </select>
         </div>
-      <div class="grupo-input">
-  <label>Nacionalidad</label>
-  <select formControlName="nacionalidadId">
-    <option [ngValue]="null">Seleccione...</option>
-    @for (n of nacionalidades$ | async; track n.tipoNacionalidadId) {
-      <option [value]="n.tipoNacionalidadId">{{ n.descripcion }}</option>
-    }
-  </select>
+        <div class="grupo-input">
+          <label>Nacionalidad</label>
+          <select formControlName="nacionalidadId">
+            <option [ngValue]="null">Seleccione...</option>
+            @for (n of nacionalidades$ | async; track n.tipoNacionalidadId) {
+              <option [value]="n.tipoNacionalidadId">{{ n.descripcion }}</option>
+            }
+          </select>
         </div>
         <div class="columna-fechas">
           <div class="grupo-input"><label>Fecha Nacimiento</label><input type="date" formControlName="fechaNacimiento"></div>
@@ -89,13 +89,13 @@
             </div>
           </div>
           <div class="grupo-input">
-            <label> Departamento</label>
+            <label>Departamento</label>
             <select formControlName="departamentoPadreId">
-  <option [ngValue]="null">Seleccione...</option>
-  @for (d of departamentos$ | async; track d.id) {
-    <option [value]="d.id">{{ d.nombre }}</option>
-  }
-</select>
+              <option [ngValue]="null">Seleccione...</option>
+              @for (d of departamentos$ | async; track d.id) {
+                <option [value]="d.id">{{ d.nombre }}</option>
+              }
+            </select>
           </div>
           <div class="grupo-input">
             <label>Nivel de Estudio</label>
@@ -106,23 +106,23 @@
             </select>
           </div>
           <div class="grupo-input">
-  <label>Localidad</label>
-  <select formControlName="localidadPadreId">
-    <option [ngValue]="null">Seleccione...</option>
-    @for (l of localidades$ | async; track $index) {
-      <option [value]="l.id">{{ l.nombre }}</option>
-    }
-  </select>
-</div>
-<div class="grupo-input">
-  <label>Actividad / Profesión</label>
-  <select formControlName="actividadPadreId">
-    <option [ngValue]="null">Seleccione Actividad...</option>
-    @for (a of actividades$ | async; track a.actividadId) {
-      <option [value]="a.actividadId">{{ a.descripcion }}</option>
-    }
-  </select>
-</div>
+            <label>Localidad</label>
+            <select formControlName="localidadPadreId">
+              <option [ngValue]="null">Seleccione...</option>
+              @for (l of localidades$ | async; track $index) {
+                <option [value]="l.id">{{ l.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="grupo-input">
+            <label>Actividad / Profesión</label>
+            <select formControlName="actividadPadreId">
+              <option [ngValue]="null">Seleccione Actividad...</option>
+              @for (a of actividades$ | async; track a.actividadId) {
+                <option [value]="a.actividadId">{{ a.descripcion }}</option>
+              }
+            </select>
+          </div>
           <div class="grupo-input"><label>Celular</label><input type="text" formControlName="telCelPadre"></div>
           <div class="grupo-input"><label>Fijo</label><input type="text" formControlName="telFijoPadre"></div>
           <div class="grupo-input"><label>Parentesco</label>
@@ -160,7 +160,7 @@
             </div>
           </div>
           <div class="grupo-input">
-            <label> Departamento</label>
+            <label>Departamento</label>
             <select formControlName="departamentoMadreId">
               <option [ngValue]="null">Seleccione...</option>
               @for (d of departamentos$ | async; track d.id) {
@@ -177,23 +177,23 @@
             </select>
           </div>
           <div class="grupo-input">
-  <label>Localidad</label>
-  <select formControlName="localidadMadreId">
-    <option [ngValue]="null">Seleccione...</option>
-    @for (l of localidades$ | async; track $index) {
-      <option [value]="l.id">{{ l.nombre }}</option>
-    }
-  </select>
-</div>
-<div class="grupo-input">
-  <label>Actividad / Profesión</label>
-  <select formControlName="actividadMadreId">
-    <option [ngValue]="null">Seleccione Actividad...</option>
-    @for (a of actividades$ | async; track a.actividadId) {
-      <option [value]="a.actividadId">{{ a.descripcion }}</option>
-    }
-  </select>
-</div>
+            <label>Localidad</label>
+            <select formControlName="localidadMadreId">
+              <option [ngValue]="null">Seleccione...</option>
+              @for (l of localidades$ | async; track $index) {
+                <option [value]="l.id">{{ l.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="grupo-input">
+            <label>Actividad / Profesión</label>
+            <select formControlName="actividadMadreId">
+              <option [ngValue]="null">Seleccione Actividad...</option>
+              @for (a of actividades$ | async; track a.actividadId) {
+                <option [value]="a.actividadId">{{ a.descripcion }}</option>
+              }
+            </select>
+          </div>
           <div class="grupo-input"><label>Celular</label><input type="text" formControlName="telCelMadre"></div>
           <div class="grupo-input"><label>Fijo</label><input type="text" formControlName="telFijoMadre"></div>
           <div class="grupo-input"><label>Parentesco</label>
@@ -207,62 +207,81 @@
     </div>
 
     <fieldset class="seccion-ficha salud-bg">
-  <legend>IV. CARTA MÉDICA Y EMERGENCIAS</legend>
-  <div class="grid-salud">
-    <div class="grupo-input">
-      <label>Enfermedades</label>
-      <textarea formControlName="enfermedades"></textarea>
-    </div>
-    
-    <div class="grupo-input">
-      <label>Toma Medicamentos</label>
-      <input type="text" formControlName="tomaMedicamentos">
-    </div>
+      <legend>IV. CARTA MÉDICA Y EMERGENCIAS</legend>
+      <div class="grid-salud">
+        <div class="grupo-input">
+          <label>Enfermedades</label>
+          <textarea formControlName="enfermedades"></textarea>
+        </div>
+        
+        <div class="grupo-input">
+          <label>Toma Medicamentos</label>
+          <input type="text" formControlName="tomaMedicamentos">
+        </div>
 
-    <div class="grupo-input">
-      <label>Grupo Sanguíneo</label>
-      <select formControlName="grupoSanguineoId">
-        <option [ngValue]="null">Seleccione...</option>
-        @for (g of gruposSanguineos$ | async; track g.grupoSanguineoId) {
-          <option [value]="g.grupoSanguineoId">{{g.descripcion}}</option>
-        }
-      </select>
-    </div>
+        <div class="grupo-input">
+          <label>Grupo Sanguíneo</label>
+          <select formControlName="grupoSanguineoId">
+            <option [ngValue]="null">Seleccione...</option>
+            @for (g of gruposSanguineos$ | async; track g.grupoSanguineoId) {
+              <option [value]="g.grupoSanguineoId">{{g.descripcion}}</option>
+            }
+          </select>
+        </div>
 
-    <div class="grupo-input">
-      <label>Medicamentos Alergia</label>
-      <input type="text" formControlName="medicamentosAlergia">
-    </div>
+        <div class="grupo-input">
+          <label>Medicamentos Alergia</label>
+          <input type="text" formControlName="medicamentosAlergia">
+        </div>
 
-    <div class="grupo-input">
-      <label>Obra Social</label>
-      <select formControlName="obraSocialId">
-        <option [ngValue]="null">Seleccione...</option>
-        @for (os of obrasSociales$ | async; track os.obraSocialId) {
-          <option [value]="os.obraSocialId">{{os.descripcion}}</option>
-        }
-      </select>
-    </div>
+        <div class="grupo-input">
+          <label>Obra Social</label>
+          <select formControlName="obraSocialId">
+            <option [ngValue]="null">Seleccione...</option>
+            @for (os of obrasSociales$ | async; track os.obraSocialId) {
+              <option [value]="os.obraSocialId">{{os.descripcion}}</option>
+            }
+          </select>
+        </div>
 
-    <div class="grupo-input">
-      <label>Teléfono Emergencia 1</label>
-      <input type="text" formControlName="telEmergencia1">
-    </div>
+        <div class="grupo-input">
+          <label>Teléfono Emergencia 1</label>
+          <input type="text" formControlName="telEmergencia1">
+        </div>
 
-    <div class="grupo-input">
-      <label>Teléfono Emergencia 2</label>
-      <input type="text" formControlName="telEmergencia2">
-    </div>
+        <div class="grupo-input">
+          <label>Teléfono Emergencia 2</label>
+          <input type="text" formControlName="telEmergencia2">
+        </div>
 
-    <div class="grupo-input check-row">
-      <input type="checkbox" formControlName="padeceEnfermedad">
-      <label>Padece Enfermedad</label>
-    </div>
-  </div>
-</fieldset>
+        <div class="grupo-input check-row">
+          <input type="checkbox" formControlName="padeceEnfermedad">
+          <label>Padece Enfermedad</label>
+        </div>
+      </div>
+    </fieldset>
 
     <div class="form-actions">
       <button type="submit" class="btn-guardar-grande" [disabled]="form.invalid">💾 FINALIZAR E INSCRIBIR ALUMNO</button>
     </div>
   </form>
+
+  <!-- CARTEL DE DIÁLOGO CUSTOM SAUCE -->
+  @if (mostrarCartelMensaje) {
+    <div class="cartel-dialogo-overlay">
+      <div class="cartel-dialogo-box border-sauce-alerta">
+        <div class="cartel-dialogo-header">
+          <h3>{{ cartelTipo === 'exito' ? '✅' : '⚠️' }} {{ cartelTitulo }}</h3>
+        </div>
+        <div class="cartel-dialogo-body">
+          <p>{{ cartelMensaje }}</p>
+        </div>
+        <div class="cartel-dialogo-footer">
+          <button type="button" class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">
+            ENTENDIDO
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

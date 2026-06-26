@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class CuentaCorrienteComponent {
   private service = inject(ColegioServ);
   private cdr = inject(ChangeDetectorRef);
-  
+
   legajo: number | null = null;
   movimientos: HistoriaFacturacionDto | null = null;
   facturaSeleccionada: FacturaDetalleDto | null = null;
@@ -33,35 +33,33 @@ export class CuentaCorrienteComponent {
   cargandoDeudaModal = false;
   reporteDeudaIndividual: DeudaIndividualResponseDto | null = null;
 
-  // 🌟 NUEVAS VARIABLES PARA EL FILTRO REACTIVO
-  periodoFiltro: string = ''; 
-  periodosDisponibles: string[] = []; // Se poblará con descripciones reales (ej: "MAYO - 2026")
+  // FILTRO REACTIVO PERÍODO
+  periodoFiltro: string = '';  
+  periodosDisponibles: string[] = [];
 
-  // VARIABLES PARA EL FORMULARIO DE CARGA MANUAL
+  // FORMULARIO CARGA MANUAL
   mostrarFormularioAlta = false;
   guardandoNovedad = false;
-  
   conceptoSeleccionadoId: number | null = null;
   importeNovedad: number | null = null;
-
-  // 🌟 LISTA DINÁMICA: Se llenará con los conceptos reales de la Base de Datos
   conceptosDisponibles: any[] = [];
 
-  // 🌟 NUEVO MÉTODO: Autocompleta el importe según el concepto contable seleccionado en el formulario individual
+  // 🌟 NUEVAS VARIABLES PARA EL CARTEL DE CONFIRMACIÓN / ALERTA CUSTOM
+  mostrarCartelMensaje = false;
+  cartelTipo: 'pregunta' | 'alerta' = 'alerta';
+  cartelTitulo: string = '';
+  cartelMensaje: string = '';
+  novedadPendienteAnular: any = null;
+
   onConceptoChange() {
     if (!this.conceptoSeleccionadoId) {
       this.importeNovedad = null;
       return;
     }
-
-    // Buscamos el objeto concepto seleccionado en nuestra lista en memoria
     const conceptoSeleccionado = this.conceptosDisponibles.find(c => c.id === Number(this.conceptoSeleccionadoId));
-
     if (conceptoSeleccionado && conceptoSeleccionado.importeBase !== null && conceptoSeleccionado.importeBase > 0) {
-      // ✅ Si tiene un importe ya establecido mayor a $0 en la base de datos, lo asignamos automáticamente
       this.importeNovedad = conceptoSeleccionado.importeBase;
     } else {
-      // ✏️ Si el importe base es 0 o null, dejamos el casillero limpio para carga manual del usuario
       this.importeNovedad = null;
     }
     this.cdr.detectChanges();
@@ -72,13 +70,12 @@ export class CuentaCorrienteComponent {
     this.mostrarModalDeudas = true;
     this.cargandoDeudaModal = true;
     this.reporteDeudaIndividual = null;
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
 
     this.service.getDeudaIndividual(this.legajo).subscribe({
       next: (data: any) => {
         if (data) {
           const listaCruda = data.detalles || [];
-          
           const detallesProcesados = listaCruda.map((d: any) => ({
             fechaEstado: d.fechaEstado || d.fecha_estado,
             concepto: d.concepto || d.nombre || 'Cuota / Concepto Base',
@@ -86,10 +83,8 @@ export class CuentaCorrienteComponent {
             fechaRegistro: d.fechaRegistro || d.fecha_registro,
             importe: Number(d.importe != null ? d.importe : 0)
           }));
-
-          const totalMapeado = data.totalDeuda != null ? data.totalDeuda : 
-                               detallesProcesados.reduce((acc: number, item: any) => acc + item.importe, 0);
-
+          const totalMapeado = data.totalDeuda != null ? data.totalDeuda :
+                                detallesProcesados.reduce((acc: number, item: any) => acc + item.importe, 0);
           this.reporteDeudaIndividual = {
             detalles: detallesProcesados,
             totalDeuda: totalMapeado
@@ -97,9 +92,8 @@ export class CuentaCorrienteComponent {
         } else {
           this.reporteDeudaIndividual = { detalles: [], totalDeuda: 0 };
         }
-
         this.cargandoDeudaModal = false;
-        this.cdr.detectChanges(); 
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error("Error al interceptar el endpoint de deudas individuales:", err);
@@ -131,13 +125,11 @@ export class CuentaCorrienteComponent {
       this.lineasDetalle = [];
       return;
     }
-
     this.facturaSeleccionada = f;
     this.lineasDetalle = [];
     this.cargandoDetalle = true;
-
     this.service.getDetalleFactura(f.nroFactura).subscribe({
-      next: (data: LineaDetalleDto[]) => { 
+      next: (data: LineaDetalleDto[]) => {
         this.lineasDetalle = data;
         this.cargandoDetalle = false;
         this.cdr.detectChanges();
@@ -154,14 +146,13 @@ export class CuentaCorrienteComponent {
     if (!this.legajo) return;
     this.facturaSeleccionada = null;
     this.cargando = true;
-    this.movimientos = null; 
+    this.movimientos = null;
     this.totalDeudaFinal = 0;
     this.cdr.detectChanges();
 
     this.service.getCuentaCorriente(this.legajo).subscribe({
       next: (data: any) => {
         const historial: HistoriaFacturacionDto = Array.isArray(data) ? data[0] : data;
-        
         if (historial && historial.facturas) {
           let acumulado = 0;
           const facturasProcesadas: FacturaDetalleDto[] = historial.facturas.map(f => {
@@ -170,11 +161,13 @@ export class CuentaCorrienteComponent {
             acumulado += (debe - haber);
             return { ...f, saldoProgresivo: acumulado };
           });
-          
           this.movimientos = { ...historial, facturas: facturasProcesadas };
           this.totalDeudaFinal = acumulado;
         } else {
-          alert('El alumno no tiene movimientos registrados');
+          this.cartelTipo = 'alerta';
+          this.cartelTitulo = 'Sin Registros';
+          this.cartelMensaje = 'El alumno no tiene movimientos registrados en este legajo.';
+          this.mostrarCartelMensaje = true;
         }
         this.cargando = false;
         this.cdr.detectChanges();
@@ -188,11 +181,9 @@ export class CuentaCorrienteComponent {
     });
   }
 
-  // 🌟 PROPIEDAD COMPUTADA: Filtra la lista en caliente según el combo
   get novedadesFiltradas() {
     if (!this.reporteNovedades || !this.reporteNovedades.novedades) return [];
-    if (!this.periodoFiltro) return this.reporteNovedades.novedades; // "Todos"
-    
+    if (!this.periodoFiltro) return this.reporteNovedades.novedades;
     return this.reporteNovedades.novedades.filter(n => n.nombrePeriodo === this.periodoFiltro);
   }
 
@@ -201,31 +192,27 @@ export class CuentaCorrienteComponent {
       alert("Por favor, ingrese un legajo primero.");
       return;
     }
-    
     this.mostrarModalNovedades = true;
     this.cargandoNovedades = true;
     this.reporteNovedades = null;
     this.cdr.detectChanges();
 
-    // 🌟 SINCRO CON TU BACK: Cargamos los conceptos preservando el importe original del DTO
     this.service.getConceptosCombo().subscribe({
       next: (data: any) => {
         const listaExtraida = Array.isArray(data) ? data : (data?.content || []);
         this.conceptosDisponibles = listaExtraida.map((c: any) => ({
           id: c.conceptoId || c.id || 0,
           nombre: c.descripcion || c.nombre || '',
-          importeBase: c.importe !== undefined ? Number(c.importe) : null // 👈 Almacenamos el valor de la base de datos
+          importeBase: c.importe !== undefined ? Number(c.importe) : null
         }));
         this.cdr.detectChanges();
       },
-      error: (err) => console.error("Error preventivo al cargar conceptos para borrado:", err)
+      error: (err) => console.error("Error preventivo al cargar conceptos:", err)
     });
 
-    // 1️⃣ PASO 1: Traemos todos los períodos reales cargados en la base de datos
     this.service.getPeriodosHistoricos().subscribe({
       next: (res: any) => {
         const listaPeriodos = res?.content || [];
-        
         if (listaPeriodos.length > 0) {
           this.periodosDisponibles = listaPeriodos.map((p: any) => p.descripcion);
           this.periodoFiltro = this.periodosDisponibles[0];
@@ -237,7 +224,7 @@ export class CuentaCorrienteComponent {
         }
       },
       error: (err) => {
-        console.error("Error al recuperar el listado de periodos del backend:", err);
+        console.error("Error al recuperar el listado de periodos:", err);
         this.periodosDisponibles = ['MAYO - 2026'];
         this.periodoFiltro = 'MAYO - 2026';
         this.cargarNovedadesDelServidor();
@@ -247,19 +234,16 @@ export class CuentaCorrienteComponent {
 
   cargarNovedadesDelServidor() {
     if (!this.legajo || !this.periodoFiltro) return;
-    
     this.cargandoNovedades = true;
     this.cdr.detectChanges();
 
     this.service.getNovedadesPorAlumno(this.legajo, this.periodoFiltro).subscribe({
       next: (data: any) => {
         if (data) {
-          const listaCruda = data.detallesGrilla || []; 
-          
+          const listaCruda = data.detallesGrilla || [];
           const novedadesProcesadas = listaCruda.map((n: any) => {
             const rawFecha = n.fechaRegistro || n.fecha_registro || null;
             let fechaLimpia = rawFecha;
-            
             if (rawFecha && typeof rawFecha === 'string' && rawFecha.includes('T')) {
               const soloFecha = rawFecha.split('T')[0];
               const partes = soloFecha.split('-');
@@ -267,7 +251,6 @@ export class CuentaCorrienteComponent {
                 fechaLimpia = `${partes[2]}/${partes[1]}/${partes[0]}`;
               }
             }
-
             return {
               nombreConcepto: n.concepto || n.nombreConcepto || '',
               nombrePeriodo: n.periodo || n.nombrePeriodo || this.periodoFiltro,
@@ -276,7 +259,6 @@ export class CuentaCorrienteComponent {
               procesado: n.estado === 'Concepto FACTURADO' || n.procesado === true
             };
           });
-
           this.reporteNovedades = {
             alumnoId: data.legajo || this.legajo || 0,
             nombreCompleto: data.nombreCompleto || this.movimientos?.nombreCompleto || 'Alumno Registrado',
@@ -303,7 +285,6 @@ export class CuentaCorrienteComponent {
     this.importeNovedad = null;
     this.cdr.detectChanges();
 
-    // 🌟 OPTIMIZADO: Si ya se cargaron al abrir el modal, evitamos golpear el endpoint al cohete
     if (this.mostrarFormularioAlta && this.conceptosDisponibles.length === 0) {
       this.service.getConceptosCombo().subscribe({
         next: (data: any) => {
@@ -333,7 +314,6 @@ export class CuentaCorrienteComponent {
       alert("Ingrese un importe válido mayor a $0.00.");
       return;
     }
-
     this.guardandoNovedad = true;
     this.cdr.detectChanges();
 
@@ -350,7 +330,6 @@ export class CuentaCorrienteComponent {
           this.reporteNovedades.novedades = grillaActualizada.map((n: any) => {
             const rawFecha = n.fechaRegistro || n.fecha_registro || null;
             let fechaLimpia = rawFecha;
-            
             if (rawFecha && typeof rawFecha === 'string' && rawFecha.includes('T')) {
               const soloFecha = rawFecha.split('T')[0];
               const partes = soloFecha.split('-');
@@ -358,7 +337,6 @@ export class CuentaCorrienteComponent {
                 fechaLimpia = `${partes[2]}/${partes[1]}/${partes[0]}`;
               }
             }
-
             return {
               nombreConcepto: n.concepto || n.nombreConcepto || '',
               nombrePeriodo: n.periodo || n.nombrePeriodo || this.periodoFiltro,
@@ -368,36 +346,46 @@ export class CuentaCorrienteComponent {
             };
           }) as any;
         }
-
         this.conceptoSeleccionadoId = null;
         this.importeNovedad = null;
         this.mostrarFormularioAlta = false;
         this.guardandoNovedad = false;
+        this.consultarCuenta(); // Refresca CC de fondo
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error("Error al registrar la novedad manual en Spring Boot:", err);
-        alert(err?.error?.message || "Ocurrió un error al procesar el alta contable en el servidor.");
+        console.error("Error al registrar la novedad manual:", err);
+        alert(err?.error?.message || "Ocurrió un error al procesar el alta contable.");
         this.guardandoNovedad = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-eliminarNovedad(novedad: any) {
+  // 🌟 CAMBIADO: Abre el nuevo cartel de confirmación customizado
+  eliminarNovedad(novedad: any) {
+    this.novedadPendienteAnular = novedad;
     const nombreConceptoVisual = novedad.nombreConcepto || novedad.concepto;
+    
+    this.cartelTitulo = 'Confirmar Anulación';
+    this.cartelMensaje = `¿Está completamente seguro de que desea eliminar la novedad "${nombreConceptoVisual}" por un valor de $${novedad.importe}?`;
+    this.cartelTipo = 'pregunta';
+    this.mostrarCartelMensaje = true;
+    this.cdr.detectChanges();
+  }
 
-    if (!confirm(`⚠️ ADVERTENCIA: ¿Está seguro de que desea eliminar la novedad "${nombreConceptoVisual}" por $${novedad.importe}?`)) {
-      return;
-    }
+  // Ejecuta la baja real una vez aceptado el cartel custom
+  ejecutarAnulacionConfirmada() {
+    this.mostrarCartelMensaje = false;
+    if (!this.novedadPendienteAnular) return;
 
+    const novedad = this.novedadPendienteAnular;
+    const nombreConceptoVisual = novedad.nombreConcepto || novedad.concepto;
     const legajoAlumno = this.legajo;
     const periodoNombre = novedad.nombrePeriodo || novedad.periodo || this.periodoFiltro;
-    
     const conceptoObj = this.conceptosDisponibles.find(c => 
       c.nombre?.trim().toUpperCase() === nombreConceptoVisual?.trim().toUpperCase()
     );
-    
     const idConcepto = conceptoObj ? (conceptoObj.id || conceptoObj.conceptoId) : null;
     const valorImporte = novedad.importe;
 
@@ -406,7 +394,6 @@ eliminarNovedad(novedad: any) {
       return;
     }
 
-    // Enviamos el payload idéntico a como lo probaste en Swagger
     this.service.eliminarNovedadIndividual(
       Number(legajoAlumno), 
       Number(idConcepto), 
@@ -414,17 +401,14 @@ eliminarNovedad(novedad: any) {
       Number(valorImporte)
     ).subscribe({
       next: () => {
-        alert("¡Registro anulado correctamente en el sistema!");
-        
-        // 🌟 SOLUCIÓN AL NEXT: Forzamos el refresco oficial encadenado
-        this.cargarNovedadesDelServidor(); // Recarga la grilla del modal
-        this.consultarCuenta();            // Recalcula los saldos de la cuenta corriente de fondo
-        
+        this.novedadPendienteAnular = null;
+        this.cargarNovedadesDelServidor();
+        this.consultarCuenta();
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error("Error devuelto por el Backend:", err);
-        alert(err?.error?.message || "El servidor rechazó la anulación. Verifique las restricciones del período.");
+        alert(err?.error?.message || "El servidor rechazó la anulación.");
       }
     });
   }

@@ -1,0 +1,351 @@
+@use "sass:color";
+
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$blanco-puro: #ffffff;
+$rojo-pdf: #cf222e;
+$fuente-titulo: 'Georgia', serif;
+$fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+.header-main-row h1 {
+  margin: 0;
+  color: $verde-colegial;
+  font-weight: 800;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  font-family: $fuente-titulo;
+}
+
+// 🌟 CORREGIDO: Contenedor estirado al 100% real de la pantalla
+.container-completo-ciclos {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.panel-doble-layout {
+  display: flex;
+  gap: 25px;
+  margin-top: 1.5rem;
+  font-family: $fuente-moderna;
+  align-items: flex-start;
+}
+
+// 🌟 CORREGIDO: flex: 6 para que la tabla tome el protagonismo y se vea gigante
+.flex-tabla-completa {
+  flex: 6 !important; 
+}
+
+.panel-tabla {
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+
+  .cabecera-panel-tabla {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid $verde-colegial;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+
+    h3 { margin: 0; color: #333; font-weight: 700; font-size: 1.1rem; }
+  }
+}
+
+// 🌟 CORREGIDO: Forzamos a la tabla a expandirse en su totalidad
+.tabla-anchura-total {
+  width: 100% !important;
+  table-layout: fixed;
+}
+
+.th-ciclo-anio { width: 34%; text-align: center; }
+.th-ciclo-fecha { width: 33%; text-align: center; }
+
+.btn-nuevo-ciclo {
+  background-color: $verde-colegial !important;
+  color: white !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  padding: 6px 14px !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+
+  &:hover {
+    background-color: color.adjust($verde-colegial, $lightness: -8%) !important;
+  }
+}
+
+.panel-formulario {
+  flex: 3; // Mantiene el formulario compacto a la derecha
+  background: #fafbfc;
+  border-radius: 6px;
+  border: 2px solid #ccc;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  min-width: 340px;
+
+  &.borde-formulario-nuevohidden {
+    border-color: $dorado-diploma;
+    background: #fffdf7;
+  }
+
+  .cabecera-form-ficha {
+    border-bottom: 2px dashed #ccc;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+
+    h3 { margin: 0; color: $verde-colegial; font-size: 1.05rem; font-weight: 800; }
+  }
+}
+
+.tabla-container-scroll {
+  max-height: 500px; // Un toque más alta para ver más filas
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.fila-activa-seleccion {
+  background-color: rgba($verde-colegial, 0.08) !important;
+  border-left: 4px solid $verde-colegial;
+}
+
+.text-verde-ciclo {
+  color: $verde-colegial;
+  font-weight: 700;
+}
+
+.campo-retro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1.2rem;
+
+  label {
+    font-weight: 700;
+    color: #444;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .input-bloqueado-retro {
+    padding: 10px;
+    background: #eaeaea;
+    border: 1px solid #ccc;
+    color: #555;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    outline: none;
+    cursor: not-allowed;
+  }
+
+  .input-fecha-retro {
+    padding: 9px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    outline: none;
+    background-color: white;
+    font-family: $fuente-moderna;
+
+    &:focus { border-color: $verde-colegial; }
+  }
+
+  .aviso-autocalculo {
+    font-size: 0.75rem;
+    color: #888;
+    font-style: italic;
+  }
+}
+
+.botones-form-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.btn-guardar-ciclo-style {
+  background-color: white !important;
+  color: $verde-colegial !important;
+  border: 2px solid $verde-colegial !important;
+  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.15) !important;
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem !important;
+
+  &:hover:not(:disabled) {
+    background-color: $verde-colegial !important;
+    color: white !important;
+  }
+}
+
+.btn-cancelar-alta {
+  height: 40px;
+  padding: 0 15px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.cargando-interno { padding: 30px; text-align: center; color: #666; font-weight: 600; }
+.text-center { text-align: center; }
+.font-bold { font-weight: 700; }
+
+.tabla-retro {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $fuente-moderna;
+
+  th {
+    background: $verde-colegial; 
+    color: $dorado-diploma; 
+    padding: 14px 12px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid color.adjust($verde-colegial, $lightness: -10%); 
+  }
+
+  td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #eee;
+    color: #444;
+    font-size: 0.92rem;
+  }
+
+  tr:nth-child(even) { background-color: rgba($crema-papel, 0.05); }
+  tr:hover { background-color: rgba($dorado-diploma, 0.06); }
+}
+
+.btn-trash-retro {
+  background: transparent;
+  border: 2px solid $rojo-pdf;
+  color: $rojo-pdf;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: $rojo-pdf; color: white; }
+}
+// =======================================================================
+// 🌟 NUEVOS ESTILOS PARA EL CARTEL DE CONFIRMACIÓN CUSTOMIZADO SAUCE
+// =======================================================================
+.cartel-dialogo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.cartel-dialogo-box {
+  background: white;
+  width: 420px;
+  border: 3px double $verde-colegial;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popIn 0.18s ease-out;
+
+  &.border-sauce-alerta {
+    border-color: $verde-colegial;
+  }
+
+  .cartel-dialogo-header {
+    background: rgba($crema-papel, 0.25);
+    padding: 12px 18px;
+    border-bottom: 2px dashed #ccc;
+
+    h3 {
+      margin: 0;
+      color: $verde-colegial;
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .cartel-dialogo-body {
+    padding: 22px 18px;
+    background: white;
+
+    p {
+      margin: 0;
+      color: #333;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+  }
+
+  .cartel-dialogo-footer {
+    padding: 12px 18px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+// Botonera Interna del Cartel Custom
+.btn-confirmar-custom {
+  background: $verde-colegial;
+  color: white;
+  border: 2px solid color.adjust($verde-colegial, $lightness: -5%);
+  padding: 8px 18px;
+  font-family: $fuente-moderna;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s;
+
+  &:hover {
+    background: color.adjust($verde-colegial, $lightness: -8%);
+  }
+}
+
+.btn-cancelar-custom {
+  background: white;
+  color: #555;
+  border: 2px solid #ccc;
+  padding: 8px 18px;
+  font-family: $fuente-moderna;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #f0f0f0;
+    color: black;
+    border-color: #999;
+  }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
