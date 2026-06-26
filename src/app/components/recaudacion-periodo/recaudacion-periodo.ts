@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ColegioServ } from '../../services/colegio-serv';
@@ -11,27 +11,61 @@ import { ReporteRecaudacionDto } from '../../models/colegio.models';
   templateUrl: './recaudacion-periodo.html',
   styleUrl: './recaudacion-periodo.scss'
 })
-export class RecaudacionPeriodoComponent {
+export class RecaudacionPeriodoComponent implements OnInit{
   private service = inject(ColegioServ);
   
+  periodosDisponibles = signal<any[]>([]);
   periodoInput: string = ''; 
   reporte: ReporteRecaudacionDto | null = null;
 
-  consultar() {
-    if (!this.periodoInput) return;
-    this.service.getRecaudacionPorPeriodo(this.periodoInput).subscribe(data => {
-      this.reporte = data;
-    });
+  ngOnInit(): void {
+  // 1. Cargar períodos desde el servicio
+  this.service.getPeriodosHistoricos().subscribe({
+    next: (data: any) => {
+      const lista = data?.content || data || [];
+      this.periodosDisponibles.set(lista);
+      // Opcional: preseleccionar el primero
+      if (lista.length > 0) this.periodoInput = lista[0].descripcion;
+    }
+  });
+}
+
+consultar() {
+  if (!this.periodoInput) return;
+  this.service.getRecaudacionPorPeriodo(this.periodoInput).subscribe(data => {
+    this.reporte = data;
+    // 🔍 MIRA ESTO EN LA CONSOLA DEL NAVEGADOR
+    console.log("Datos recibidos:", data); 
+  });
+}
+
+descargarPdf() {
+  if (!this.periodoInput) {
+    alert("Por favor, seleccione un período primero.");
+    return;
   }
 
-  descargarPdf() {
-    if (!this.periodoInput) return;
-    this.service.descargarPdfRecaudacionPeriodo(this.periodoInput).subscribe(blob => {
+  this.service.descargarPdfRecaudacionPeriodo(this.periodoInput).subscribe({
+    next: (blob: Blob) => {
+      if (blob.size === 0) {
+        alert("El archivo generado está vacío.");
+        return;
+      }
+      
+      // 1. Crear la URL del objeto Blob
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `recaudacion_periodo_${this.periodoInput}.pdf`;
-      a.click();
-    });
+      
+      // 2. Abrir en una pestaña nueva para visualización directa
+      // Al no asignar el atributo 'download', el navegador mostrará el visor
+      window.open(url, '_blank');
+      
+      // 3. Liberar la URL después de un tiempo prudencial
+      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+    },
+    error: (err) => {
+      console.error("Error al generar PDF de facturas:", err);
+      alert("No se pudo cargar el archivo. Verifique la conexión.");
+    }
+  });
   }
 }

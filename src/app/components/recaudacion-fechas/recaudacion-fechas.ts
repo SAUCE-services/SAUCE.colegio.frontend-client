@@ -26,14 +26,33 @@ export class RecaudacionFechasComponent {
     });
   }
 
-  descargarPdf() {
-    if (!this.fechaDesde || !this.fechaHasta) return;
-    this.service.descargarPdfRecaudacionFechas(this.fechaDesde, this.fechaHasta).subscribe(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `recaudacion_${this.fechaDesde}_al_${this.fechaHasta}.pdf`;
-      a.click();
-    });
+descargarPdf() {
+  if (!this.fechaDesde || !this.fechaHasta) {
+    alert("Por favor, seleccione ambas fechas.");
+    return;
   }
+
+  this.service.descargarPdfRecaudacionFechas(this.fechaDesde, this.fechaHasta).subscribe({
+    next: (blob: Blob) => {
+      if (blob.size === 0) {
+        alert("El archivo generado está vacío.");
+        return;
+      }
+      
+      // 1. Crear la URL del objeto Blob
+      const url = window.URL.createObjectURL(blob);
+      
+      // 2. Abrir en una pestaña nueva para visualización directa
+      // Al no asignar el atributo 'download', el navegador mostrará el visor
+      window.open(url, '_blank');
+      
+      // 3. Liberar la URL después de un tiempo prudencial
+      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+    },
+    error: (err) => {
+      console.error("Error al generar PDF de recaudación por fechas:", err);
+      alert("No se pudo cargar el archivo. Verifique la conexión.");
+    }
+  });
+}
 }
