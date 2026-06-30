@@ -1,0 +1,114 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Carga de pago</h1>
+    </div>
+  </header>
+
+  <div class="form-retro-container">
+    <section class="seccion-ficha search-bg">
+  <div class="row-search" style="flex-direction: row; gap: 15px; align-items: flex-end;">
+    
+    <div class="campo-novedad-select" style="flex: 1;">
+      <label>Período:</label>
+      <select [(ngModel)]="periodoSeleccionado" class="select-retro-colegio" style="width: 100%;">
+        <option [ngValue]="''" disabled>[ Seleccione un período ]</option>
+        @for (p of periodosDisponibles(); track p.descripcion) {
+          <option [value]="p.descripcion">{{ p.descripcion }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo-novedad-input" style="flex: 2;">
+      <label>Legajo:</label>
+      <input type="number" [(ngModel)]="legajo" (keyup.enter)="consultarCuenta()" placeholder="Ej: 1484">
+    </div>
+
+    <button type="button" class="btn-toggle" (click)="consultarCuenta()" [disabled]="cargando">
+      {{ cargando ? 'BUSCANDO...' : 'CONSULTAR' }}
+    </button>
+  </div>
+</section>
+
+    @if (movimientos && !cargando) {
+      <div class="info-alumno-banner">
+        <label>ALUMNO:</label>
+        <span class="nombre-resaltado">{{ movimientos.nombreCompleto }}</span>
+      </div>
+
+      <div class="tabla-container seccion-ficha">
+        <table class="tabla-retro">
+          <thead>
+            <tr>
+              <th class="text-center col-factura">Factura</th>
+              <th class="text-center col-estado">Estado</th>
+              <th class="text-center col-fecha">F.Estado</th>
+              <th class="text-center col-fecha">1er Venc</th>
+              <th class="text-center col-fecha">F.Pago</th>
+              <th class="text-center col-monto">Imp.Adeudado</th>
+              <th class="text-center col-monto">Imp.Pagado</th>
+              <th class="text-center col-monto">Saldo</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of movimientos.facturas; track f.nroFactura) {
+              <tr (click)="seleccionarFactura(f)" 
+                  [class.fila-seleccionada]="facturaSeleccionada?.nroFactura === f.nroFactura"
+                  class="pointer">
+                <td># {{ f.nroFactura }}</td>
+                <td>{{ f.estado }}</td>
+                <td>{{ f.saldoProgresivo | number:'1.2-2' }}</td>
+                <td class="text-center">
+                  @if (f.estado === 'PAGADA') {
+                    <button class="btn-toggle" (click)="anularPago(f.nroFactura); $event.stopPropagation()">
+                      ANULAR
+                    </button>
+                  }
+                </td>
+              </tr>
+
+@if (facturaSeleccionada?.nroFactura === f.nroFactura) {
+  <tr class="fila-detalle-expandida">
+    <td colspan="8"> <div class="detalle-desplegable-animado">
+        <table class="tabla-detalle-interna">
+          <thead>
+            <tr>
+              <th>F.Estado</th>
+              <th>Concepto</th>
+              <th>Estado</th>
+              <th class="text-right">Importe</th>
+              <th>F.Registro</th>
+              <th>Periodo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (cargandoDetalle) {
+              <tr><td colspan="6" class="text-center">Cargando detalle...</td></tr>
+            } @else {
+              @for (linea of lineasDetalle; track $index) {
+                <tr>
+                  <td>{{ linea.fechaEstado | date:'dd/MM/yyyy' }}</td>
+                  <td class="font-bold">{{ linea.concepto }}</td>
+                  <td><span class="badge-concepto">{{ linea.estado }}</span></td>
+                  <td class="text-center">{{ linea.importe | number:'1.2-2' }}</td>
+                  <td class="text-center">{{ linea.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+                  <td class="text-center">{{ linea.periodo }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4" class="text-center">No hay detalles para esta factura.</td></tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </td>
+  </tr>
+}
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
