@@ -108,24 +108,26 @@ consultarCuenta() {
   });
 }
 
-seleccionarFactura(f: FacturaDetalleDto) {
-  // Si ya estaba abierta, la cerramos
+seleccionarFactura(f: any) {
+  // 1. Si clicamos la misma, la cerramos
   if (this.facturaSeleccionada?.nroFactura === f.nroFactura) {
     this.facturaSeleccionada = null;
     this.lineasDetalle = [];
     return;
   }
 
-  // Si no, la seleccionamos y pedimos el detalle
+  // 2. Seleccionamos la nueva
   this.facturaSeleccionada = f;
   this.cargandoDetalle = true;
-  this.lineasDetalle = []; // Limpiamos previo para evitar mostrar datos viejos
+  this.lineasDetalle = []; // Limpiamos para el loading
 
+  // 3. Llamada al servicio
   this.service.getDetalleFactura(f.nroFactura).subscribe({
     next: (data: LineaDetalleDto[]) => {
+      // IMPORTANTE: Asegúrate de que 'data' sea el array de detalles
       this.lineasDetalle = data;
       this.cargandoDetalle = false;
-      this.cdr.detectChanges();
+      this.cdr.detectChanges(); // Fuerza la detección de cambios
     },
     error: (err) => {
       console.error("Error al traer el detalle:", err);
