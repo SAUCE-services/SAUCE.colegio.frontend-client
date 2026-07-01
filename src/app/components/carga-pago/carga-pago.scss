@@ -48,20 +48,31 @@ $fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, s
 .search-bg { background-color: $gris-fondo; }
 
 .row-search {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  .input-mixto {
-    display: flex;
-    gap: 10px;
-    input {
-      flex: 1;
-      padding: 12px;
-      border: 2px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-      &:focus { border-color: $verde-colegial; outline: none; }
-    }
+  display: grid !important;
+  grid-template-columns: 2fr 1.5fr auto; // Proporción más equilibrada
+  gap: 20px !important;
+  align-items: center !important; // Alineación vertical perfecta
+
+  label {
+    white-space: nowrap; // Evita que la palabra se rompa
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+
+  input[type="number"] {
+    text-align: center; // Centra el número escrito
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  // Asegura que el selector de periodo y el input de legajo tengan la misma altura
+  .select-periodo-modal, input {
+    height: 42px;
+    box-sizing: border-box;
   }
 }
 
@@ -206,314 +217,10 @@ td:nth-child(5) { // Columna F.Registro
   to { opacity: 1; transform: translateY(0); }
 }
 
-// --- BOTÓN DEUDAS ESTILO SISTEMA VIEJO ---
-.btn-deudas-clasico {
-  background: white;
-  color: $rojo-deuda;
-  border: 2px solid $rojo-deuda;
-  padding: 8px 25px;
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 1px;
-  border-radius: 4px;
-  cursor: pointer;
-  // 🌟 CORRECCIÓN: Agregamos el canal alfa (0.2)
-  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.2); 
-  transition: all 0.2s ease;
-
-  &:hover {
-    // Si querés que el botón sea rojo al pasar el mouse, está perfecto:
-    background: $rojo-deuda;
-    color: white;
-    // La sombra al hacer hover debe ser más pequeña para simular que el botón "baja"
-    box-shadow: 2px 2px 0px rgba($verde-colegial, 0.1);
-  }
-}
-
-.btn-alta-novedad-manual {
-  // 🌟 CAMBIADO: Estilo verde institucional Sauce
-  background-color: $verde-colegial !important; 
-  border-color: color.adjust($verde-colegial, $lightness: -5%) !important;
-  color: white !important;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin: 0;
-  cursor: pointer;
-  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.2) !important;
-  transition: all 0.2s;
-
-  &:hover {
-    background-color: color.adjust($verde-colegial, $lightness: -8%) !important;
-    color: white !important;
-  }
-}
-// === ESTILOS OPTIMIZADOS PARA EL MODAL DE DEUDA DESAPRETADO ===
-.modal-deuda-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.modal-deuda-box {
-  background: white;
-  width: 85%;
-  max-width: 1000px;
-  max-height: 85vh;
-  border-radius: 8px;
-  padding: 2.5rem !important; 
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-  display: flex;
-  flex-direction: column;
-  border: 2px solid $verde-colegial;
-
-  .modal-deuda-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px double $dorado-diploma;
-    padding-bottom: 1.2rem;
-    margin-bottom: 1.5rem;
-
-    .header-titulos {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      h2 { margin: 0; color: $rojo-deuda; font-size: 1.3rem; font-weight: 800; }
-      
-      .btn-pdf-deuda {
-        background: white;
-        color: #cf222e;
-        border: 2px solid #cf222e;
-        padding: 6px 15px;
-        font-weight: 800;
-        font-size: 0.75rem;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.2s;
-        &:hover { background: #cf222e; color: white; }
-      }
-    }
-
-    .btn-close-modal {
-      background: transparent;
-      border: none;
-      color: #666;
-      font-weight: 700;
-      cursor: pointer;
-      &:hover { color: black; }
-    }
-  }
-
-  .modal-deuda-body {
-    overflow-y: auto;
-    flex: 1;
-    margin-bottom: 1.5rem;
-    
-    .modal-table {
-      width: 100%;
-      border-collapse: collapse;
-      
-      th {
-        background: #f8f9fa !important;
-        color: $verde-colegial !important;
-        padding: 15px 12px !important;
-        font-weight: 700;
-        border-bottom: 2px solid #eee !important;
-      }
-      
-      td {
-        padding: 18px 12px !important; /* FILAS MÁS ALTAS PARA QUEDAR SÚPER DESAPRETADAS */
-        border-bottom: 1px solid #f0f0f0 !important;
-        font-size: 0.95rem;
-      }
-      
-      .badge-concepto-deuda {
-        background: #fff3cd;
-        color: #856404;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-weight: 700;
-        font-size: 0.75rem;
-        border: 1px solid #ffeeba;
-      }
-
-      .money-right-deuda {
-        font-family: 'Courier New', Courier, monospace;
-        font-weight: 800;
-        font-size: 1.15rem;
-        color: #cf222e;
-        text-align: right;
-      }
-    }
-  }
-
-  // BLOQUE DE TOTAL DE GRAN VISIBILIDAD
-  .caja-total-deuda-exigible {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px dashed #ccc;
-
-    .total-deuda-block {
-      background: $verde-colegial;
-      color: white;
-      padding: 15px 35px;
-      border-radius: 6px;
-      box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.3);
-      text-align: right;
-      min-width: 320px;
-
-      .total-deuda-label {
-        display: block;
-        color: $dorado-diploma;
-        font-size: 0.75rem;
-        font-weight: 800;
-        letter-spacing: 1.5px;
-        margin-bottom: 4px;
-      }
-
-      .total-deuda-valor {
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 1.8rem;
-        font-weight: 900;
-        letter-spacing: 0.5px;
-      }
-    }
-  }
-}
 
 .text-center { text-align: center !important; }
 .text-right { text-align: right !important; }
 
-// BOTÓN RETRO DE NOVEDADES
-.btn-novedades-retro {
-  background: white;
-  color: $verde-colegial;
-  border: 2px solid $verde-colegial;
-  padding: 8px 25px;
-  font-weight: 800;
-  font-size: 0.85rem;
-  border-radius: 4px;
-  cursor: pointer;
-  box-shadow: 4px 4px 0px rgba($verde-colegial, 0.15);
-  transition: all 0.2s ease;
-  &:hover {
-    background: $verde-colegial;
-    color: white;
-  }
-}
-
-// === ESTILOS HOLGADOS PARA EL MODAL DE NOVEDADES ===
-.modal-novedades-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.modal-novedades-box {
-  background: white;
-  width: 85%;
-  max-width: 1050px;
-  max-height: 85vh;
-  border-radius: 8px;
-  padding: 2.5rem !important; // Mayor acolchado en la caja principal
-  display: flex;
-  flex-direction: column;
-  border: 2px solid $verde-colegial;
-
-  .modal-novedades-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px double $dorado-diploma;
-    padding-bottom: 1.2rem;
-    margin-bottom: 1.5rem;
-
-    .header-titulos {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      h2 { margin: 0; color: $verde-colegial; font-size: 1.4rem; font-weight: 800; }
-      .subtitulo-alumno { font-size: 0.95rem; font-weight: 700; color: #555; text-transform: uppercase; }
-    }
-
-    .btn-close-modal {
-      background: transparent;
-      border: none;
-      color: #666;
-      font-weight: 700;
-      cursor: pointer;
-      &:hover { color: black; }
-    }
-  }
-
-  .modal-novedades-body {
-    overflow-y: auto;
-    flex: 1;
-    
-    .modal-table {
-      width: 100%;
-      border-collapse: collapse;
-      
-      th {
-        background: #f8f9fa !important;
-        color: $verde-colegial !important;
-        padding: 15px 12px !important;
-        font-weight: 700;
-        border-bottom: 2px solid #eee !important;
-      }
-      
-      td {
-        padding: 18px 12px !important; // 🌟 FILAS EXTRA DESAPRETADAS PARA MÁXIMA LEGIBILIDAD
-        border-bottom: 1px solid #f0f0f0 !important;
-        font-size: 0.95rem;
-        vertical-align: middle;
-      }
-
-      .badge-proceso {
-        background: #f8d7da;
-        color: #721c24;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-weight: 700;
-        font-size: 0.75rem;
-        border: 1px solid #f5c6cb;
-        &.badge-procesado {
-          background: #d4edda;
-          color: #155724;
-          border: 1px solid #c3e6cb;
-        }
-      }
-
-      .money-right-novedad {
-        font-family: 'Courier New', Courier, monospace;
-        font-weight: 800;
-        font-size: 1.1rem;
-        text-align: right;
-        color: #444;
-        &.texto-rojo { color: #cf222e; }
-      }
-    }
-  }
-}
 
 // =======================================================================
 // 🌟 SISTEMA UNIFICADO DE CARTEL FLOTANTE (ESTILO RETRO-SAUCE)
@@ -633,10 +340,6 @@ td:nth-child(5) { // Columna F.Registro
 // 🌟 COMPLEMENTO DE ALTA MANUAL DE NOVEDADES Y CLASES DE COLUMNAS (SAUCE)
 // =======================================================================
 
-// Contenedores del formulario de alta dentro del modal
-.contenedor-alta-novedad-trigger {
-  margin-bottom: 1.2rem;
-}
 
 .filtro-periodo-modal {
   display: flex;
@@ -672,81 +375,6 @@ td:nth-child(5) { // Columna F.Registro
   font-family: $fuente-moderna;
 }
 
-.panel-formulario-alta-novedad {
-  margin: 0 0 1.5rem 0;
-  background: #fffcf4;
-  border: 2px solid $dorado-diploma;
-  padding: 20px;
-  border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
-  font-family: $fuente-moderna;
-
-  h3 {
-    margin-top: 0;
-    color: color.adjust($dorado-diploma, $lightness: -20%);
-    font-size: 1.1rem;
-    font-weight: 800;
-    border-bottom: 1px dashed $dorado-diploma;
-    padding-bottom: 8px;
-    text-transform: uppercase;
-  }
-
-  .periodo-underlined {
-    text-decoration: underline;
-  }
-}
-
-.flex-form-row-novedad {
-  display: flex;
-  gap: 20px;
-  align-items: flex-end;
-  flex-wrap: wrap;
-
-  .campo-novedad-select {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 2;
-    min-width: 250px;
-  }
-
-  .campo-novedad-input {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
-    min-width: 150px;
-  }
-
-  .campo-novedad-btn {
-    flex: 1;
-    min-width: 180px;
-  }
-
-  label {
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: #555;
-    text-transform: uppercase;
-  }
-
-  .input-importe-form {
-    padding: 10px;
-    border: 1px solid #ccc;
-    font-weight: 700;
-    border-radius: 4px;
-    text-align: right;
-    background: white;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: $fuente-moderna;
-    font-size: 1rem;
-    outline: none;
-    
-    &:focus { border-color: $verde-colegial; }
-  }
-}
 
 .btn-asentar-registro-manual {
   width: 100%;
@@ -801,4 +429,41 @@ td:nth-child(5) { // Columna F.Registro
   color: $verde-colegial;
   font-weight: 700;
   font-size: 1.1rem;
+}
+
+// 🌟 BOTÓN ANULAR (ROJO)
+.btn-anular-rojo {
+  background: white;
+  color: $rojo-deuda;
+  border: 2px solid $rojo-deuda;
+  padding: 6px 14px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: $rojo-deuda;
+    color: white;
+  }
+}
+
+// 🌟 CONTENEDOR REGISTRAR PAGO (MEJOR DISEÑO)
+.panel-registrar-pago {
+  margin-top: 15px;
+  background: #fdfdfd;
+  border: 1px solid #d4af37; // Borde dorado institucional
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  
+  h3 {
+    margin: 0 0 15px 0;
+    color: $verde-colegial;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    border-bottom: 1px dashed #d4af37;
+    padding-bottom: 5px;
+  }
 }
