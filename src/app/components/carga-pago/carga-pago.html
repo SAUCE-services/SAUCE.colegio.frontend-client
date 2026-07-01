@@ -66,7 +66,7 @@
                 <td class="money-center">{{ f.impPagado | number:'1.2-2' }}</td>
                 <td class="money-center font-bold status-saldo">{{ f.saldoProgresivo | number:'1.2-2' }}</td>
                 <td class="text-center">
-                  @if (f.estado === 'PAGADA') {
+                  @if (f.estado === 'Factura PAGADA') {
                     <button class="btn-toggle" (click)="anularPago(f.nroFactura); $event.stopPropagation()">
                       ANULAR
                     </button>
@@ -81,8 +81,12 @@
                       <table class="tabla-detalle-interna">
                         <thead>
                           <tr>
-                            <th>F.Estado</th><th>Concepto</th><th>Estado</th>
-                            <th class="text-right">Importe</th><th>F.Registro</th><th>Periodo</th>
+                            <th class="text-center">F.Estado</th>
+                            <th class="text-center">Concepto</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Importe</th>
+                            <th class="text-center">F.Registro</th>
+                            <th class="text-center">Periodo</th>
                           </tr>
                         </thead>
                         <tbody>

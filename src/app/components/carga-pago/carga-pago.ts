@@ -28,6 +28,7 @@ export class CargaPagoComponent implements OnInit {
   movimientos: HistoriaFacturacionDto | null = null;
   facturaSeleccionada: FacturaDetalleDto | null = null;
   lineasDetalle: LineaDetalleDto[] = [];
+  totalDeudaFinal = 0;
   
   cargando = false;
   cargandoDetalle = false;
@@ -50,7 +51,6 @@ export class CargaPagoComponent implements OnInit {
       }
     });
   }
-
 consultarCuenta() {
   if (!this.legajo || !this.periodoSeleccionado) {
     alert("Por favor, ingrese legajo y seleccione un período.");
@@ -60,48 +60,57 @@ consultarCuenta() {
   this.cargando = true;
   this.movimientos = null;
   this.facturaSeleccionada = null;
+  this.totalDeudaFinal = 0;
 
-  // 1. Buscamos la factura específica
-  this.service.buscarFacturaParaPago(this.legajo, this.periodoSeleccionado).subscribe({
-    next: (facturaData: any) => {
+  // CAMBIO: Ahora usamos getCuentaCorriente para traer TODO el historial
+  this.service.getCuentaCorriente(this.legajo).subscribe({
+    next: (historial: any) => {
+      // Si el backend devuelve un array, tomamos el primero, si es objeto, lo usamos directo
+      const data = Array.isArray(historial) ? historial[0] : historial;
       
-      // 2. Buscamos el nombre del alumno a través del servicio de alumnos
-      // Esto soluciona que el nombre no aparezca porque no viene en el JSON de factura
+
+      if (!data || !data.facturas) {
+        alert("No se encontraron movimientos para este legajo.");
+        this.cargando = false;
+        return;
+      }
+
+      let acumulado = 0;
+      const facturasFiltradas = data.facturas
+        .filter((f: any) => f.periodo === this.periodoSeleccionado)
+        .map((f: any) => {
+          // 2. Calculamos el saldo progresivo igual que en CuentaCorriente
+          const debe = f.impAdeudado || 0;
+          const haber = f.impPagado || 0;
+          acumulado += (debe - haber);
+          return { ...f, saldoProgresivo: acumulado };
+        });
+
+      this.totalDeudaFinal = acumulado;
+
+      // 2. Buscamos el nombre del alumno (Tu lógica intacta)
       this.service.getAlumnoPorLegajo(this.legajo!).subscribe({
         next: (alumnoData: any) => {
-  // 🔍 ESTO NOS DIRÁ EL NOMBRE REAL DE LA PROPIEDAD
-  console.log("Datos del alumno recibidos:", alumnoData);
-  
-  // Probemos con estas variantes, una debería funcionar:
-  const nombreFinal = alumnoData.nombreCompleto || 
-                      alumnoData.apellido + ', ' + alumnoData.nombre || 
-                      alumnoData.nombre || 
-                      'Alumno sin nombre';
+          console.log("Datos del alumno recibidos:", alumnoData);
+          
+          const nombreFinal = alumnoData.nombreCompleto || 
+                              alumnoData.apellido + ', ' + alumnoData.nombre || 
+                              alumnoData.nombre || 
+                              'Alumno sin nombre';
 
-  this.movimientos = {
-    legajo: this.legajo,
-    nombreCompleto: nombreFinal,
-    facturas: [facturaData]
-  } as HistoriaFacturacionDto;
-
-  this.cargando = false;
-  this.cdr.detectChanges();
-},
-        error: () => {
-          // Si falla la búsqueda del nombre, mostramos la factura igual
           this.movimientos = {
-            legajo: this.legajo,
-            nombreCompleto: `Alumno Legajo: ${this.legajo}`,
-            facturas: [facturaData]
+            legajo: this.legajo!,
+            nombreCompleto: nombreFinal,
+           facturas: facturasFiltradas // Aquí están todas, pagadas y no pagadas
           } as HistoriaFacturacionDto;
+          
           this.cargando = false;
           this.cdr.detectChanges();
         }
       });
     },
     error: (err) => {
-      console.error("Error al buscar factura:", err);
-      alert(err.error?.message || "No se encontró factura para este alumno y período.");
+      console.error("Error al cargar historial:", err);
       this.cargando = false;
       this.cdr.detectChanges();
     }
