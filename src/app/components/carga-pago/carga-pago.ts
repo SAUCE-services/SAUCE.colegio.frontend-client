@@ -116,36 +116,35 @@ consultarCuenta() {
     }
   });
 }
-
 seleccionarFactura(f: any) {
-  // 1. Si clicamos la misma, la cerramos
   if (this.facturaSeleccionada?.nroFactura === f.nroFactura) {
     this.facturaSeleccionada = null;
     this.lineasDetalle = [];
+    this.importePago = null; // Limpiamos el importe al cerrar
     return;
   }
 
-  // 2. Seleccionamos la nueva
   this.facturaSeleccionada = f;
   this.cargandoDetalle = true;
-  this.lineasDetalle = []; // Limpiamos para el loading
+  this.lineasDetalle = []; 
+  this.importePago = f.saldoProgresivo;
 
-  // 3. Llamada al servicio
   this.service.getDetalleFactura(f.nroFactura).subscribe({
-    next: (data: LineaDetalleDto[]) => {
-      // IMPORTANTE: Asegúrate de que 'data' sea el array de detalles
-      this.lineasDetalle = data;
+    next: (data: any) => {
+      // 🌟 Corrección: Aseguramos que data sea un array válido.
+      // Si el backend devuelve un objeto envoltorio, cámbialo a data.detalles || []
+      this.lineasDetalle = Array.isArray(data) ? data : (data?.detalles || []);
       this.cargandoDetalle = false;
-      this.cdr.detectChanges(); // Fuerza la detección de cambios
+      this.cdr.detectChanges();
     },
     error: (err) => {
       console.error("Error al traer el detalle:", err);
+      this.lineasDetalle = []; // Limpiamos en caso de error
       this.cargandoDetalle = false;
       this.cdr.detectChanges();
     }
   });
 }
-
   registrarPago() {
     if (!this.legajo || !this.facturaSeleccionada || !this.importePago || this.importePago <= 0) {
       alert("Ingrese un importe válido.");

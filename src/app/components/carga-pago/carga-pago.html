@@ -109,15 +109,18 @@
                         </tbody>
                       </table>
 
-                      <div class="seccion-ficha" style="margin-top: 15px; background: #fdfdfd; border: 1px solid #ccc; padding: 15px;">
-                         <h3 style="margin: 0 0 10px 0;">Registrar Pago</h3>
-                         <div style="display: flex; gap: 10px; align-items: center;">
-                           <input type="number" [(ngModel)]="importePago" placeholder="Importe a pagar" class="input-form-retro-style">
-                           <button class="btn-toggle" (click)="registrarPago()" [disabled]="cargandoPago">
-                             {{ cargandoPago ? 'PROCESANDO...' : 'CONFIRMAR PAGO' }}
-                           </button>
-                         </div>
-                      </div>
+                      <!-- 🌟 FORMULARIO SOLO SI NO ESTÁ PAGADA -->
+          @if (facturaSeleccionada && !facturaSeleccionada.estado?.includes('PAGADA')) {
+            <div class="seccion-ficha" style="margin-top: 15px; background: #fdfdfd; border: 1px solid #ccc; padding: 15px;">
+               <h3 style="margin: 0 0 10px 0;">Registrar Pago</h3>
+               <div style="display: flex; gap: 10px; align-items: center;">
+                 <input type="number" [(ngModel)]="importePago" placeholder="Importe a pagar" class="input-form-retro-style">
+                 <button class="btn-toggle" (click)="registrarPago()" [disabled]="cargandoPago">
+                   {{ cargandoPago ? 'PROCESANDO...' : 'CONFIRMAR PAGO' }}
+                 </button>
+               </div>
+            </div>
+          }
                     </div>
                   </td>
                 </tr>
