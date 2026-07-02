@@ -103,21 +103,28 @@ export class CuentaCorrienteComponent {
       }
     });
   }
+descargarPdfDeuda() {
+  if (!this.legajo) return;
 
-  descargarPdfDeuda() {
-    if (!this.legajo) return;
-    this.service.descargarPdfDeudaIndividual(this.legajo).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `deuda_individual_${this.legajo}.pdf`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      },
-      error: (err) => console.error("Error al descargar el PDF de deuda:", err)
-    });
-  }
+  this.service.descargarPdfDeudaIndividual(this.legajo).subscribe({
+    next: (blob: Blob) => {
+      // 🌟 Crear una URL para el blob
+      const url = window.URL.createObjectURL(blob);
+      
+      // 🌟 Abrir en una nueva pestaña para previsualización
+      const nuevaVentana = window.open(url, '_blank');
+      
+      // Si el navegador bloquea la ventana emergente, podrías optar por:
+      if (!nuevaVentana) {
+        alert("Por favor, permite las ventanas emergentes para ver el PDF.");
+      }
+      
+      // Opcional: revocar la URL después de un tiempo para liberar memoria
+      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+    },
+    error: (err) => console.error("Error al generar el PDF de deuda:", err)
+  });
+}
 
   seleccionarFactura(f: FacturaDetalleDto) {
     if (this.facturaSeleccionada?.nroFactura === f.nroFactura) {
