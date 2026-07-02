@@ -467,3 +467,52 @@ td:nth-child(5) { // Columna F.Registro
     padding-bottom: 5px;
   }
 }
+
+/* 🌟 DISEÑO PROFESIONAL DE CARTELES */
+.cartel-dialogo-box {
+  background: #ffffff !important;
+  border: none !important; // Eliminamos bordes dobles anticuados
+  border-radius: 12px !important; // Bordes más suaves
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important; // Sombra moderna
+  overflow: hidden;
+  width: 400px !important;
+
+  .cartel-dialogo-header {
+    background: #f8f9fa !important; // Fondo gris muy claro
+    padding: 16px 20px !important;
+    border-bottom: 1px solid #e9ecef !important;
+
+    h3 {
+      color: #1a5d3b !important; // Verde institucional
+      font-size: 1.1rem !important;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .cartel-dialogo-body {
+    padding: 24px 20px !important;
+    color: #333 !important;
+    font-size: 0.95rem !important;
+  }
+
+  .cartel-dialogo-footer {
+    padding: 12px 20px !important;
+    background: #f8f9fa !important;
+    border-top: 1px solid #e9ecef !important;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+}
+
+/* Mejora de los botones dentro del cartel */
+.btn-confirmar-custom, .btn-cancelar-custom {
+  border-radius: 6px !important; // Botones más redondeados
+  padding: 10px 20px !important;
+  font-weight: 700 !important;
+  transition: transform 0.1s ease !important;
+
+  &:active {
+    transform: scale(0.98); // Efecto de "clic" al presionar
+  }
+}

@@ -37,6 +37,12 @@ export class CargaPagoComponent implements OnInit {
   // Variables para el registro de pagos
   importePago: number | null = null;
 
+  mostrarCartel = false;
+tituloCartel = '';
+mensajeCartel = '';
+esConfirmacion = false;
+accionPendiente: () => void = () => {};
+
   ngOnInit() {
     this.cargarPeriodos();
   }
@@ -153,8 +159,8 @@ seleccionarFactura(f: any) {
 
   registrarPago() {
     if (!this.legajo || !this.facturaSeleccionada || !this.importePago || this.importePago <= 0) {
-      alert("Ingrese un importe válido.");
-      return;
+     this.abrirCartel('Atención', 'Ingrese un importe válido.');
+    return;
     }
 
     this.cargandoPago = true;
@@ -171,6 +177,7 @@ seleccionarFactura(f: any) {
         this.cargandoPago = false;
         this.importePago = null;
         this.consultarCuenta(); // Refresca la grilla
+        this.abrirCartel('Éxito', 'Pago registrado correctamente.');
       },
       error: (err) => {
         console.error("Error al registrar pago:", err);
@@ -180,17 +187,32 @@ seleccionarFactura(f: any) {
     });
   }
 
-  anularPago(nroFactura: number) {
-    if (!confirm("¿Está seguro de que desea anular este pago?")) return;
-    
+anularPago(nroFactura: number) {
+  this.abrirCartel('Confirmar Anulación', '¿Está seguro de que desea anular este pago?', true, () => {
     this.service.anularPago(nroFactura).subscribe({
       next: () => {
-        this.consultarCuenta(); // Refresca la grilla
+        this.consultarCuenta();
+        this.abrirCartel('Éxito', 'El pago ha sido anulado correctamente.');
       },
-      error: (err) => {
-        console.error("Error al anular pago:", err);
-        alert("Error al anular el pago.");
-      }
+      error: () => this.abrirCartel('Error', 'No se pudo anular el pago.')
     });
-  }
+  });
+}
+
+  abrirCartel(titulo: string, mensaje: string, confirmacion = false, callback?: () => void) {
+  this.tituloCartel = titulo;
+  this.mensajeCartel = mensaje;
+  this.esConfirmacion = confirmacion;
+  this.accionPendiente = callback || (() => {});
+  this.mostrarCartel = true;
+}
+
+cerrarCartel() {
+  this.mostrarCartel = false;
+}
+
+ejecutarAccionConfirmada() {
+  this.accionPendiente();
+  this.cerrarCartel();
+}
 }

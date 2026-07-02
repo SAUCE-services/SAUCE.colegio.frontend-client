@@ -135,5 +135,25 @@
         </table>
       </div>
     }
+    @if (mostrarCartel) {
+  <div class="cartel-dialogo-overlay">
+    <div class="cartel-dialogo-box">
+      <header class="cartel-dialogo-header">
+        <h3>{{ tituloCartel }}</h3>
+      </header>
+      <div class="cartel-dialogo-body">
+        <p>{{ mensajeCartel }}</p>
+      </div>
+      <footer class="cartel-dialogo-footer">
+        @if (esConfirmacion) {
+          <button class="btn-cancelar-custom" (click)="cerrarCartel()">CANCELAR</button>
+          <button class="btn-confirmar-custom" (click)="ejecutarAccionConfirmada()">ACEPTAR</button>
+        } @else {
+          <button class="btn-confirmar-custom" (click)="cerrarCartel()">ENTENDIDO</button>
+        }
+      </footer>
+    </div>
+  </div>
+}
   </div>
 </div>
