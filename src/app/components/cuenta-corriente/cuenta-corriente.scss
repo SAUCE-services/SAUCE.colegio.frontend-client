@@ -48,19 +48,49 @@ $fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, s
 .search-bg { background-color: $gris-fondo; }
 
 .row-search {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  .input-mixto {
+  display: grid !important;
+  grid-template-columns: 1fr 2fr auto !important; // 1 parte para legajo, 2 para nombre, auto para botón
+  gap: 30px !important; 
+  align-items: end !important;
+  
+  .campo-novedad-input {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    gap: 5px;
+    
     input {
-      flex: 1;
+      width: 100%;
       padding: 12px;
       border: 2px solid #ccc;
       border-radius: 4px;
       font-size: 1rem;
-      &:focus { border-color: $verde-colegial; outline: none; }
+      &:focus { border-color: #1a5d3b; outline: none; } // Verde colegial
+    }
+  }
+}
+
+.dropdown-resultados {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #1a5d3b; // Verde institucional
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+
+  li {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    &:hover,
+    &.activo {
+      background-color: #f4e9d9; // Crema institucional
     }
   }
 }
@@ -74,7 +104,7 @@ $fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, s
   align-items: center;
   gap: 1rem;
   label { font-weight: 800; color: $verde-colegial; }
-  .nombre-resaltado { font-size: 1.2rem; font-weight: 700; color: #333; }
+  .nombre-resaltado { margin-left: 10px; font-size: 1.2rem; font-weight: 700; color: #333; }
 }
 
 // TABLA PRINCIPAL (HISTORIA)
@@ -189,6 +219,8 @@ td:nth-child(5) { // Columna F.Registro
 .btn-toggle {
   background: white;
   border: 2px solid $verde-colegial;
+  margin-left: 10px;
+  height: 42px; // Alineado con los inputs
   color: $verde-colegial;
   padding: 10px 20px;
   font-weight: 800;

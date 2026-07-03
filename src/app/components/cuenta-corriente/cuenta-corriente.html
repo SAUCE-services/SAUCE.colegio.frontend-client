@@ -7,24 +7,50 @@
 
   <div class="form-retro-container">
     <section class="seccion-ficha search-bg">
-      <div class="row-search">
-        <label>Legajo:</label>
-        <div class="input-mixto">
-          <input
-             type="number"
-             [(ngModel)]="legajo"
-             [ngModelOptions]="{updateOn: 'blur'}"
-             (keyup.enter)="consultarCuenta()"
-             placeholder="Ej: 1484">
-                  
-          <button
-             type="button"
-             class="btn-toggle"
-             (click)="consultarCuenta()"
-             [disabled]="cargando">
-            {{ cargando ? 'BUSCANDO...' : 'CONSULTAR' }}
-          </button>
+      <div class="row-search" style="display: grid; grid-template-columns: 1fr 2fr auto; gap: 20px; align-items: end;">
+    
+        <!-- Campo Legajo -->
+        <div class="campo-novedad-input">
+          <label>Legajo:</label>
+            <input 
+              type="number" 
+              [(ngModel)]="legajo" 
+              (blur)="buscarPorLegajo()" 
+               (keyup.enter)="onEnterLegajo()" 
+              placeholder="Ej: 1484">
         </div>
+
+    <!-- Campo Nombre/Apellido -->
+        <div class="campo-novedad-input" style="position: relative;">
+  <label>Apellido y Nombre:</label>
+  <input 
+    type="text" 
+    [(ngModel)]="nombreAlumno" 
+    (input)="buscarEnTiempoReal()" 
+    (keydown)="manejarTecladoSugerencias($event)"
+    placeholder="Empiece a escribir el nombre...">
+  
+  <!-- Lista de sugerencias (estilo dropdown) -->
+  @if (mostrarSugerencias) {
+    <ul class="dropdown-resultados">
+      @for (a of resultadosBusqueda; track a.alumnoId; let i = $index) {
+        <li 
+          [class.activo]="i === indiceSugerenciaActiva"
+          (click)="seleccionarAlumno(a)">
+          {{ a.nombreCompleto }} <small>(#{{ a.alumnoId }})</small>
+        </li>
+      }
+      </ul>
+          }
+        </div>
+        <!-- BOTÓN CONSULTAR AGREGADO AQUÍ -->
+    <button 
+      type="button" 
+      class="btn-toggle" 
+      (click)="consultarCuenta()" 
+      [disabled]="cargando">
+      {{ cargando ? 'BUSCANDO...' : 'CONSULTAR' }}
+    </button>
       </div>
     </section>
 

@@ -19,7 +19,8 @@ import {
   DeudaCursoResponseDto,
   NovedadesAlumnoResponseDto,
   NovedadCargaDto,
-  NovedadCursoDto
+  NovedadCursoDto,
+  AlumnoDto
 } from '../models/colegio.models';
 
 @Injectable({
@@ -406,6 +407,11 @@ buscarFacturaParaPago(alumnoId: number, periodo: string) {
   return this.http.get(`${this.baseUrl}/facturacion/buscar-para-pago`, {
     params: { alumnoId: alumnoId.toString(), periodo: periodo }
   });
+}
+
+// En tu servicio
+buscarAlumnos(query: string): Observable<AlumnoDto[]> {
+  return this.http.get<AlumnoDto[]>(`${this.baseUrl}/alumno/buscar?query=${query}`);
 }
 }
 

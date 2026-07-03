@@ -1,6 +1,6 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { ColegioServ } from '../../services/colegio-serv';
-import { HistoriaFacturacionDto, FacturaDetalleDto, LineaDetalleDto, DeudaIndividualResponseDto, NovedadesAlumnoResponseDto, NovedadCargaDto } from '../../models/colegio.models'; 
+import { HistoriaFacturacionDto, FacturaDetalleDto, LineaDetalleDto, DeudaIndividualResponseDto, NovedadesAlumnoResponseDto, NovedadCargaDto, AlumnoDto } from '../../models/colegio.models'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -16,6 +16,11 @@ export class CuentaCorrienteComponent {
   private cdr = inject(ChangeDetectorRef);
 
   legajo: number | null = null;
+  nombreAlumno: string = ''; // Nueva propiedad para el nombre
+  resultadosBusqueda: any[] = [];
+  mostrarSugerencias = false;
+  indiceSugerenciaActiva = -1; // Índice de la sugerencia resaltada con el teclado
+
   movimientos: HistoriaFacturacionDto | null = null;
   facturaSeleccionada: FacturaDetalleDto | null = null;
   lineasDetalle: LineaDetalleDto[] = [];
@@ -50,6 +55,98 @@ export class CuentaCorrienteComponent {
   cartelTitulo: string = '';
   cartelMensaje: string = '';
   novedadPendienteAnular: any = null;
+
+  // Método disparado con (input)
+buscarEnTiempoReal() {
+  this.indiceSugerenciaActiva = -1; // Reinicia el resaltado en cada nueva búsqueda
+
+  if (this.nombreAlumno.length < 3) {
+    this.resultadosBusqueda = [];
+    this.mostrarSugerencias = false;
+    return;
+  }
+  
+  this.service.buscarAlumnos(this.nombreAlumno).subscribe(data => {
+    this.resultadosBusqueda = data;
+    this.mostrarSugerencias = data.length > 0;
+    this.indiceSugerenciaActiva = -1;
+  });
+}
+
+// Se llama exclusivamente al presionar Enter en el campo Legajo
+async onEnterLegajo() {
+  if (this.legajo) {
+    await this.buscarPorLegajoPromise(); // siempre sincroniza el nombre con el legajo actual
+  }
+  this.consultarCuenta();
+}
+
+// Al hacer clic en un resultado
+seleccionarAlumno(alumno: any) {
+  this.legajo = alumno.alumnoId;
+  this.nombreAlumno = alumno.nombreCompleto;
+  this.resultadosBusqueda = [];
+  this.mostrarSugerencias = false;
+  this.indiceSugerenciaActiva = -1;
+  this.consultarCuenta(); // Dispara la consulta inmediatamente al elegir
+}
+
+// Maneja flechas ↑↓ para navegar sugerencias, Enter para confirmar y Escape para cerrar
+manejarTecladoSugerencias(event: KeyboardEvent) {
+  if (!this.mostrarSugerencias || this.resultadosBusqueda.length === 0) {
+    if (event.key === 'Enter') {
+      this.consultarCuenta();
+    }
+    return;
+  }
+
+  switch (event.key) {
+    case 'ArrowDown':
+      event.preventDefault();
+      this.indiceSugerenciaActiva =
+        (this.indiceSugerenciaActiva + 1) % this.resultadosBusqueda.length;
+      break;
+
+    case 'ArrowUp':
+      event.preventDefault();
+      this.indiceSugerenciaActiva =
+        (this.indiceSugerenciaActiva - 1 + this.resultadosBusqueda.length) %
+        this.resultadosBusqueda.length;
+      break;
+
+    case 'Enter':
+      event.preventDefault();
+      if (this.indiceSugerenciaActiva >= 0) {
+        this.seleccionarAlumno(this.resultadosBusqueda[this.indiceSugerenciaActiva]);
+      } else {
+        this.consultarCuenta();
+      }
+      break;
+
+    case 'Escape':
+      this.mostrarSugerencias = false;
+      this.indiceSugerenciaActiva = -1;
+      break;
+  }
+}
+
+  // Método para buscar por nombre (puedes usar el servicio que ya tienes)
+  buscarPorNombre() {
+    if (this.nombreAlumno.length < 3) return;
+    this.service.buscarAlumnos(this.nombreAlumno).subscribe((data: AlumnoDto[]) => {
+      if (data && data.length > 0) {
+        this.legajo = data[0].alumnoId;
+        this.nombreAlumno = data[0].nombreCompleto;
+      }
+    });
+  }
+// Método para buscar por legajo (se mantiene el original)
+  buscarPorLegajo() {
+    if (!this.legajo) return;
+      this.service.getAlumnoPorLegajo(this.legajo).subscribe((data: any) => {
+      this.nombreAlumno = `${data.apellido}, ${data.nombre}`;
+    });
+  }
 
   onConceptoChange() {
     if (!this.conceptoSeleccionadoId) {
@@ -149,7 +246,14 @@ descargarPdfDeuda() {
     });
   }
 
-  consultarCuenta() {
+  async consultarCuenta() {
+    this.cargando = true;
+    
+    if (this.nombreAlumno && !this.legajo) {
+    await this.buscarPorNombrePromise();
+  } else if (this.legajo && !this.nombreAlumno) {
+    await this.buscarPorLegajoPromise();
+  }
     if (!this.legajo) return;
     this.facturaSeleccionada = null;
     this.cargando = true;
@@ -187,6 +291,32 @@ descargarPdfDeuda() {
       }
     });
   }
+  buscarPorLegajoPromise(): Promise<void> {
+  return new Promise((resolve) => {
+    this.service.getAlumnoPorLegajo(this.legajo!).subscribe({
+      next: (data: any) => {
+        this.nombreAlumno = `${data.apellido}, ${data.nombre}`;
+        resolve();
+      },
+      error: () => resolve()
+    });
+  });
+}
+
+buscarPorNombrePromise(): Promise<void> {
+  return new Promise((resolve) => {
+    this.service.buscarAlumnos(this.nombreAlumno).subscribe({
+      next: (data: any[]) => {
+        if (data && data.length > 0) {
+          this.legajo = data[0].alumnoId;
+          this.nombreAlumno = data[0].nombreCompleto;
+        }
+        resolve();
+      },
+      error: () => resolve()
+    });
+  });
+}
 
   get novedadesFiltradas() {
     if (!this.reporteNovedades || !this.reporteNovedades.novedades) return [];
