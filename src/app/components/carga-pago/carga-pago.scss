@@ -1,0 +1,518 @@
+@use "sass:color";
+
+// VARIABLES INSTITUCIONALES
+$verde-colegial: #1a5d3b;
+$dorado-diploma: #d4af37;
+$crema-papel: #f4e9d9;
+$gris-fondo: #f9f9f9;
+$rojo-deuda: #d9534f;
+$fuente-titulo: 'Georgia', serif;
+$fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+// ESTRUCTURA GENERAL
+.page-container { padding: 1rem 0; }
+
+.section-header {
+  margin: 1rem 2rem 2rem 2rem;
+  .header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h1 {
+      color: $verde-colegial;
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin: 0;
+        font-family: $fuente-titulo;
+    }
+  }
+}
+
+.form-retro-container {
+  padding: 0 2rem 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+// SECCIONES TIPO FICHA (ESTILO SAUCE)
+.seccion-ficha {
+  background: white;
+  border: 2px solid $verde-colegial;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 6px 6px 0px rgba($dorado-diploma, 0.2);
+}
+
+.search-bg { background-color: $gris-fondo; }
+
+.row-search {
+  display: grid !important;
+  grid-template-columns: 2fr 1.5fr auto; // Proporción más equilibrada
+  gap: 20px !important;
+  align-items: center !important; // Alineación vertical perfecta
+
+  label {
+    white-space: nowrap; // Evita que la palabra se rompa
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+
+  input[type="number"] {
+    text-align: center; // Centra el número escrito
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  // Asegura que el selector de periodo y el input de legajo tengan la misma altura
+  .select-periodo-modal, input {
+    height: 42px;
+    box-sizing: border-box;
+  }
+}
+
+.info-alumno-banner {
+  background: $crema-papel;
+  padding: 1rem;
+  border-left: 5px solid $dorado-diploma;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  label { font-weight: 800; color: $verde-colegial; }
+  .nombre-resaltado { font-size: 1.2rem; font-weight: 700; color: #333; }
+}
+
+// TABLA PRINCIPAL (HISTORIA)
+.tabla-container { 
+  overflow-x: auto; 
+  padding: 0 !important; // Para que la tabla toque los bordes del contenedor blanco
+}
+
+.tabla-retro {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead th {
+    background: $verde-colegial;
+    color: $dorado-diploma;
+    padding: 12px;
+    text-align: left;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border: 1px solid color.adjust($verde-colegial, $lightness: -5%);
+  }
+
+  tbody tr {
+    background-color: white;
+    cursor: pointer;
+
+    td {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      color: #444;
+    }
+
+    &:hover { background-color: #f5f5f5; }
+
+    &.fila-seleccionada {
+      background-color: rgba($dorado-diploma, 0.15) !important;
+      border-left: 5px solid $dorado-diploma;
+      td { font-weight: bold; }
+    }
+  }
+
+  .detalle-desplegable-animado {
+  padding: 10px 20px 30px 20px; // Más espacio abajo para separar de la siguiente factura
+  background-color: #fff;
+  border-bottom: 2px solid $verde-colegial;
+  animation: fadeIn 0.3s ease-out;
+}
+
+  // Estilo para la fila que contiene el desplegable
+  .fila-detalle-expandida {
+    background-color: white !important;
+    
+    td {
+      padding: 0 !important; // 👈 Crucial para la integración visual
+      border: none !important;
+    }
+  }
+}
+
+/* Ajustes para la tabla de detalle interna */
+.tabla-detalle-interna {
+  width: 100%;
+  border-collapse: separate; // Cambiado para manejar mejor el espaciado
+  border-spacing: 0;
+  background: white;
+  font-size: 0.95rem;
+  
+  thead th {
+    background-color: #727272 !important; // Cabecera gris oscuro
+    color: #fff !important;
+    padding: 15px 10px; // Aumentamos espacio vertical en cabecera
+    text-align: left;
+    border-bottom: 2px solid $verde-colegial;
+  }
+
+  tbody td {
+    padding: 15px 10px; // 👈 Esto da más espacio arriba y abajo a cada fila
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    color: #555;
+  }
+    .badge-concepto {
+      font-weight: 600;
+      color: #777;
+      font-size: 0.75rem;
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  }
+
+// UTILITARIOS
+.money {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 800;
+    white-space: nowrap; // Evita que el importe se rompa en dos líneas
+  }
+
+.negativo { color: $rojo-deuda; }
+.text-right {
+    text-align: center;
+    padding-right: 20px; // Espacio extra a la derecha para separar de la siguiente columna
+  }
+.font-bold { font-weight: 800; color: #333; }
+.pointer { cursor: pointer; }
+
+td:nth-child(5) { // Columna F.Registro
+    min-width: 120px;
+    padding-left: 15px;
+  }
+
+.btn-toggle {
+  background: white;
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 10px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover:not(:disabled) {
+    background: $verde-colegial;
+    color: white;
+  }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+
+
+// =======================================================================
+// 🌟 SISTEMA UNIFICADO DE CARTEL FLOTANTE (ESTILO RETRO-SAUCE)
+// =======================================================================
+.cartel-dialogo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000; // Por encima de cualquier modal de desglose
+}
+
+.cartel-dialogo-box {
+  background: white;
+  width: 440px;
+  border: 3px double $verde-colegial;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popInCC 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+
+  .cartel-dialogo-header {
+    background: rgba($crema-papel, 0.25);
+    padding: 12px 18px;
+    border-bottom: 2px dashed #ccc;
+
+    h3 {
+      margin: 0;
+      color: $verde-colegial;
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .cartel-dialogo-body {
+    padding: 22px 18px;
+    background: white;
+
+    p {
+      margin: 0;
+      color: #333;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+  }
+
+  .cartel-dialogo-footer {
+    padding: 12px 18px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+// Botonera de Control del Diálogo
+.btn-confirmar-custom {
+  background: $verde-colegial;
+  color: white;
+  border: 2px solid color.adjust($verde-colegial, $lightness: -5%);
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    background: color.adjust($verde-colegial, $lightness: -8%);
+  }
+}
+
+.btn-cancelar-custom {
+  background: white;
+  color: #555;
+  border: 2px solid #ccc;
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    background: #f0f0f0;
+    color: black;
+    border-color: #999;
+  }
+}
+
+@keyframes popInCC {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+// =======================================================================
+// 🌟 COMPLEMENTO DE ALTA MANUAL DE NOVEDADES Y CLASES DE COLUMNAS (SAUCE)
+// =======================================================================
+
+
+.filtro-periodo-modal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9f9f9;
+  padding: 12px 18px;
+  border-radius: 4px;
+  border: 1px dashed $verde-colegial;
+  width: fit-content;
+  margin-bottom: 1.5rem;
+  font-family: $fuente-moderna;
+
+  label {
+    font-weight: 700;
+    color: $verde-colegial;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.select-periodo-modal, .select-concepto-form {
+  padding: 8px 16px;
+  border: 2px solid $verde-colegial;
+  border-radius: 4px;
+  font-weight: 700;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  min-width: 200px;
+  outline: none;
+  font-family: $fuente-moderna;
+}
+
+
+.btn-asentar-registro-manual {
+  width: 100%;
+  background-color: color.adjust($dorado-diploma, $lightness: -10%) !important;
+  border-color: color.adjust($dorado-diploma, $lightness: -15%) !important;
+  color: white !important;
+  padding: 11px !important;
+  font-weight: 800;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.5px;
+  margin: 0;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.1) !important;
+
+  &:hover {
+    background-color: color.adjust($dorado-diploma, $lightness: -15%) !important;
+  }
+}
+
+// 📏 CONTROL DE ANCHOS DE COLUMNAS (TABLAS PRINCIPALES Y INTERNAS)
+.col-factura { width: 10%; }
+.col-estado { width: 15%; }
+.col-fecha { width: 10%; }
+.col-monto { width: 10%; }
+
+.subcol-fecha { width: 15%; }
+.subcol-concepto { width: 35%; }
+.subcol-estado { width: 15%; }
+.subcol-monto { width: 15%; }
+.subcol-periodo { width: 10%; }
+
+.col-modal-fecha { width: 15%; }
+.col-modal-concepto { width: 40%; }
+.col-modal-estado { width: 15%; }
+.col-modal-monto { width: 15%; }
+
+.col-nov-fecha { width: 15%; }
+.col-nov-concepto { width: 35%; }
+.col-nov-periodo { width: 15%; }
+.col-nov-estado { width: 15%; }
+.col-nov-monto { width: 12%; }
+.col-nov-accion { width: 8%; }
+
+// Clases de utilidad para centrar celdas de carga vacías
+.celda-aviso-carga, .celda-aviso-vacio, .celda-modal-espera {
+  padding: 25px !important;
+  font-weight: 600;
+  color: #666;
+}
+
+.celda-modal-vacio-verde, .celda-modal-vacio-institucional {
+  padding: 50px !important;
+  color: $verde-colegial;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+// 🌟 BOTÓN ANULAR (ROJO)
+.btn-anular-rojo {
+  background: white;
+  color: $rojo-deuda;
+  border: 2px solid $rojo-deuda;
+  padding: 6px 14px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: $rojo-deuda;
+    color: white;
+  }
+}
+
+// 🌟 CONTENEDOR REGISTRAR PAGO (MEJOR DISEÑO)
+.panel-registrar-pago {
+  margin-top: 15px;
+  background: #fdfdfd;
+  border: 1px solid #d4af37; // Borde dorado institucional
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  
+  h3 {
+    margin: 0 0 15px 0;
+    color: $verde-colegial;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    border-bottom: 1px dashed #d4af37;
+    padding-bottom: 5px;
+  }
+}
+
+/* 🌟 DISEÑO PROFESIONAL DE CARTELES */
+.cartel-dialogo-box {
+  background: #ffffff !important;
+  border: none !important; // Eliminamos bordes dobles anticuados
+  border-radius: 12px !important; // Bordes más suaves
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important; // Sombra moderna
+  overflow: hidden;
+  width: 400px !important;
+
+  .cartel-dialogo-header {
+    background: #f8f9fa !important; // Fondo gris muy claro
+    padding: 16px 20px !important;
+    border-bottom: 1px solid #e9ecef !important;
+
+    h3 {
+      color: #1a5d3b !important; // Verde institucional
+      font-size: 1.1rem !important;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .cartel-dialogo-body {
+    padding: 24px 20px !important;
+    color: #333 !important;
+    font-size: 0.95rem !important;
+  }
+
+  .cartel-dialogo-footer {
+    padding: 12px 20px !important;
+    background: #f8f9fa !important;
+    border-top: 1px solid #e9ecef !important;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+}
+
+/* Mejora de los botones dentro del cartel */
+.btn-confirmar-custom, .btn-cancelar-custom {
+  border-radius: 6px !important; // Botones más redondeados
+  padding: 10px 20px !important;
+  font-weight: 700 !important;
+  transition: transform 0.1s ease !important;
+
+  &:active {
+    transform: scale(0.98); // Efecto de "clic" al presionar
+  }
+}

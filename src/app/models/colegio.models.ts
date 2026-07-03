@@ -277,3 +277,11 @@ export interface NovedadCursoDto {
   estado : string;
   fecha : Date;
 }
+
+export interface PagoCargaDto {
+  legajo: number | null;
+  nroFactura: number | null;
+  fechaPago: string; // O Date, pero string 'yyyy-mm-dd' es mejor para input date
+  importePagado: number;
+  tipoPagoId: number | null;
+}

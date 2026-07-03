@@ -6,23 +6,30 @@
     
     <div class="nav-links">
       <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">INICIO</a>
-      <a routerLink="/cursos" routerLinkActive="active-link">CURSOS</a>
       <a routerLink="/anotador" routerLinkActive="active-link">ANOTADOR</a>
       <a routerLink="/cuenta-corriente" routerLinkActive="active-link">CTA CORRIENTE</a>
       <a routerLink="/inscripcion" routerLinkActive="active-link">NUEVA INSCRIPCIÓN</a>
-      <a routerLink="/ciclo-lectivo" routerLinkActive="active-link">CICLOS</a>
+
+      <div class="dropdown">
+        <a class="dropbtn">MANTENIMIENTO ▼</a>
+        <div class="dropdown-content">
+          <a routerLink="/periodos">PERIODOS</a>
+          <a routerLink="/conceptos">CONCEPTOS</a>
+          <a routerLink="/ciclo-lectivo" routerLinkActive="active-link">CICLOS</a>
+          <a routerLink="/cursos" routerLinkActive="active-link">CURSOS</a>
+        </div>
+      </div>
 
       <!-- SUBMENU DESPLEGABLE DE ADMINISTRACIÓN -->
       <div class="dropdown">
         <a class="dropbtn">ADMINISTRACIÓN ▼</a>
         <div class="dropdown-content">
-          <a routerLink="/periodos">PERIODOS</a>
-          <a routerLink="/conceptos">CONCEPTOS</a>
           <a routerLink="/recaudacion">RECAUDACIÓN DIARIA</a>
           <a routerLink="/facturacion-periodo">FACTURACIÓN POR PERÍODO</a>
           <a routerLink="/recaudacion-periodo">RECAUDACIÓN POR PERÍODO</a>
           <a routerLink="/recaudacion-fechas">RECAUDACIÓN POR FECHAS</a>
           <a routerLink="/deuda-general">DEUDA GENERAL</a>
+          <a routerLink="/carga-pago">CARGA DE PAGO</a>
         </div>
       </div>
     </div>

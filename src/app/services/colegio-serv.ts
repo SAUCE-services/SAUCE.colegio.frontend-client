@@ -41,6 +41,12 @@ export class ColegioServ {
       params: { nombre: nombre } 
     });
   }
+
+  getAlumnoPorLegajo(legajo: number) {
+  // Asegúrate de que esta ruta coincida con tu AlumnoController
+  return this.http.get(`${this.baseUrl}/alumno/${legajo}`);
+}
+
   descargarPdfAlumnosPorCurso(nombreCurso: string): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/alumno/curso-pdf`, {
       params: { nombre: nombreCurso },
@@ -386,6 +392,21 @@ agregarNovedadManual(dto: { alumnoId: number; periodoNombre: string; conceptoId:
   guardarOCorregirCicloLectivo(ciclo: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/ciclos-lectivos/guardar`, ciclo);
   }
+
+  // En tu servicio (ColegioServ)
+registrarPago(dto: any): Observable<any> {
+  return this.http.post(`${this.baseUrl}/facturacion/registrar-pago`, dto);
+}
+
+anularPago(nroFactura: number): Observable<any> {
+  return this.http.post(`${this.baseUrl}/facturacion/anular-pago/${nroFactura}`, {});
+}
+
+buscarFacturaParaPago(alumnoId: number, periodo: string) {
+  return this.http.get(`${this.baseUrl}/facturacion/buscar-para-pago`, {
+    params: { alumnoId: alumnoId.toString(), periodo: periodo }
+  });
+}
 }
 
 

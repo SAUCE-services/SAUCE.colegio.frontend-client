@@ -14,6 +14,7 @@ import { RecaudacionFechasComponent } from './components/recaudacion-fechas/reca
 import { NovedadesCursoComponent } from './components/novedades-curso/novedades-curso';
 import { DeudaGeneralComponent } from './components/deuda-general/deuda-general';
 import { CicloLectivoComponent } from './components/ciclo-lectivo/ciclo-lectivo';
+import { CargaPagoComponent } from './components/carga-pago/carga-pago';
 
 export const routes: Routes = [
   // 1. Ruta por defecto: Carga la Home
@@ -34,6 +35,7 @@ export const routes: Routes = [
   { path: 'novedades-curso', component: NovedadesCursoComponent},
   { path: 'deuda-general', component: DeudaGeneralComponent},
   { path: 'ciclo-lectivo', component: CicloLectivoComponent},
+  { path: 'carga-pago', component: CargaPagoComponent},
   
   // 3. Comodín: Si escriben cualquier cosa mal, vuelve a la Home
   { path: '**', redirectTo: '' }

@@ -1,0 +1,159 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Carga de pago</h1>
+    </div>
+  </header>
+
+  <div class="form-retro-container">
+    <section class="seccion-ficha search-bg">
+      <div class="row-search" style="flex-direction: row; gap: 15px; align-items: flex-end;">
+        <div class="campo-novedad-select" style="flex: 1;">
+          <label>Período:</label>
+          <select [(ngModel)]="periodoSeleccionado" class="select-periodo-modal" style="width: 100%;">
+            <option [ngValue]="''" disabled>[ Seleccione un período ]</option>
+            @for (p of periodosDisponibles(); track p.descripcion) {
+              <option [value]="p.descripcion">{{ p.descripcion }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- CAMBIA ESTO -->
+<div class="input-mixto" style="display: flex; align-items: center; gap: 10px; flex: 2;">
+  <label style="margin: 0; font-weight: 700;">Legajo:</label>
+  <input type="number" [(ngModel)]="legajo" (keyup.enter)="consultarCuenta()" 
+         placeholder="Ej: 1484" style="text-align: center; flex: 1;">
+</div>
+
+        <button type="button" class="btn-toggle" (click)="consultarCuenta()" [disabled]="cargando">
+          {{ cargando ? 'BUSCANDO...' : 'CONSULTAR' }}
+        </button>
+      </div>
+    </section>
+
+    @if (movimientos && !cargando) {
+      <div class="info-alumno-banner banner-control-alumno">
+        <div class="bloque-datos-alumno">
+          <label>ALUMNO:</label>
+          <span class="nombre-resaltado">{{ movimientos.nombreCompleto }}</span>
+        </div>
+      </div>
+
+      <div class="tabla-container seccion-ficha">
+        <table class="tabla-retro">
+          <thead>
+            <tr>
+              <th class="text-center col-factura">Factura</th>
+              <th class="text-center col-estado">Estado</th>
+              <th class="text-center col-fecha">F. Estado</th>
+              <th class="text-center col-fecha">1er Venc</th>
+              <th class="text-center col-fecha">F. Pago</th>
+              <th class="text-center col-monto">Imp. Adeudado</th>
+              <th class="text-center col-monto">Imp. Pagado</th>
+              <th class="text-center col-monto">Saldo</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of movimientos.facturas; track f.nroFactura) {
+              <tr (click)="seleccionarFactura(f)"
+                  [class.fila-seleccionada]="facturaSeleccionada?.nroFactura === f.nroFactura"
+                  class="pointer">
+                <td class="text-center bold-cell"># {{ f.nroFactura }}</td>
+                <td class="text-center"><span class="badge-estado">{{ f.estado }}</span></td>
+                <td class="text-center">{{ f.fechaEstado | date:'dd/MM/yyyy' }}</td>
+                <td class="text-center">{{ f.primerVenc | date:'dd/MM/yyyy' }}</td>
+                <td class="text-center">{{ f.fechaPago | date:'dd/MM/yyyy' }}</td>
+                <td class="money-center">{{ f.impAdeudado | number:'1.2-2' }}</td>
+                <td class="money-center">{{ f.impPagado | number:'1.2-2' }}</td>
+                <td class="money-center font-bold status-saldo">{{ f.saldoProgresivo | number:'1.2-2' }}</td>
+                <td class="text-center">
+                  @if (f.estado === 'Factura PAGADA') {
+                    <button class="btn-anular-rojo" (click)="anularPago(f.nroFactura); $event.stopPropagation()">
+                      ANULAR
+                    </button>
+                  }
+                </td>
+              </tr>
+
+              @if (facturaSeleccionada?.nroFactura === f.nroFactura) {
+                <tr class="fila-detalle-expandida">
+                  <td colspan="9"> 
+                    <div class="detalle-desplegable-animado">
+                      <table class="tabla-detalle-interna">
+                        <thead>
+                          <tr>
+                            <th class="text-center">F.Estado</th>
+                            <th class="text-center">Concepto</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Importe</th>
+                            <th class="text-center">F.Registro</th>
+                            <th class="text-center">Periodo</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @if (cargandoDetalle) {
+                            <tr><td colspan="6" class="text-center">Cargando detalle...</td></tr>
+                          } @else {
+                            @for (linea of lineasDetalle; track $index) {
+                              <tr>
+                                <td>{{ linea.fechaEstado | date:'dd/MM/yyyy' }}</td>
+                                <td class="font-bold">{{ linea.concepto }}</td>
+                                <td><span class="badge-concepto">{{ linea.estado }}</span></td>
+                                <td class="text-center">{{ linea.importe | number:'1.2-2' }}</td>
+                                <td class="text-center">{{ linea.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+                                <td class="text-center">{{ linea.periodo }}</td>
+                              </tr>
+                            } @empty {
+                              <tr><td colspan="6" class="text-center">No hay detalles para esta factura.</td></tr>
+                            }
+                          }
+                        </tbody>
+                      </table>
+
+                      <!-- 🌟 FORMULARIO SOLO SI NO ESTÁ PAGADA -->
+          @if (facturaSeleccionada && !facturaSeleccionada.estado?.includes('PAGADA')) {
+  <div class="panel-registrar-pago seccion-ficha">
+     <h3>Registrar Pago</h3>
+     <div style="display: flex; gap: 15px; align-items: flex-end;">
+       <div style="flex: 1;">
+         <label style="font-weight: 700; font-size: 0.75rem; color: #555; text-transform: uppercase;">Monto a acreditar ($)</label>
+         <input type="number" [(ngModel)]="importePago" class="input-form-retro-style" style="width: 100%; padding: 10px;">
+       </div>
+       <button class="btn-toggle" (click)="registrarPago()" [disabled]="cargandoPago" style="height: 40px;">
+         {{ cargandoPago ? 'PROCESANDO...' : 'CONFIRMAR PAGO' }}
+       </button>
+     </div>
+  </div>
+}
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    @if (mostrarCartel) {
+  <div class="cartel-dialogo-overlay">
+    <div class="cartel-dialogo-box">
+      <header class="cartel-dialogo-header">
+        <h3>{{ tituloCartel }}</h3>
+      </header>
+      <div class="cartel-dialogo-body">
+        <p>{{ mensajeCartel }}</p>
+      </div>
+      <footer class="cartel-dialogo-footer">
+        @if (esConfirmacion) {
+          <button class="btn-cancelar-custom" (click)="cerrarCartel()">CANCELAR</button>
+          <button class="btn-confirmar-custom" (click)="ejecutarAccionConfirmada()">ACEPTAR</button>
+        } @else {
+          <button class="btn-confirmar-custom" (click)="cerrarCartel()">ENTENDIDO</button>
+        }
+      </footer>
+    </div>
+  </div>
+}
+  </div>
+</div>
