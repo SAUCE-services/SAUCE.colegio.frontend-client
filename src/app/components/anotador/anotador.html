@@ -8,31 +8,58 @@
     <div class="filtros-periodo">
       <div class="grupo-input">
         <label>Nro. de Legajo</label>
-        <div class="input-mixto-search">
-          <input 
-            type="number" 
-            [(ngModel)]="legajoBusqueda" 
-            (blur)="buscarYConsultar()" 
-            (keyup.enter)="buscarYConsultar()"
-            placeholder="Ej: 105">
-          <button type="button" class="btn-buscar-accion" (click)="buscarYConsultar()">🔍 BUSCAR </button>
-        </div>
+        <input 
+          type="number" 
+          [(ngModel)]="legajoBusqueda" 
+          (blur)="buscarYConsultar()" 
+          (keyup.enter)="buscarYConsultar()"
+          placeholder="Ej: 105">
       </div>
 
-      @if (nombreAlumno) {
+      <div class="grupo-input" style="position: relative;">
+        <label>Apellido y Nombre</label>
+        <input 
+          type="text" 
+          [(ngModel)]="nombreAlumno" 
+          (input)="buscarEnTiempoReal()" 
+          (keydown)="manejarTecladoSugerencias($event)"
+          placeholder="Empiece a escribir el nombre...">
+
+        @if (mostrarSugerencias) {
+          <ul class="dropdown-resultados">
+            @for (a of resultadosBusqueda; track a.alumnoId; let i = $index) {
+              <li 
+                [class.activo]="i === indiceSugerenciaActiva"
+                (click)="seleccionarAlumno(a)">
+                {{ a.nombreCompleto }} <small>(#{{ a.alumnoId }})</small>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      @if (alumnoConfirmado) {
+        <div class="alumno-identificado">
+          <label>Identificado como:</label>
+          <span class="nombre-resaltado">{{ nombreAlumno }}</span>
+        </div>
+      } @else if (nombreAlumno === 'Alumno no encontrado') {
         <div class="alumno-identificado">
           <label>Identificado como:</label>
           <span class="nombre-resaltado">{{ nombreAlumno }}</span>
         </div>
       }
 
-      <button class="btn-limpiar" (click)="legajoBusqueda=null; nombreAlumno=''">
-        LIMPIAR IDENTIFICACIÓN
-      </button>
+      <div class="acciones-identificacion">
+        <button type="button" class="btn-buscar-accion" (click)="buscarYConsultar()">🔍 BUSCAR</button>
+        <button class="btn-limpiar" (click)="limpiarIdentificacion()">
+          LIMPIAR IDENTIFICACIÓN
+        </button>
+      </div>
     </div>
   </header>
 
-  @if (nombreAlumno && nombreAlumno !== 'Alumno no encontrado') {
+  @if (alumnoConfirmado) {
     <div class="anotacion-form-box">
       <fieldset class="seccion-ficha">
         <legend>📝 REGISTRAR NUEVA OBSERVACIÓN PARA EL LEGAJO #{{legajoBusqueda}}</legend>
