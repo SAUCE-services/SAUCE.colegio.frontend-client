@@ -64,6 +64,48 @@ $fuente-moderna: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetic
   margin: 1rem 0 2rem 0;
 }
 
+.filtro-tipo-establecimiento {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+.btn-filtro-tipo {
+  background: white;
+  border: 2px solid $verde-colegial;
+  color: $verde-colegial;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: $fuente-moderna;
+
+  &:hover { background: rgba($verde-colegial, 0.08); }
+
+  &.activo {
+    background: $verde-colegial;
+    color: white;
+  }
+}
+
+.grupo-cursos {
+  margin-bottom: 2.5rem;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.subtitulo-grupo-cursos {
+  font-family: $fuente-titulo;
+  color: $verde-colegial;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px dashed rgba($verde-colegial, 0.3);
+}
+
 .card-grid {
   display: flex;
   flex-direction: column;

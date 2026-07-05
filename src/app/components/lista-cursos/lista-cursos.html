@@ -16,34 +16,101 @@
         }
       </select>
     </div>
+
+    <div class="filtro-tipo-establecimiento">
+      <button 
+        type="button" 
+        class="btn-filtro-tipo" 
+        [class.activo]="vistaSeleccionada === 'todos'" 
+        (click)="vistaSeleccionada = 'todos'">
+        TODOS
+      </button>
+      <button 
+        type="button" 
+        class="btn-filtro-tipo" 
+        [class.activo]="vistaSeleccionada === 'jardin'" 
+        (click)="vistaSeleccionada = 'jardin'">
+        🧸 JARDÍN
+      </button>
+      <button 
+        type="button" 
+        class="btn-filtro-tipo" 
+        [class.activo]="vistaSeleccionada === 'colegio'" 
+        (click)="vistaSeleccionada = 'colegio'">
+        🎓 COLEGIO
+      </button>
+    </div>
   </header>
 
-  <!-- Grilla de Tarjetas Escolares -->
-  <div class="card-grid">
-    @for (curso of cursos; track curso.cursoId) {
-      <div class="curso-card" [routerLink]="['/curso', curso.descripcion]">
-        <div class="card-content">
-          <div class="titulo-row-card-flex">
-            <h3>{{ curso.descripcion }}</h3>
-            <!-- Botón interno para disparar la ficha de edición custom sin pisar la navegación -->
-            <button type="button" class="btn-editar-interno-card" (click)="abrirEditorCurso(curso, $event)" title="Modificar asignación del curso">
-              ✏️ MODIFICAR
-            </button>
-          </div>
-          <div class="detalles-fila">
-            <span><strong>Profesor/a:</strong> <span class="maestro-bold">{{ curso.nombreMaestro || 'Sin Asignar' }}</span></span>
-            <span><strong>Ciclo:</strong> {{ curso.nombreCiclo }}</span>
-            <span class="est-name-span"><strong>Establecimiento:</strong> {{ curso.nombreEstablecimiento }}</span>
-          </div>
+  @if (cursos.length === 0) {
+    <div class="cargando">
+      <p>Buscando folios en el archivo...</p>
+    </div>
+  } @else {
+    @if (vistaSeleccionada !== 'colegio') {
+      <!-- Grilla de Tarjetas Escolares: Jardín / Inicial -->
+      <div class="grupo-cursos">
+        <h2 class="subtitulo-grupo-cursos">🧸 Jardín / Inicial</h2>
+        <div class="card-grid">
+          @for (curso of cursosJardin(); track curso.cursoId) {
+            <div class="curso-card" [routerLink]="['/curso', curso.descripcion]">
+              <div class="card-content">
+                <div class="titulo-row-card-flex">
+                  <h3>{{ curso.descripcion }}</h3>
+                  <!-- Botón interno para disparar la ficha de edición custom sin pisar la navegación -->
+                  <button type="button" class="btn-editar-interno-card" (click)="abrirEditorCurso(curso, $event)" title="Modificar asignación del curso">
+                    ✏️ MODIFICAR
+                  </button>
+                </div>
+                <div class="detalles-fila">
+                  <span><strong>Profesor/a:</strong> <span class="maestro-bold">{{ curso.nombreMaestro || 'Sin Asignar' }}</span></span>
+                  <span><strong>Ciclo:</strong> {{ curso.nombreCiclo }}</span>
+                  <span class="est-name-span"><strong>Establecimiento:</strong> {{ curso.nombreEstablecimiento }}</span>
+                </div>
+              </div>
+              <span class="badge">{{ curso.nombreTurno }}</span>
+            </div>
+          } @empty {
+            <div class="cargando">
+              <p>No hay cursos de Jardín / Inicial en este folio.</p>
+            </div>
+          }
         </div>
-        <span class="badge">{{ curso.nombreTurno }}</span>
-      </div>
-    } @empty {
-      <div class="cargando">
-        <p>Buscando folios en el archivo...</p>
       </div>
     }
-  </div>
+
+    @if (vistaSeleccionada !== 'jardin') {
+      <!-- Grilla de Tarjetas Escolares: Colegio -->
+      <div class="grupo-cursos">
+        <h2 class="subtitulo-grupo-cursos">🎓 Colegio</h2>
+        <div class="card-grid">
+          @for (curso of cursosColegio(); track curso.cursoId) {
+            <div class="curso-card" [routerLink]="['/curso', curso.descripcion]">
+              <div class="card-content">
+                <div class="titulo-row-card-flex">
+                  <h3>{{ curso.descripcion }}</h3>
+                  <!-- Botón interno para disparar la ficha de edición custom sin pisar la navegación -->
+                  <button type="button" class="btn-editar-interno-card" (click)="abrirEditorCurso(curso, $event)" title="Modificar asignación del curso">
+                    ✏️ MODIFICAR
+                  </button>
+                </div>
+                <div class="detalles-fila">
+                  <span><strong>Profesor/a:</strong> <span class="maestro-bold">{{ curso.nombreMaestro || 'Sin Asignar' }}</span></span>
+                  <span><strong>Ciclo:</strong> {{ curso.nombreCiclo }}</span>
+                  <span class="est-name-span"><strong>Establecimiento:</strong> {{ curso.nombreEstablecimiento }}</span>
+                </div>
+              </div>
+              <span class="badge">{{ curso.nombreTurno }}</span>
+            </div>
+          } @empty {
+            <div class="cargando">
+              <p>No hay cursos de Colegio en este folio.</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
 
   <div class="paginacion-retro">
     <button [disabled]="paginaActual === 0" (click)="cargarCursos(paginaActual - 1)">

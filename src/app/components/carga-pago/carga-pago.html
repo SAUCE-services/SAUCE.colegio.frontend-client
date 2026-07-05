@@ -25,6 +25,29 @@
          placeholder="Ej: 1484" style="text-align: center; flex: 1;">
 </div>
 
+        <div class="input-mixto" style="display: flex; align-items: center; gap: 10px; flex: 2; position: relative;">
+          <label style="margin: 0; font-weight: 700; white-space: nowrap;">Apellido y Nombre:</label>
+          <input 
+            type="text" 
+            [(ngModel)]="nombreAlumno" 
+            (input)="buscarEnTiempoReal()" 
+            (keydown)="manejarTecladoSugerencias($event)"
+            placeholder="Empiece a escribir el nombre..." 
+            style="flex: 1;">
+
+          @if (mostrarSugerencias) {
+            <ul class="dropdown-resultados">
+              @for (a of resultadosBusqueda; track a.alumnoId; let i = $index) {
+                <li 
+                  [class.activo]="i === indiceSugerenciaActiva"
+                  (click)="seleccionarAlumno(a)">
+                  {{ a.nombreCompleto }} <small>(#{{ a.alumnoId }})</small>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
         <button type="button" class="btn-toggle" (click)="consultarCuenta()" [disabled]="cargando">
           {{ cargando ? 'BUSCANDO...' : 'CONSULTAR' }}
         </button>

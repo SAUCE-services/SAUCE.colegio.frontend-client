@@ -20,7 +20,10 @@ export class ListaCursosComponent implements OnInit {
   totalPaginas: number = 0;
   paginaActual: number = 0;  
   cicloSeleccionado?: string;
-  ciclosDisponibles: string[] = [];  
+  ciclosDisponibles: string[] = [];
+
+  // 🌟 Filtro de vista: Todos / Jardín / Colegio
+  vistaSeleccionada: 'todos' | 'jardin' | 'colegio' = 'todos';
 
   // 🌟 VARIABLE DE CONTROL PARA FORMULARIO FLOTANTE (ABM)
   mostrarFormulario = false;
@@ -45,6 +48,26 @@ export class ListaCursosComponent implements OnInit {
   mostrarCartelMensaje = false;
   cartelTitulo: string = '';
   cartelMensaje: string = '';
+
+  // 🔧 Antes eran computed(), pero `cursos` es un array plano (no un signal),
+  // así que Angular nunca detectaba el cambio y quedaban cacheados con el valor viejo.
+  // Como métodos normales, se re-evalúan en cada ciclo de detección de cambios.
+  cursosJardin(): CursoDto[] {
+    return this.cursos.filter(c => this.esJardinOInicial(c.nombreEstablecimiento));
+  }
+
+  cursosColegio(): CursoDto[] {
+    return this.cursos.filter(c => !this.esJardinOInicial(c.nombreEstablecimiento));
+  }
+
+  // Compara ignorando tildes y mayúsculas, así "Jardín" y "Jardin" matchean igual
+  private esJardinOInicial(nombreEstablecimiento?: string): boolean {
+    const texto = (nombreEstablecimiento || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // quita las tildes
+      .toLowerCase();
+    return texto.includes('jardin') || texto.includes('inicial');
+  }
 
   ngOnInit() {
     this.cargarCursos(0);

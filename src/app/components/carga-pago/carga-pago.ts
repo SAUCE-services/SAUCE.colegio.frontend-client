@@ -29,6 +29,12 @@ export class CargaPagoComponent implements OnInit {
   facturaSeleccionada: FacturaDetalleDto | null = null;
   lineasDetalle: LineaDetalleDto[] = [];
   totalDeudaFinal = 0;
+
+  // 🔎 Búsqueda por Apellido y Nombre con autocompletado (unificada con legajo)
+  nombreAlumno: string = '';
+  resultadosBusqueda: any[] = [];
+  mostrarSugerencias = false;
+  indiceSugerenciaActiva = -1;
   
   cargando = false;
   cargandoDetalle = false;
@@ -56,6 +62,68 @@ accionPendiente: () => void = () => {};
         this.cdr.detectChanges();
       }
     });
+  }
+
+  // Búsqueda en tiempo real por Apellido y Nombre
+  buscarEnTiempoReal() {
+    this.indiceSugerenciaActiva = -1;
+
+    if (this.nombreAlumno.length < 3) {
+      this.resultadosBusqueda = [];
+      this.mostrarSugerencias = false;
+      return;
+    }
+
+    this.service.buscarAlumnos(this.nombreAlumno).subscribe(data => {
+      this.resultadosBusqueda = data;
+      this.mostrarSugerencias = data.length > 0;
+      this.indiceSugerenciaActiva = -1;
+    });
+  }
+
+  // Al hacer clic (o Enter) en un resultado: fija el legajo y dispara la consulta
+  seleccionarAlumno(alumno: any) {
+    this.legajo = alumno.alumnoId;
+    this.nombreAlumno = alumno.nombreCompleto;
+    this.resultadosBusqueda = [];
+    this.mostrarSugerencias = false;
+    this.indiceSugerenciaActiva = -1;
+    this.consultarCuenta();
+  }
+
+  // Maneja flechas ↑↓ para navegar sugerencias, Enter para confirmar y Escape para cerrar
+  manejarTecladoSugerencias(event: KeyboardEvent) {
+    if (!this.mostrarSugerencias || this.resultadosBusqueda.length === 0) {
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.indiceSugerenciaActiva =
+          (this.indiceSugerenciaActiva + 1) % this.resultadosBusqueda.length;
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        this.indiceSugerenciaActiva =
+          (this.indiceSugerenciaActiva - 1 + this.resultadosBusqueda.length) %
+          this.resultadosBusqueda.length;
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        if (this.resultadosBusqueda.length > 0) {
+          const indice = this.indiceSugerenciaActiva >= 0 ? this.indiceSugerenciaActiva : 0;
+          this.seleccionarAlumno(this.resultadosBusqueda[indice]);
+        }
+        break;
+
+      case 'Escape':
+        this.mostrarSugerencias = false;
+        this.indiceSugerenciaActiva = -1;
+        break;
+    }
   }
 consultarCuenta() {
   if (!this.legajo || !this.periodoSeleccionado) {
@@ -109,6 +177,8 @@ consultarCuenta() {
             nombreCompleto: nombreFinal,
            facturas: facturasFiltradas // Aquí están todas, pagadas y no pagadas
           } as HistoriaFacturacionDto;
+
+          this.nombreAlumno = nombreFinal; // 🔗 Sincroniza el campo de nombre con el legajo consultado
           
           this.cargando = false;
           this.cdr.detectChanges();
