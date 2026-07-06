@@ -80,6 +80,13 @@ export class ColegioServ {
     });
   }
 
+  // 🌟 Paginación separada por tipo de establecimiento (jardin/colegio), con filtro opcional de ciclo
+  listarCursosPorTipo(tipo: 'jardin' | 'colegio', anio: string | undefined, page: number = 0, size: number = 10): Observable<PageResponse<CursoDto>> {
+    const params: any = { page: page.toString(), size: size.toString() };
+    if (anio) params.anio = anio;
+    return this.http.get<PageResponse<CursoDto>>(`${this.baseUrl}/curso/tipo/${tipo}`, { params });
+  }
+
   getCiclosDisponibles(): Observable<string[]> {
     return this.http.get<string[]>(`${this.baseUrl}/curso/ciclos-disponibles`);
   }
@@ -414,5 +421,3 @@ buscarAlumnos(query: string): Observable<AlumnoDto[]> {
   return this.http.get<AlumnoDto[]>(`${this.baseUrl}/alumno/buscar?query=${query}`);
 }
 }
-
-

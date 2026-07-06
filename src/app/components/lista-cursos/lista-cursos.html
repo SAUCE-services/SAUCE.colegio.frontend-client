@@ -22,27 +22,27 @@
         type="button" 
         class="btn-filtro-tipo" 
         [class.activo]="vistaSeleccionada === 'todos'" 
-        (click)="vistaSeleccionada = 'todos'">
+        (click)="cambiarVista('todos')">
         TODOS
       </button>
       <button 
         type="button" 
         class="btn-filtro-tipo" 
         [class.activo]="vistaSeleccionada === 'jardin'" 
-        (click)="vistaSeleccionada = 'jardin'">
+        (click)="cambiarVista('jardin')">
         🧸 JARDÍN
       </button>
       <button 
         type="button" 
         class="btn-filtro-tipo" 
         [class.activo]="vistaSeleccionada === 'colegio'" 
-        (click)="vistaSeleccionada = 'colegio'">
+        (click)="cambiarVista('colegio')">
         🎓 COLEGIO
       </button>
     </div>
   </header>
 
-  @if (cursos.length === 0) {
+  @if (cargando) {
     <div class="cargando">
       <p>Buscando folios en el archivo...</p>
     </div>
@@ -52,7 +52,7 @@
       <div class="grupo-cursos">
         <h2 class="subtitulo-grupo-cursos">🧸 Jardín / Inicial</h2>
         <div class="card-grid">
-          @for (curso of cursosJardin(); track curso.cursoId) {
+          @for (curso of itemsJardin(); track curso.cursoId) {
             <div class="curso-card" [routerLink]="['/curso', curso.descripcion]">
               <div class="card-content">
                 <div class="titulo-row-card-flex">
@@ -84,7 +84,7 @@
       <div class="grupo-cursos">
         <h2 class="subtitulo-grupo-cursos">🎓 Colegio</h2>
         <div class="card-grid">
-          @for (curso of cursosColegio(); track curso.cursoId) {
+          @for (curso of itemsColegio(); track curso.cursoId) {
             <div class="curso-card" [routerLink]="['/curso', curso.descripcion]">
               <div class="card-content">
                 <div class="titulo-row-card-flex">
