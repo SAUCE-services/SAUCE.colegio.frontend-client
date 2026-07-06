@@ -145,7 +145,11 @@ enviar() {
           // 🌟 REEMPLAZO DE ALERT POR CARTEL ERROR
           this.cartelTipo = 'error';
           this.cartelTitulo = 'Error de Servidor';
-          this.cartelMensaje = 'Error 400: El servidor rechazó los datos. Verifica que todos los campos de selección tengan una opción válida.';
+          // Mostramos el mensaje real que devuelve el backend (por ej. "Ya existe un
+          // alumno registrado con el DNI ...") en vez de un texto genérico fijo.
+          this.cartelMensaje = (typeof err.error === 'string' && err.error.trim())
+            ? err.error
+            : 'Error 400: El servidor rechazó los datos. Verifica que todos los campos de selección tengan una opción válida.';
           this.mostrarCartelMensaje = true;
           this.cdr.detectChanges();
         }
@@ -178,5 +182,3 @@ enviar() {
     });
   }
 }
-
-
