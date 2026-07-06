@@ -12,7 +12,7 @@
         
         <div class="grupo-botones-acciones">
           <button type="button" class="btn-novedades-retro btn-verde-matricular" (click)="abrirModalAgregar()">
-            ➕ MATRICULAR ALUMNO
+            AGREGAR ALUMNO
           </button>
 
           <button type="button" class="btn-novedades-retro" [routerLink]="['/novedades-curso']" [queryParams]="{ cursoNombre: nombreCursoUrl }">
@@ -145,7 +145,7 @@
               </button>
             }
           </div>
-          <button type="button" class="btn-close-modal" (click)="mostrarModalDeuda = false">❌ CERRAR</button>
+          <button type="button" class="btn-close-modal" (click)="mostrarModalDeuda = false"> X </button>
         </div>
 
         <div class="modal-mora-body">

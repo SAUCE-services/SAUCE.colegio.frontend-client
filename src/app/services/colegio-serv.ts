@@ -19,7 +19,8 @@ import {
   DeudaCursoResponseDto,
   NovedadesAlumnoResponseDto,
   NovedadCargaDto,
-  NovedadCursoDto
+  NovedadCursoDto,
+  AlumnoDto
 } from '../models/colegio.models';
 
 @Injectable({
@@ -77,6 +78,13 @@ export class ColegioServ {
     return this.http.get<PageResponse<CursoDto>>(`${this.baseUrl}/curso/ciclo/${anio}`, {
       params: { page: page.toString(), size: size.toString() }
     });
+  }
+
+  // 🌟 Paginación separada por tipo de establecimiento (jardin/colegio), con filtro opcional de ciclo
+  listarCursosPorTipo(tipo: 'jardin' | 'colegio', anio: string | undefined, page: number = 0, size: number = 10): Observable<PageResponse<CursoDto>> {
+    const params: any = { page: page.toString(), size: size.toString() };
+    if (anio) params.anio = anio;
+    return this.http.get<PageResponse<CursoDto>>(`${this.baseUrl}/curso/tipo/${tipo}`, { params });
   }
 
   getCiclosDisponibles(): Observable<string[]> {
@@ -407,6 +415,9 @@ buscarFacturaParaPago(alumnoId: number, periodo: string) {
     params: { alumnoId: alumnoId.toString(), periodo: periodo }
   });
 }
+
+// En tu servicio
+buscarAlumnos(query: string): Observable<AlumnoDto[]> {
+  return this.http.get<AlumnoDto[]>(`${this.baseUrl}/alumno/buscar?query=${query}`);
 }
-
-
+}

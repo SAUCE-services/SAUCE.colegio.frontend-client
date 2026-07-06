@@ -16,11 +16,16 @@ export class ListaCursosComponent implements OnInit {
   private colegioService = inject(ColegioServ);
   private cdr = inject(ChangeDetectorRef);
 
-  cursos: CursoDto[] = [];
+  cursos: CursoDto[] = []; // Usado en la vista "Todos" (paginación mixta)
+  cursosFiltrados: CursoDto[] = []; // Usado en la vista "Jardín" o "Colegio" (ya paginado por tipo en el backend)
   totalPaginas: number = 0;
   paginaActual: number = 0;  
+  cargando = false;
   cicloSeleccionado?: string;
-  ciclosDisponibles: string[] = [];  
+  ciclosDisponibles: string[] = [];
+
+  // 🌟 Filtro de vista: Todos / Jardín / Colegio
+  vistaSeleccionada: 'todos' | 'jardin' | 'colegio' = 'todos';
 
   // 🌟 VARIABLE DE CONTROL PARA FORMULARIO FLOTANTE (ABM)
   mostrarFormulario = false;
@@ -46,22 +51,85 @@ export class ListaCursosComponent implements OnInit {
   cartelTitulo: string = '';
   cartelMensaje: string = '';
 
+  // 🔧 Antes eran computed(), pero `cursos` es un array plano (no un signal),
+  // así que Angular nunca detectaba el cambio y quedaban cacheados con el valor viejo.
+  // Como métodos normales, se re-evalúan en cada ciclo de detección de cambios.
+  cursosJardin(): CursoDto[] {
+    return this.cursos.filter(c => this.esJardinOInicial(c.nombreEstablecimiento));
+  }
+
+  cursosColegio(): CursoDto[] {
+    return this.cursos.filter(c => !this.esJardinOInicial(c.nombreEstablecimiento));
+  }
+
+  // En vista "Todos" se arma el grupo filtrando client-side sobre `cursos` (la página mixta).
+  // En vista "Jardín"/"Colegio" el backend ya devolvió solo ese tipo, paginado correctamente,
+  // así que usamos `cursosFiltrados` directo, sin volver a filtrar.
+  itemsJardin(): CursoDto[] {
+    return this.vistaSeleccionada === 'jardin' ? this.cursosFiltrados : this.cursosJardin();
+  }
+
+  itemsColegio(): CursoDto[] {
+    return this.vistaSeleccionada === 'colegio' ? this.cursosFiltrados : this.cursosColegio();
+  }
+
+  // Compara ignorando tildes y mayúsculas, así "Jardín" y "Jardin" matchean igual
+  private esJardinOInicial(nombreEstablecimiento?: string): boolean {
+    const texto = (nombreEstablecimiento || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // quita las tildes
+      .toLowerCase();
+    return texto.includes('jardin') || texto.includes('inicial');
+  }
+
   ngOnInit() {
     this.cargarCursos(0);
     this.cargarFiltros();
     this.cargarCombosEstructura();
   }
 
+  // Cambia la vista (Todos/Jardín/Colegio) y vuelve a la página 1 con la fuente de datos correcta
+  cambiarVista(vista: 'todos' | 'jardin' | 'colegio') {
+    if (this.vistaSeleccionada === vista) return;
+    this.vistaSeleccionada = vista;
+    this.cargarCursos(0);
+  }
+
   cargarCursos(page: number) {
+    this.cargando = true;
+
+    // Vista Jardín o Colegio: pedimos al backend la página YA filtrada por tipo,
+    // así la paginación es correcta (antes se filtraba en el cliente sobre una
+    // página mixta de 10, y por eso la distribución entre páginas quedaba despareja).
+    if (this.vistaSeleccionada === 'jardin' || this.vistaSeleccionada === 'colegio') {
+      this.colegioService.listarCursosPorTipo(this.vistaSeleccionada, this.cicloSeleccionado, page).subscribe({
+        next: (response) => this.actualizarGrillaFiltrada(response),
+        error: (err) => {
+          console.error('Error al cargar cursos por tipo:', err);
+          this.cargando = false;
+          this.cdr.detectChanges();
+        }
+      });
+      return;
+    }
+
     if (this.cicloSeleccionado) {
       this.colegioService.filtrarCursosPorCiclo(this.cicloSeleccionado, page).subscribe({
         next: (response) => this.actualizarGrilla(response),
-        error: (err) => console.error('Error en filtro paginado:', err)
+        error: (err) => {
+          console.error('Error en filtro paginado:', err);
+          this.cargando = false;
+          this.cdr.detectChanges();
+        }
       });
     } else {
       this.colegioService.listarCursos(page).subscribe({
         next: (response) => this.actualizarGrilla(response),
-        error: (err) => console.error('Error al cargar folios:', err)
+        error: (err) => {
+          console.error('Error al cargar folios:', err);
+          this.cargando = false;
+          this.cdr.detectChanges();
+        }
       });
     }
   }
@@ -70,6 +138,15 @@ export class ListaCursosComponent implements OnInit {
     this.cursos = response.content;
     this.totalPaginas = response.totalPages;
     this.paginaActual = response.number;
+    this.cargando = false;
+    this.cdr.detectChanges();
+  }
+
+  private actualizarGrillaFiltrada(response: PageResponse<CursoDto>) {
+    this.cursosFiltrados = response.content;
+    this.totalPaginas = response.totalPages;
+    this.paginaActual = response.number;
+    this.cargando = false;
     this.cdr.detectChanges();
   }
 
