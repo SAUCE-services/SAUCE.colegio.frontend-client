@@ -450,4 +450,12 @@ consultarFacturaCurso(cursoId: number, periodoId: number): Observable<any> {
 buscarAlumnos(query: string): Observable<AlumnoDto[]> {
   return this.http.get<AlumnoDto[]>(`${this.baseUrl}/alumno/buscar?query=${query}`);
 }
+
+// 🌟 PDF de "Facturar por Curso": una página por cada alumno ya facturado en el período
+imprimirFacturaCurso(cursoId: number, periodoId: number): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/facturacion/imprimir-curso`, {
+    params: { cursoId: cursoId.toString(), periodoId: periodoId.toString() },
+    responseType: 'blob'
+  });
+}
 }

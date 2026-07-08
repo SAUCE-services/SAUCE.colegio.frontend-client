@@ -54,6 +54,15 @@
           style="padding: 10px 24px; height: 42px;">
           {{ facturando ? '⏳ FACTURANDO...' : '💾 FACTURAR PENDIENTES' }}
         </button>
+
+        <button
+          type="button"
+          class="btn-toggle"
+          (click)="imprimir()"
+          [disabled]="imprimiendo || !hayFacturados"
+          style="padding: 10px 24px; height: 42px;">
+          {{ imprimiendo ? '⏳ GENERANDO...' : '🖨️ IMPRIMIR' }}
+        </button>
       </div>
 
       <div style="display: flex; gap: 20px; margin-top: 14px; font-size: 0.8rem; font-weight: 700;">

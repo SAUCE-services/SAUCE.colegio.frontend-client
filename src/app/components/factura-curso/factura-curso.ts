@@ -25,6 +25,7 @@ export class FacturaCursoComponent implements OnInit {
 
   cargandoPreview = false;
   facturando = false;
+  imprimiendo = false;
   preview: any[] = []; // 🌟 TODOS los alumnos del curso, con facturado true/false
 
   // 🌟 Sistema de cartel custom (mismo patrón que el resto de la app)
@@ -116,6 +117,41 @@ export class FacturaCursoComponent implements OnInit {
   // Cuántos alumnos de la vista previa tienen conceptos sin facturar (para habilitar el botón).
   get hayPendientes(): boolean {
     return this.preview.some(a => a.tienePendientes);
+  }
+
+  // Si hay al menos un alumno ya facturado, se puede imprimir el PDF del curso
+  get hayFacturados(): boolean {
+    return this.preview.some(a => a.facturado);
+  }
+
+  imprimir() {
+    if (!this.cursoSeleccionadoId || !this.periodoSeleccionadoId) {
+      return;
+    }
+
+    this.imprimiendo = true;
+    this.cdr.detectChanges();
+
+    this.service.imprimirFacturaCurso(this.cursoSeleccionadoId, this.periodoSeleccionadoId).subscribe({
+      next: (blob: Blob) => {
+        this.imprimiendo = false;
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        this.cdr.detectChanges();
+      },
+      error: async (err) => {
+        this.imprimiendo = false;
+        // El error viene como Blob (responseType: 'blob'), hay que leerlo como texto
+        let mensaje = 'No se pudo generar el PDF.';
+        if (err?.error instanceof Blob) {
+          try {
+            mensaje = await err.error.text();
+          } catch { /* usamos el mensaje genérico */ }
+        }
+        this.lanzarCartel('Error', mensaje, 'error');
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   facturar() {
