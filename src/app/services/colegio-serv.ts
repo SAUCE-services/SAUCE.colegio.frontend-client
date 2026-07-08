@@ -91,11 +91,21 @@ export class ColegioServ {
     return this.http.get<string[]>(`${this.baseUrl}/curso/ciclos-disponibles`);
   }
 
+  // 🌟 Combo sin paginar de cursos de un ciclo (para el <select> de "Facturar por Curso")
+  getCursosComboPorCiclo(ciclo: string): Observable<CursoDto[]> {
+    return this.http.get<CursoDto[]>(`${this.baseUrl}/curso/combo`, { params: { ciclo } });
+  }
+
   // --- MÓDULO: PERÍODOS ---
   listarPeriodos(page: number = 0, size: number = 15): Observable<PageResponse<PeriodoDto>> {
     return this.http.get<PageResponse<PeriodoDto>>(`${this.baseUrl}/periodo/paginado`, {
       params: { page: page.toString(), size: size.toString() }
     });
+  }
+
+  // 🌟 Combo sin paginar de periodos de un ciclo (para el <select> de "Facturar por Curso")
+  getPeriodosComboPorCiclo(ciclo: string): Observable<PeriodoDto[]> {
+    return this.http.get<PeriodoDto[]>(`${this.baseUrl}/periodo/combo`, { params: { ciclo } });
   }
 
 buscarPeriodos(primerVenc?: string, segundoVenc?: string, ciclo?: string, page: number = 0): Observable<PageResponse<PeriodoDto>> {
@@ -413,6 +423,26 @@ anularPago(nroFactura: number): Observable<any> {
 buscarFacturaParaPago(alumnoId: number, periodo: string) {
   return this.http.get(`${this.baseUrl}/facturacion/buscar-para-pago`, {
     params: { alumnoId: alumnoId.toString(), periodo: periodo }
+  });
+}
+
+// 🌟 Vista previa: todos los alumnos del curso, marcados como facturado/pendiente
+previewFacturaCurso(cursoId: number, periodoId: number): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/facturacion/preview-curso`, {
+    params: { cursoId: cursoId.toString(), periodoId: periodoId.toString() }
+  });
+}
+
+// 🌟 "Facturar por Curso": agrupa las novedades pendientes de cada alumno del curso
+// en una factura nueva, para el período y vencimiento indicados.
+facturarCurso(dto: { cursoId: number; periodoId: number; fechaVencimiento: string }): Observable<any> {
+  return this.http.post(`${this.baseUrl}/facturacion/facturar-curso`, dto);
+}
+
+// 🌟 Vista previa: todos los conceptos (facturados y pendientes) del curso/período
+consultarFacturaCurso(cursoId: number, periodoId: number): Observable<any> {
+  return this.http.get(`${this.baseUrl}/facturacion/consultar-curso`, {
+    params: { cursoId: cursoId.toString(), periodoId: periodoId.toString() }
   });
 }
 

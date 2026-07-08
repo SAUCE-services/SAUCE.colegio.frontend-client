@@ -1,0 +1,161 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Factura por Curso</h1>
+    </div>
+  </header>
+
+  <div class="form-retro-container">
+    <section class="seccion-ficha search-bg" style="padding: 20px;">
+      <h2 style="margin-top: 0; color: #1a5d3b; font-size: 1.1rem; font-weight: 800; border-bottom: 2px double #1a5d3b; padding-bottom: 6px; text-transform: uppercase; margin-bottom: 15px;">
+        ⚙️ Parámetros de Facturación
+      </h2>
+
+      <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="display: flex; flex-direction: column; gap: 5px; width: 130px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Ciclo</label>
+          <select [(ngModel)]="cicloSeleccionado" (change)="onCambioCiclo()">
+            @for (anio of ciclosDisponibles; track anio) {
+              <option [value]="anio">{{ anio }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 5px; flex: 2; min-width: 240px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Curso</label>
+          <select [(ngModel)]="cursoSeleccionadoId" (change)="onCambioSeleccion()">
+            <option [ngValue]="null" disabled>[ Seleccione un curso ]</option>
+            @for (c of cursosCombo; track c.cursoId) {
+              <option [ngValue]="c.cursoId">{{ c.descripcion }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 5px; flex: 1.5; min-width: 200px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Período</label>
+          <select [(ngModel)]="periodoSeleccionadoId" (change)="onCambioSeleccion()">
+            <option [ngValue]="null" disabled>[ Seleccione un período ]</option>
+            @for (p of periodosCombo; track p.periodoId) {
+              <option [ngValue]="p.periodoId">{{ p.descripcion }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 5px; width: 170px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Vencimiento</label>
+          <input type="date" [(ngModel)]="fechaVencimiento">
+        </div>
+
+        <button
+          type="button"
+          class="btn-toggle"
+          (click)="facturar()"
+          [disabled]="facturando || !cursoSeleccionadoId || !periodoSeleccionadoId || !fechaVencimiento || !hayPendientes"
+          style="padding: 10px 24px; height: 42px;">
+          {{ facturando ? '⏳ FACTURANDO...' : '💾 FACTURAR PENDIENTES' }}
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 20px; margin-top: 14px; font-size: 0.8rem; font-weight: 700;">
+        <span style="display: flex; align-items: center; gap: 6px;">
+          <span style="width: 14px; height: 14px; border-radius: 3px; background: #fdecea; border: 2px solid #d9534f; display: inline-block;"></span>
+          Ya facturado en este período
+        </span>
+        <span style="display: flex; align-items: center; gap: 6px;">
+          <span style="width: 14px; height: 14px; border-radius: 3px; background: #e6f4ea; border: 2px solid #1a5d3b; display: inline-block;"></span>
+          Pendiente de facturar
+        </span>
+      </div>
+    </section>
+
+    @if (cargandoPreview) {
+      <div class="info-alumno-banner" style="justify-content: center; background: #fff3cd;">
+        <span class="nombre-resaltado">Cargando alumnos del curso...</span>
+      </div>
+    }
+    @if (facturando) {
+      <div class="info-alumno-banner" style="justify-content: center; background: #fff3cd;">
+        <span class="nombre-resaltado">Generando facturas de los alumnos pendientes...</span>
+      </div>
+    }
+
+    <div class="tabla-container-amplio seccion-ficha" style="margin-top: 0; padding: 0;">
+      <table class="tabla-retro">
+        <thead>
+          <tr>
+            <th class="text-center" style="width: 5%">Ord</th>
+            <th class="text-center" style="width: 7%">Leg</th>
+            <th style="width: 20%">Alumno</th>
+            <th class="text-center" style="width: 10%">F.Estado</th>
+            <th style="width: 22%">Concepto</th>
+            <th class="text-center" style="width: 13%">Estado</th>
+            <th class="text-right" style="width: 10%">Importe</th>
+            <th class="text-center" style="width: 8%">F.Registro</th>
+            <th class="text-center" style="width: 5%">Período</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!cargandoPreview && preview.length === 0) {
+            <tr>
+              <td colspan="9" class="text-center" style="padding: 45px; color: #555; font-weight: 700;">
+                ℹ Seleccione Curso y Período para ver los alumnos del curso.
+              </td>
+            </tr>
+          } @else {
+            @for (item of preview; track item.legajo; let i = $index) {
+              <tr class="fila-alumno-factura"
+                  [class.ya-facturado]="item.facturado && !item.tienePendientes"
+                  [class.pendiente]="item.tienePendientes">
+                <td class="text-center bold-cell">{{ i + 1 }}</td>
+                <td class="text-center bold-cell">{{ item.legajo }}</td>
+                <td class="nombre-cell font-bold" colspan="7">
+                  {{ item.nombreCompleto }}
+                  @if (item.facturado) {
+                    <span class="badge-nro-factura badge-rojo">✔ Factura Nº {{ item.nroFactura }}</span>
+                    <span class="total-factura">Total: {{ item.importeFactura | number:'1.2-2' }}</span>
+                  }
+                  @if (item.tienePendientes) {
+                    <span class="badge-nro-factura badge-verde">⏳ Tiene novedades sin facturar</span>
+                  } @else if (!item.facturado) {
+                    <span class="badge-nro-factura badge-gris">— Sin novedades cargadas —</span>
+                  }
+                </td>
+              </tr>
+              @for (linea of item.conceptos; track $index) {
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td class="text-center">{{ linea.fechaEstado ? (linea.fechaEstado | date:'dd/MM/yyyy') : '—' }}</td>
+                  <td class="nombre-cell">{{ linea.concepto }}</td>
+                  <td class="text-center">
+                    <span class="badge-proceso" [class.badge-procesado]="linea.estado === 'Concepto FACTURADO'">{{ linea.estado }}</span>
+                  </td>
+                  <td class="money-center">{{ linea.importe | number:'1.2-2' }}</td>
+                  <td class="text-center">{{ linea.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+                  <td class="text-center">{{ linea.periodo }}</td>
+                </tr>
+              }
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (mostrarCartelMensaje) {
+    <div class="cartel-dialogo-overlay">
+      <div class="cartel-dialogo-box">
+        <div class="cartel-dialogo-header">
+          <h3>{{ cartelTipo === 'exito' ? '✅' : '❌' }} {{ cartelTitulo }}</h3>
+        </div>
+        <div class="cartel-dialogo-body">
+          <p>{{ cartelMensaje }}</p>
+        </div>
+        <div class="cartel-dialogo-footer">
+          <button class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">ENTENDIDO</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
