@@ -2,6 +2,7 @@ import { Component, inject, OnInit, ChangeDetectorRef, signal } from '@angular/c
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { ColegioServ } from '../../services/colegio-serv';
+import { PeriodoService } from '../../services/periodo-service';
 import { PeriodoDto } from '../../models/colegio.models';
 
 @Component({
@@ -13,6 +14,7 @@ import { PeriodoDto } from '../../models/colegio.models';
 })
 export class ListaPeriodosComponent implements OnInit {
   private colegioService = inject(ColegioServ);
+  private periodoService = inject(PeriodoService);
   private cdr = inject(ChangeDetectorRef);
 
   periodos: PeriodoDto[] = [];
@@ -59,8 +61,8 @@ cargarPeriodos(page: number) {
     const venc2 = formatearParaBack(this.filtroVenc2);
 
     const observable = (venc1 || venc2 || this.filtroCiclo) 
-      ? this.colegioService.buscarPeriodos(venc1, venc2, this.filtroCiclo, page)
-      : this.colegioService.listarPeriodos(page);
+      ? this.periodoService.buscarPeriodos(venc1, venc2, this.filtroCiclo, page)
+      : this.periodoService.listarPeriodos(page);
 
     observable.subscribe({
       next: (response) => {
@@ -176,7 +178,7 @@ cargarPeriodos(page: number) {
       payload.periodoId = 0;
     }
 
-    this.colegioService.guardarPeriodo(payload).subscribe({
+    this.periodoService.guardarPeriodo(payload).subscribe({
       next: () => {
         this.esNuevoMode = false;
         this.idPeriodoSeleccionado = null;

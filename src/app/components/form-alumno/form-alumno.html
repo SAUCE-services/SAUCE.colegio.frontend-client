@@ -9,14 +9,43 @@
   <form [formGroup]="form" (ngSubmit)="enviar()" class="form-retro-container">
     <fieldset class="seccion-ficha search-bg">
       <legend>BUSCAR ALUMNO (ACTUALIZACIÓN)</legend>
-      <div class="grupo-input row-search">
-        <label>Nro. de Legajo</label>
-        <div class="input-mixto">
-          <input type="number" #legajoInput placeholder="Ingrese legajo...">
-          <button type="button" class="btn-toggle" (click)="buscarAlumno(legajoInput.valueAsNumber)">
-            🔍 BUSCAR Y CARGAR
-          </button>
+      <div class="fila-buscadores">
+        <div class="grupo-input campo-legajo">
+          <label>Nro. de Legajo</label>
+          <input
+            type="number"
+            [(ngModel)]="legajoBusqueda"
+            [ngModelOptions]="{standalone: true}"
+            (keyup.enter)="buscarAlumno(legajoBusqueda!)"
+            placeholder="Ingrese legajo...">
         </div>
+
+        <div class="grupo-input campo-nombre" style="position: relative;">
+          <label>Apellido y Nombre</label>
+          <input
+            type="text"
+            [(ngModel)]="nombreBusqueda"
+            [ngModelOptions]="{standalone: true}"
+            (input)="buscarEnTiempoReal()"
+            (keydown)="manejarTecladoSugerencias($event)"
+            placeholder="Empiece a escribir el nombre...">
+
+          @if (mostrarSugerencias) {
+            <ul class="dropdown-resultados">
+              @for (a of resultadosBusqueda; track a.alumnoId; let i = $index) {
+                <li
+                  [class.activo]="i === indiceSugerenciaActiva"
+                  (click)="seleccionarAlumno(a)">
+                  {{ a.nombreCompleto }} <small>(#{{ a.alumnoId }})</small>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <button type="button" class="btn-toggle btn-buscar-fila" (click)="buscarAlumno(legajoBusqueda!)">
+          🔍 BUSCAR Y CARGAR
+        </button>
       </div>
     </fieldset>
     

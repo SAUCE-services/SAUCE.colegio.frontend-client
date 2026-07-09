@@ -2,6 +2,8 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ColegioServ } from '../../services/colegio-serv';
+import { FacturaService } from '../../services/factura-service';
+import { PeriodoService } from '../../services/periodo-service';
 
 @Component({
   selector: 'app-factura-curso',
@@ -12,6 +14,8 @@ import { ColegioServ } from '../../services/colegio-serv';
 })
 export class FacturaCursoComponent implements OnInit {
   private service = inject(ColegioServ);
+  private facturaService = inject(FacturaService);
+  private periodoService = inject(PeriodoService);
   private cdr = inject(ChangeDetectorRef);
 
   ciclosDisponibles: string[] = [];
@@ -70,7 +74,7 @@ export class FacturaCursoComponent implements OnInit {
       }
     });
 
-    this.service.getPeriodosComboPorCiclo(this.cicloSeleccionado).subscribe({
+    this.periodoService.getPeriodosComboPorCiclo(this.cicloSeleccionado).subscribe({
       next: (periodos: any[]) => {
         this.periodosCombo = periodos || [];
         if (this.periodosCombo.length > 0) {
@@ -97,7 +101,7 @@ export class FacturaCursoComponent implements OnInit {
     this.cargandoPreview = true;
     this.cdr.detectChanges();
 
-    this.service.previewFacturaCurso(this.cursoSeleccionadoId, this.periodoSeleccionadoId).subscribe({
+    this.facturaService.previewFacturaCurso(this.cursoSeleccionadoId, this.periodoSeleccionadoId).subscribe({
       next: (res: any[]) => {
         this.preview = res || [];
         this.cargandoPreview = false;
@@ -132,7 +136,7 @@ export class FacturaCursoComponent implements OnInit {
     this.imprimiendo = true;
     this.cdr.detectChanges();
 
-    this.service.imprimirFacturaCurso(this.cursoSeleccionadoId, this.periodoSeleccionadoId).subscribe({
+    this.facturaService.imprimirFacturaCurso(this.cursoSeleccionadoId, this.periodoSeleccionadoId).subscribe({
       next: (blob: Blob) => {
         this.imprimiendo = false;
         const url = window.URL.createObjectURL(blob);
@@ -163,7 +167,7 @@ export class FacturaCursoComponent implements OnInit {
     this.facturando = true;
     this.cdr.detectChanges();
 
-    this.service.facturarCurso({
+    this.facturaService.facturarCurso({
       cursoId: this.cursoSeleccionadoId,
       periodoId: this.periodoSeleccionadoId,
       fechaVencimiento: this.fechaVencimiento

@@ -2,6 +2,8 @@ import { Component, inject, ChangeDetectorRef, OnInit, signal } from '@angular/c
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ColegioServ } from '../../services/colegio-serv';
+import { FacturaService } from '../../services/factura-service';
+import { PeriodoService } from '../../services/periodo-service';
 import { 
   HistoriaFacturacionDto, 
   FacturaDetalleDto, 
@@ -17,6 +19,8 @@ import {
 })
 export class CargaPagoComponent implements OnInit {
   private service = inject(ColegioServ);
+  private facturaService = inject(FacturaService);
+  private periodoService = inject(PeriodoService);
   private cdr = inject(ChangeDetectorRef);
 
   // 🌟 NUEVO: Señal para el dropdown
@@ -54,7 +58,7 @@ accionPendiente: () => void = () => {};
   }
 
   cargarPeriodos() {
-    this.service.getPeriodosHistoricos().subscribe({
+    this.periodoService.getPeriodosHistoricos().subscribe({
       next: (res: any) => {
         const lista = res?.content || res || [];
         this.periodosDisponibles.set(lista);
@@ -137,7 +141,7 @@ consultarCuenta() {
   this.totalDeudaFinal = 0;
 
   // CAMBIO: Ahora usamos getCuentaCorriente para traer TODO el historial
-  this.service.getCuentaCorriente(this.legajo).subscribe({
+  this.facturaService.getCuentaCorriente(this.legajo).subscribe({
     next: (historial: any) => {
       // Si el backend devuelve un array, tomamos el primero, si es objeto, lo usamos directo
       const data = Array.isArray(historial) ? historial[0] : historial;
@@ -206,7 +210,7 @@ seleccionarFactura(f: any) {
   this.lineasDetalle = []; 
   this.importePago = f.saldoProgresivo;
 
-  this.service.getDetalleFactura(f.nroFactura).subscribe({
+  this.facturaService.getDetalleFactura(f.nroFactura).subscribe({
     next: (data: any) => {
       // 🌟 FILTRO ACTIVO: Solo mostramos las líneas cuyo período coincida con el seleccionado
       const todosLosDetalles = Array.isArray(data) ? data : (data?.detalles || []);
@@ -242,7 +246,7 @@ seleccionarFactura(f: any) {
       tipoPagoId: 1 // Ajusta según tu lógica de medio de pago
     };
 
-    this.service.registrarPago(payload).subscribe({
+    this.facturaService.registrarPago(payload).subscribe({
       next: () => {
         this.cargandoPago = false;
         this.importePago = null;
@@ -259,7 +263,7 @@ seleccionarFactura(f: any) {
 
 anularPago(nroFactura: number) {
   this.abrirCartel('Confirmar Anulación', '¿Está seguro de que desea anular este pago?', true, () => {
-    this.service.anularPago(nroFactura).subscribe({
+    this.facturaService.anularPago(nroFactura).subscribe({
       next: () => {
         this.consultarCuenta();
         this.abrirCartel('Éxito', 'El pago ha sido anulado correctamente.');
