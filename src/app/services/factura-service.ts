@@ -67,6 +67,27 @@ export class FacturaService {
     return this.http.post(`${this.baseUrl}/facturacion/facturar-curso`, dto);
   }
 
+  // --- FACTURAR POR ALUMNO ---
+  // 🌟 Vista previa de un solo alumno (mismo formato que la de curso)
+  previewFacturaAlumno(alumnoId: number, periodoId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/facturacion/preview-alumno`, {
+      params: { alumnoId: alumnoId.toString(), periodoId: periodoId.toString() }
+    });
+  }
+
+  // 🌟 Agrupa los conceptos pendientes de un alumno en una factura nueva, con recargo opcional
+  facturarAlumno(dto: { alumnoId: number; periodoId: number; fechaVencimiento: string; recargo?: number }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/facturacion/facturar-alumno`, dto);
+  }
+
+  // 🌟 PDF de "Factura por Alumno" (dos copias, misma plantilla que "Factura por Curso")
+  imprimirFacturaAlumno(alumnoId: number, periodoId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/facturacion/imprimir-alumno`, {
+      params: { alumnoId: alumnoId.toString(), periodoId: periodoId.toString() },
+      responseType: 'blob'
+    });
+  }
+
   // --- FACTURAS/RECAUDACIÓN POR PERÍODO Y POR FECHAS ---
   getFacturasPorPeriodo(periodo: string): Observable<ReporteFacturaPeriodoDto> {
     return this.http.get<ReporteFacturaPeriodoDto>(`${this.baseUrl}/facturacion/facturas-periodo`, {
@@ -155,5 +176,10 @@ export class FacturaService {
     return this.http.get(`${this.baseUrl}/facturacion/reportes/deuda-general-pdf`, {
       responseType: 'blob'
     });
+  }
+
+   // 🌟 Anula la factura completa (distinto de anularPago, que solo revierte el pago)
+  anularFactura(nroFactura: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/facturacion/anular-factura/${nroFactura}`, {});
   }
 }
