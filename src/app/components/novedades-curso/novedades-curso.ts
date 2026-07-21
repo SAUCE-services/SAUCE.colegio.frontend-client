@@ -2,6 +2,8 @@ import { Component, inject, OnInit, ChangeDetectorRef, signal } from '@angular/c
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ColegioServ } from '../../services/colegio-serv';
+import { ConceptoService } from '../../services/concepto-service';
+import { PeriodoService } from '../../services/periodo-service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -13,6 +15,8 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class NovedadesCursoComponent implements OnInit {
   private service = inject(ColegioServ);
+  private conceptoService = inject(ConceptoService);
+  private periodoService = inject(PeriodoService);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
 
@@ -70,14 +74,14 @@ export class NovedadesCursoComponent implements OnInit {
       }
     });
 
-    this.service.getPeriodosHistoricos().subscribe((res: any) => {
+    this.periodoService.getPeriodosHistoricos().subscribe((res: any) => {
       const content = res?.content || res || [];
       this.periodosRaw.set(content);
       if (content.length > 0) this.periodoSeleccionadoDescripcion = content[0].descripcion;
       this.cdr.detectChanges();
     });
 
-    this.service.getConceptosCombo().subscribe((data: any) => {
+    this.conceptoService.getConceptosCombo().subscribe((data: any) => {
       const listaExtraida = Array.isArray(data) ? data : (data?.content || []);
       const mapped = listaExtraida.map((c: any) => ({
         id: c.conceptoId || c.id || 0,
@@ -120,7 +124,7 @@ export class NovedadesCursoComponent implements OnInit {
         let procesados = 0;
         const temporalAuditoria: any[] = [];
         estudiantes.forEach((alumno: any) => {
-          this.service.getNovedadesPorAlumno(alumno.alumnoId, this.periodoSeleccionadoDescripcion).subscribe({
+          this.conceptoService.getNovedadesPorAlumno(alumno.alumnoId, this.periodoSeleccionadoDescripcion).subscribe({
             next: (novRes: any) => {
               const novedades = novRes?.detallesGrilla || novRes || [];
               if (novedades.length > 0) {
@@ -175,11 +179,11 @@ export class NovedadesCursoComponent implements OnInit {
         let contador = 0;
         alumnosAula.forEach((estudiante: any) => {
           if (this.accionPendiente === 'alta') {
-            this.service.agregarNovedadManual({ alumnoId: Number(estudiante.alumnoId), periodoNombre: this.periodoSeleccionadoDescripcion, conceptoId: Number(this.conceptoSeleccionadoId), importe: Number(this.importeCarga) }).subscribe(() => {
+            this.conceptoService.agregarNovedadManual({ alumnoId: Number(estudiante.alumnoId), periodoNombre: this.periodoSeleccionadoDescripcion, conceptoId: Number(this.conceptoSeleccionadoId), importe: Number(this.importeCarga) }).subscribe(() => {
               contador++; if (contador === alumnosAula.length) this.finalizarProcesoAltaMasiva(contador);
             });
           } else {
-            this.service.eliminarNovedadIndividual(Number(estudiante.alumnoId), Number(this.conceptoSeleccionadoId), this.periodoSeleccionadoDescripcion, 0).subscribe(() => {
+            this.conceptoService.eliminarNovedadIndividual(Number(estudiante.alumnoId), Number(this.conceptoSeleccionadoId), this.periodoSeleccionadoDescripcion, 0).subscribe(() => {
               contador++; if (contador === alumnosAula.length) this.finalizarProcesoBajaMasiva(contador);
             });
           }

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ColegioServ } from '../../services/colegio-serv';
+import { FacturaService } from '../../services/factura-service';
 import { ReporteRecaudacionDto } from '../../models/colegio.models';
 import { RouterLink } from '@angular/router';
 
@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './recaudacion-fechas.scss'
 })
 export class RecaudacionFechasComponent {
-  private service = inject(ColegioServ);
+  private service = inject(FacturaService);
   
   fechaDesde: string = '';
   fechaHasta: string = '';

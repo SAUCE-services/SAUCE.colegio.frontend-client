@@ -2,6 +2,7 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ColegioServ } from '../../services/colegio-serv'; 
+import { FacturaService } from '../../services/factura-service';
 import { FormsModule } from '@angular/forms'; // 🌟 CLAVE 1: Módulo requerido para utilizar [(ngModel)] en componentes Standalone
 
 @Component({
@@ -17,6 +18,7 @@ import { FormsModule } from '@angular/forms'; // 🌟 CLAVE 1: Módulo requerido
 })
 export class ListaAlumnosComponent implements OnInit {
   private colegioService = inject(ColegioServ);
+  private facturaService = inject(FacturaService);
   private route = inject(ActivatedRoute); 
   private cdr = inject(ChangeDetectorRef);
 
@@ -144,7 +146,7 @@ mostrarCartelMensaje = false;
     this.reporteDeudaCurso = null;
     this.cdr.detectChanges();
 
-    this.colegioService.getDeudaPorCurso(this.nombreCursoUrl).subscribe({
+    this.facturaService.getDeudaPorCurso(this.nombreCursoUrl).subscribe({
       next: (data: any) => {
         if (data) {
           const listaCruda = data.detalles || (Array.isArray(data) ? data : []);
@@ -193,7 +195,7 @@ mostrarCartelMensaje = false;
     this.generandoPdfMora = true;
     this.cdr.detectChanges();
 
-    this.colegioService.descargarPdfDeudaCurso(this.nombreCursoUrl).subscribe({
+    this.facturaService.descargarPdfDeudaCurso(this.nombreCursoUrl).subscribe({
       next: (blob: Blob) => {
         const fileURL = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
         const a = document.createElement('a');

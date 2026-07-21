@@ -35,6 +35,13 @@ export class FormAlumnoComponent implements OnInit {
   cartelMensaje = '';
   cartelTipo: 'exito' | 'error' = 'exito';
 
+  // 🔎 Búsqueda por Apellido y Nombre con autocompletado (además de por legajo)
+  legajoBusqueda: number | null = null;
+  nombreBusqueda: string = '';
+  resultadosBusqueda: any[] = [];
+  mostrarSugerencias = false;
+  indiceSugerenciaActiva = -1;
+
   // ✅ Formulario con la estructura exacta del DTO
   form = this.fb.group({
     // Datos Alumno
@@ -180,5 +187,67 @@ enviar() {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  // Búsqueda en tiempo real por Apellido y Nombre
+  buscarEnTiempoReal() {
+    this.indiceSugerenciaActiva = -1;
+
+    if (this.nombreBusqueda.length < 3) {
+      this.resultadosBusqueda = [];
+      this.mostrarSugerencias = false;
+      return;
+    }
+
+    this.service.buscarAlumnos(this.nombreBusqueda).subscribe(data => {
+      this.resultadosBusqueda = data;
+      this.mostrarSugerencias = data.length > 0;
+      this.indiceSugerenciaActiva = -1;
+    });
+  }
+
+  // Al hacer clic (o Enter) en un resultado: carga la ficha de ese alumno
+  seleccionarAlumno(alumno: any) {
+    this.nombreBusqueda = alumno.nombreCompleto;
+    this.legajoBusqueda = alumno.alumnoId;
+    this.resultadosBusqueda = [];
+    this.mostrarSugerencias = false;
+    this.indiceSugerenciaActiva = -1;
+    this.buscarAlumno(alumno.alumnoId);
+  }
+
+  // Maneja flechas ↑↓ para navegar sugerencias, Enter para confirmar y Escape para cerrar
+  manejarTecladoSugerencias(event: KeyboardEvent) {
+    if (!this.mostrarSugerencias || this.resultadosBusqueda.length === 0) {
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.indiceSugerenciaActiva =
+          (this.indiceSugerenciaActiva + 1) % this.resultadosBusqueda.length;
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        this.indiceSugerenciaActiva =
+          (this.indiceSugerenciaActiva - 1 + this.resultadosBusqueda.length) %
+          this.resultadosBusqueda.length;
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        if (this.resultadosBusqueda.length > 0) {
+          const indice = this.indiceSugerenciaActiva >= 0 ? this.indiceSugerenciaActiva : 0;
+          this.seleccionarAlumno(this.resultadosBusqueda[indice]);
+        }
+        break;
+
+      case 'Escape':
+        this.mostrarSugerencias = false;
+        this.indiceSugerenciaActiva = -1;
+        break;
+    }
   }
 }

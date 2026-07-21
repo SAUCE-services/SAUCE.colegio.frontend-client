@@ -1,7 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ColegioServ } from '../../services/colegio-serv';
+import { FacturaService } from '../../services/factura-service';
+import { PeriodoService } from '../../services/periodo-service';
 import { ReporteFacturaPeriodoDto } from '../../models/colegio.models';
 
 @Component({
@@ -12,7 +13,8 @@ import { ReporteFacturaPeriodoDto } from '../../models/colegio.models';
   styleUrl: './facturacion-periodo.scss'
 })
 export class FacturacionPeriodoComponent implements OnInit {
-  private service = inject(ColegioServ);
+  private facturaService = inject(FacturaService);
+  private periodoService = inject(PeriodoService);
   
   periodosDisponibles = signal<any[]>([]);
   periodoInput: string = ''; 
@@ -20,7 +22,7 @@ export class FacturacionPeriodoComponent implements OnInit {
 
   ngOnInit(): void {
   // 1. Cargar períodos desde el servicio
-  this.service.getPeriodosHistoricos().subscribe({
+  this.periodoService.getPeriodosHistoricos().subscribe({
     next: (data: any) => {
       const lista = data?.content || data || [];
       this.periodosDisponibles.set(lista);
@@ -32,7 +34,7 @@ export class FacturacionPeriodoComponent implements OnInit {
 
   consultar() {
     if (!this.periodoInput) return;
-    this.service.getFacturasPorPeriodo(this.periodoInput).subscribe(data => {
+    this.facturaService.getFacturasPorPeriodo(this.periodoInput).subscribe(data => {
       this.reporte = data;
     });
   }
@@ -43,7 +45,7 @@ descargarPdf() {
     return;
   }
 
-  this.service.descargarPdfFacturasPeriodo(this.periodoInput).subscribe({
+  this.facturaService.descargarPdfFacturasPeriodo(this.periodoInput).subscribe({
     next: (blob: Blob) => {
       if (blob.size === 0) {
         alert("El archivo generado está vacío.");

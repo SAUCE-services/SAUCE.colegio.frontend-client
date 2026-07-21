@@ -1,0 +1,211 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Factura por Alumno</h1>
+    </div>
+  </header>
+
+  <div class="form-retro-container">
+    <section class="seccion-ficha search-bg" style="padding: 20px;">
+      <h2 style="margin-top: 0; color: #1a5d3b; font-size: 1.1rem; font-weight: 800; border-bottom: 2px double #1a5d3b; padding-bottom: 6px; text-transform: uppercase; margin-bottom: 15px;">
+        🔎 Buscar Alumno
+      </h2>
+
+      <div class="fila-buscadores">
+        <div class="grupo-input campo-legajo">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Legajo</label>
+          <input
+            type="number"
+            [(ngModel)]="legajoBusqueda"
+            (keyup.enter)="buscarPorLegajo()"
+            placeholder="Ingrese legajo...">
+        </div>
+
+        <div class="grupo-input campo-nombre" style="position: relative;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Apellido, Nombre</label>
+          <input
+            type="text"
+            [(ngModel)]="nombreBusqueda"
+            (input)="buscarEnTiempoReal()"
+            (keydown)="manejarTecladoSugerencias($event)"
+            placeholder="Empiece a escribir el nombre...">
+
+          @if (mostrarSugerencias) {
+            <ul class="dropdown-resultados">
+              @for (a of resultadosBusqueda; track a.alumnoId; let i = $index) {
+                <li
+                  [class.activo]="i === indiceSugerenciaActiva"
+                  (click)="seleccionarAlumno(a)">
+                  {{ a.nombreCompleto }} <small>(#{{ a.alumnoId }})</small>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <button type="button" class="btn-toggle btn-buscar-fila" (click)="buscarPorLegajo()">
+          🔍 BUSCAR
+        </button>
+      </div>
+
+      @if (alumnoSeleccionado) {
+        <div class="info-alumno-banner" style="margin-top: 15px;">
+          <span class="nombre-resaltado">Alumno: {{ alumnoSeleccionado.nombreCompleto }} (#{{ alumnoSeleccionado.alumnoId }})</span>
+        </div>
+      }
+    </section>
+
+    <section class="seccion-ficha search-bg" style="padding: 20px; margin-top: 15px;">
+      <h2 style="margin-top: 0; color: #1a5d3b; font-size: 1.1rem; font-weight: 800; border-bottom: 2px double #1a5d3b; padding-bottom: 6px; text-transform: uppercase; margin-bottom: 15px;">
+        ⚙️ Parámetros de Facturación
+
+      </h2>
+
+      <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="display: flex; flex-direction: column; gap: 5px; flex: 1.5; min-width: 200px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Período</label>
+          <select [(ngModel)]="periodoSeleccionadoId" (change)="onCambioPeriodo()">
+            <option [ngValue]="null" disabled>[ Seleccione un período ]</option>
+            @for (p of periodosCombo; track p.periodoId) {
+              <option [ngValue]="p.periodoId">{{ p.descripcion }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 5px; width: 170px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Vencimiento</label>
+          <input type="date" [(ngModel)]="fechaVencimiento">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 5px; width: 160px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #444;">Recargo ($)</label>
+          <input type="number" [(ngModel)]="recargo" placeholder="0.00">
+        </div>
+
+        <button
+          type="button"
+          class="btn-toggle"
+          (click)="facturar()"
+          [disabled]="facturando || !alumnoSeleccionado || !periodoSeleccionadoId || !fechaVencimiento || !preview?.tienePendientes"
+          style="padding: 10px 24px; height: 42px;">
+          {{ facturando ? '⏳ FACTURANDO...' : '💾 FACTURAR' }}
+        </button>
+
+        <button
+          type="button"
+          class="btn-toggle"
+          (click)="imprimir()"
+          [disabled]="imprimiendo || !preview?.facturado"
+          style="padding: 10px 24px; height: 42px;">
+          {{ imprimiendo ? '⏳ GENERANDO...' : '🖨️ IMPRIMIR' }}
+        </button>
+      </div>
+
+      @if (preview) {
+        <div class="panel-resultado-factura">
+          <div>
+            <span class="etiqueta-panel">Importe</span>
+            <span class="valor-panel">{{ (preview.facturado ? preview.importeFactura : totalPendientes) | number:'1.2-2' }}</span>
+          </div>
+          <div class="separador-panel"></div>
+          <div>
+            <span class="etiqueta-panel">Nro Factura</span>
+            <span class="valor-panel">{{ preview.facturado ? preview.nroFactura : '— sin facturar —' }}</span>
+          </div>
+        </div>
+      }
+    </section>
+
+    @if (cargandoPreview) {
+      <div class="info-alumno-banner" style="justify-content: center; background: #fff3cd;">
+        <span class="nombre-resaltado">Cargando datos del alumno...</span>
+      </div>
+    }
+    @if (facturando) {
+      <div class="info-alumno-banner" style="justify-content: center; background: #fff3cd;">
+        <span class="nombre-resaltado">Generando la factura...</span>
+      </div>
+    }
+
+    <div class="tabla-container-amplio seccion-ficha" style="margin-top: 0; padding: 0;">
+      <table class="tabla-retro">
+        <thead>
+          <tr>
+            <th class="text-center" style="width: 10%">F.Estado</th>
+            <th style="width: 32%">Concepto</th>
+            <th class="text-center" style="width: 15%">Estado</th>
+            <th class="text-right" style="width: 13%">Importe</th>
+            <th class="text-center" style="width: 12%">F.Registro</th>
+            <th class="text-center" style="width: 18%">Período</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!alumnoSeleccionado) {
+            <tr>
+              <td colspan="6" class="text-center" style="padding: 45px; color: #555; font-weight: 700;">
+                ℹ Busque un alumno por legajo o por nombre para ver su detalle.
+              </td>
+            </tr>
+          } @else if (!preview) {
+            <tr>
+              <td colspan="6" class="text-center" style="padding: 45px; color: #555; font-weight: 700;">
+                ℹ Seleccione un Período para ver el detalle de este alumno.
+              </td>
+            </tr>
+          } @else {
+            <tr class="fila-alumno-factura"
+                [class.ya-facturado]="preview.facturado && !preview.tienePendientes"
+                [class.pendiente]="preview.tienePendientes">
+              <td colspan="6" class="nombre-cell font-bold">
+                {{ preview.nombreCompleto }}
+                @if (preview.facturado) {
+                  <span class="badge-nro-factura badge-rojo">✔ Factura Nº {{ preview.nroFactura }}</span>
+                  <span class="total-factura">Total: {{ preview.importeFactura | number:'1.2-2' }}</span>
+                }
+                @if (preview.tienePendientes) {
+                  <span class="badge-nro-factura badge-verde">⏳ Tiene novedades sin facturar</span>
+                } @else if (!preview.facturado) {
+                  <span class="badge-nro-factura badge-gris">— Sin novedades cargadas —</span>
+                }
+              </td>
+            </tr>
+            @for (linea of preview.conceptos; track $index) {
+              <tr>
+                <td class="text-center">{{ linea.fechaEstado ? (linea.fechaEstado | date:'dd/MM/yyyy') : '—' }}</td>
+                <td class="nombre-cell">{{ linea.concepto }}</td>
+                <td class="text-center">
+                  <span class="badge-proceso" [class.badge-procesado]="linea.estado === 'Concepto FACTURADO'">{{ linea.estado }}</span>
+                </td>
+                <td class="money-center">{{ linea.importe | number:'1.2-2' }}</td>
+                <td class="text-center">{{ linea.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+                <td class="text-center">{{ linea.periodo }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="text-center" style="padding: 30px; color: #777;">
+                  Este alumno no tiene conceptos cargados para este período.
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (mostrarCartelMensaje) {
+    <div class="cartel-dialogo-overlay">
+      <div class="cartel-dialogo-box">
+        <div class="cartel-dialogo-header">
+          <h3>{{ cartelTipo === 'exito' ? '✅' : '❌' }} {{ cartelTitulo }}</h3>
+        </div>
+        <div class="cartel-dialogo-body">
+          <p>{{ cartelMensaje }}</p>
+        </div>
+        <div class="cartel-dialogo-footer">
+          <button class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">ENTENDIDO</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

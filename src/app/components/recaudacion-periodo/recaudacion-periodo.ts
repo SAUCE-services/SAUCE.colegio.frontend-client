@@ -1,7 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ColegioServ } from '../../services/colegio-serv';
+import { FacturaService } from '../../services/factura-service';
+import { PeriodoService } from '../../services/periodo-service';
 import { ReporteRecaudacionDto } from '../../models/colegio.models';
 
 @Component({
@@ -12,7 +13,8 @@ import { ReporteRecaudacionDto } from '../../models/colegio.models';
   styleUrl: './recaudacion-periodo.scss'
 })
 export class RecaudacionPeriodoComponent implements OnInit{
-  private service = inject(ColegioServ);
+  private facturaService = inject(FacturaService);
+  private periodoService = inject(PeriodoService);
   
   periodosDisponibles = signal<any[]>([]);
   periodoInput: string = ''; 
@@ -20,7 +22,7 @@ export class RecaudacionPeriodoComponent implements OnInit{
 
   ngOnInit(): void {
   // 1. Cargar períodos desde el servicio
-  this.service.getPeriodosHistoricos().subscribe({
+  this.periodoService.getPeriodosHistoricos().subscribe({
     next: (data: any) => {
       const lista = data?.content || data || [];
       this.periodosDisponibles.set(lista);
@@ -32,7 +34,7 @@ export class RecaudacionPeriodoComponent implements OnInit{
 
 consultar() {
   if (!this.periodoInput) return;
-  this.service.getRecaudacionPorPeriodo(this.periodoInput).subscribe(data => {
+  this.facturaService.getRecaudacionPorPeriodo(this.periodoInput).subscribe(data => {
     this.reporte = data;
     // 🔍 MIRA ESTO EN LA CONSOLA DEL NAVEGADOR
     console.log("Datos recibidos:", data); 
@@ -45,7 +47,7 @@ descargarPdf() {
     return;
   }
 
-  this.service.descargarPdfRecaudacionPeriodo(this.periodoInput).subscribe({
+  this.facturaService.descargarPdfRecaudacionPeriodo(this.periodoInput).subscribe({
     next: (blob: Blob) => {
       if (blob.size === 0) {
         alert("El archivo generado está vacío.");

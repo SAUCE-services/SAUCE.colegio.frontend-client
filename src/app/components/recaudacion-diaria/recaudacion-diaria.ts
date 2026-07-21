@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ColegioServ } from '../../services/colegio-serv';
+import { FacturaService } from '../../services/factura-service';
 import { ReporteRecaudacionDto } from '../../models/colegio.models';
 
 @Component({
@@ -12,7 +12,7 @@ import { ReporteRecaudacionDto } from '../../models/colegio.models';
   styleUrl: './recaudacion-diaria.scss'
 })
 export class RecaudacionDiariaComponent {
-  private service = inject(ColegioServ);
+  private service = inject(FacturaService);
   
   fechaInput: string = ''; // Formato del input date: yyyy-mm-dd
   reporte: ReporteRecaudacionDto | null = null;

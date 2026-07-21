@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
-import { ColegioServ } from '../../services/colegio-serv';
+import { ConceptoService } from '../../services/concepto-service';
 import { ConceptoDto } from '../../models/colegio.models';
 
 @Component({
@@ -12,7 +12,7 @@ import { ConceptoDto } from '../../models/colegio.models';
   styleUrl: './lista-conceptos.scss'
 })
 export class ListaConceptosComponent implements OnInit {
-  private colegioService = inject(ColegioServ);
+  private colegioService = inject(ConceptoService);
   private cdr = inject(ChangeDetectorRef);
   
   mostrarFormulario = false;

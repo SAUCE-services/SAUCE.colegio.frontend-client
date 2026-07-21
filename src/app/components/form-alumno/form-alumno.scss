@@ -74,6 +74,54 @@ $blanco-puro: #ffffff;
   @media (max-width: 900px) { grid-template-columns: 1fr; }
 }
 
+.fila-buscadores {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+
+  .campo-legajo {
+    flex: 0 0 160px;
+  }
+
+  .campo-nombre {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .btn-buscar-fila {
+    flex: 0 0 auto;
+    height: 46px;
+    white-space: nowrap;
+  }
+}
+
+.dropdown-resultados {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid $verde-colegial;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+
+  li {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    &:hover,
+    &.activo {
+      background-color: rgba($dorado-diploma, 0.15);
+    }
+  }
+}
+
 .grupo-input {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,8 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { ColegioServ } from '../../services/colegio-serv';
+import { ConceptoService } from '../../services/concepto-service';
+import { FacturaService } from '../../services/factura-service';
+import { PeriodoService } from '../../services/periodo-service';
 import { HistoriaFacturacionDto, FacturaDetalleDto, LineaDetalleDto, DeudaIndividualResponseDto, NovedadesAlumnoResponseDto, NovedadCargaDto, AlumnoDto } from '../../models/colegio.models'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +16,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class CuentaCorrienteComponent {
   private service = inject(ColegioServ);
+  private conceptoService = inject(ConceptoService);
+  private facturaService = inject(FacturaService);
+  private periodoService = inject(PeriodoService);
   private cdr = inject(ChangeDetectorRef);
 
   legajo: number | null = null;
@@ -169,7 +175,7 @@ manejarTecladoSugerencias(event: KeyboardEvent) {
     this.reporteDeudaIndividual = null;
     this.cdr.detectChanges();
 
-    this.service.getDeudaIndividual(this.legajo).subscribe({
+    this.facturaService.getDeudaIndividual(this.legajo).subscribe({
       next: (data: any) => {
         if (data) {
           const listaCruda = data.detalles || [];
@@ -203,7 +209,7 @@ manejarTecladoSugerencias(event: KeyboardEvent) {
 descargarPdfDeuda() {
   if (!this.legajo) return;
 
-  this.service.descargarPdfDeudaIndividual(this.legajo).subscribe({
+  this.facturaService.descargarPdfDeudaIndividual(this.legajo).subscribe({
     next: (blob: Blob) => {
       // 🌟 Crear una URL para el blob
       const url = window.URL.createObjectURL(blob);
@@ -232,7 +238,7 @@ descargarPdfDeuda() {
     this.facturaSeleccionada = f;
     this.lineasDetalle = [];
     this.cargandoDetalle = true;
-    this.service.getDetalleFactura(f.nroFactura).subscribe({
+    this.facturaService.getDetalleFactura(f.nroFactura).subscribe({
       next: (data: LineaDetalleDto[]) => {
         this.lineasDetalle = data;
         this.cargandoDetalle = false;
@@ -261,7 +267,7 @@ descargarPdfDeuda() {
     this.totalDeudaFinal = 0;
     this.cdr.detectChanges();
 
-    this.service.getCuentaCorriente(this.legajo).subscribe({
+    this.facturaService.getCuentaCorriente(this.legajo).subscribe({
       next: (data: any) => {
         const historial: HistoriaFacturacionDto = Array.isArray(data) ? data[0] : data;
         if (historial && historial.facturas) {
@@ -334,7 +340,7 @@ buscarPorNombrePromise(): Promise<void> {
     this.reporteNovedades = null;
     this.cdr.detectChanges();
 
-    this.service.getConceptosCombo().subscribe({
+    this.conceptoService.getConceptosCombo().subscribe({
       next: (data: any) => {
         const listaExtraida = Array.isArray(data) ? data : (data?.content || []);
         this.conceptosDisponibles = listaExtraida.map((c: any) => ({
@@ -347,7 +353,7 @@ buscarPorNombrePromise(): Promise<void> {
       error: (err) => console.error("Error preventivo al cargar conceptos:", err)
     });
 
-    this.service.getPeriodosHistoricos().subscribe({
+    this.periodoService.getPeriodosHistoricos().subscribe({
       next: (res: any) => {
         const listaPeriodos = res?.content || [];
         if (listaPeriodos.length > 0) {
@@ -374,7 +380,7 @@ buscarPorNombrePromise(): Promise<void> {
     this.cargandoNovedades = true;
     this.cdr.detectChanges();
 
-    this.service.getNovedadesPorAlumno(this.legajo, this.periodoFiltro).subscribe({
+    this.conceptoService.getNovedadesPorAlumno(this.legajo, this.periodoFiltro).subscribe({
       next: (data: any) => {
         if (data) {
           const listaCruda = data.detallesGrilla || [];
@@ -423,7 +429,7 @@ buscarPorNombrePromise(): Promise<void> {
     this.cdr.detectChanges();
 
     if (this.mostrarFormularioAlta && this.conceptosDisponibles.length === 0) {
-      this.service.getConceptosCombo().subscribe({
+      this.conceptoService.getConceptosCombo().subscribe({
         next: (data: any) => {
           const listaExtraida = Array.isArray(data) ? data : ((data as any)?.content || []);
           this.conceptosDisponibles = listaExtraida.map((c: any) => ({
@@ -461,7 +467,7 @@ buscarPorNombrePromise(): Promise<void> {
       importe: Number(this.importeNovedad)
     };
 
-    this.service.agregarNovedadManual(payload).subscribe({
+    this.conceptoService.agregarNovedadManual(payload).subscribe({
       next: (grillaActualizada: any[]) => {
         if (this.reporteNovedades) {
           this.reporteNovedades.novedades = grillaActualizada.map((n: any) => {
@@ -531,7 +537,7 @@ buscarPorNombrePromise(): Promise<void> {
       return;
     }
 
-    this.service.eliminarNovedadIndividual(
+    this.conceptoService.eliminarNovedadIndividual(
       Number(legajoAlumno), 
       Number(idConcepto), 
       periodoNombre, 

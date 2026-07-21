@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ChangeDetectorRef, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ColegioServ } from '../../services/colegio-serv';
+import { FacturaService } from '../../services/factura-service';
 
 @Component({
   selector: 'app-deuda-general',
@@ -11,7 +11,7 @@ import { ColegioServ } from '../../services/colegio-serv';
   styleUrl: './deuda-general.scss'
 })
 export class DeudaGeneralComponent implements OnInit {
-  private service = inject(ColegioServ);
+  private service = inject(FacturaService);
   private cdr = inject(ChangeDetectorRef);
 
   // Signals para el manejo reactivo del reporte
