@@ -1,7 +1,7 @@
 <div class="page-container">
   <header class="section-header">
     <div class="header-main">
-      <h1>Cuenta Corriente</h1>
+      <h1>Deuda Individual</h1>
     </div>
   </header>
 
@@ -67,9 +67,6 @@
           <span class="nombre-resaltado">{{ movimientos.nombreCompleto }}</span>
         </div>
         <div class="bloque-acciones-alumno">
-          <button type="button" class="btn-novedades-retro" (click)="abrirModalNovedades()">
-              NOVEDADES
-          </button>
           <button type="button" class="btn-deudas-clasico" (click)="abrirModalDeudas()">
               DEUDAS
           </button>
@@ -214,124 +211,13 @@
     </div>
   }
 
-  @if (mostrarModalNovedades) {
-    <div class="modal-novedades-overlay">
-      <div class="modal-novedades-box seccion-ficha">
-        
-        <div class="modal-novedades-header">
-          <div class="header-titulos">
-            <h2>Novedades por Alumno</h2>
-            @if (reporteNovedades?.nombreCompleto) {
-              <span class="subtitulo-alumno">
-                <label>ALUMNO:</label> {{ reporteNovedades?.nombreCompleto }}
-              </span>
-            }
-          </div>
-          <button type="button" class="btn-close-modal" (click)="mostrarModalNovedades = false"> X </button>
-        </div>
-
-        <div class="contenedor-alta-novedad-trigger">
-          <button type="button" class="btn-deudas-clasico btn-alta-novedad-manual" (click)="toggleFormularioAlta()">
-            {{ mostrarFormularioAlta ? 'CANCELAR ALTA MANUAL' : 'REGISTRAR NOVEDAD MANUAL' }}
-          </button>
-        </div>
-
-        @if (periodosDisponibles.length > 0) {
-          <div class="filtro-periodo-modal">
-            <label>Seleccionar Periodo:</label>
-            <select [(ngModel)]="periodoFiltro" (change)="cargarNovedadesDelServidor()" class="select-periodo-modal">
-              @for (p of periodosDisponibles; track p) {
-                <option [value]="p">{{ p }}</option>
-              }
-            </select>
-          </div>
-        }
-
-        @if (mostrarFormularioAlta) {
-          <div class="seccion-ficha panel-formulario-alta-novedad">
-            <h3>
-              Novedad Manual para el periodo: <span class="periodo-underlined">{{ periodoFiltro }}</span>
-            </h3>
-                       
-            <div class="flex-form-row-novedad">
-              <div class="campo-novedad-select">
-                <label>Concepto Contable:</label>
-                <select [(ngModel)]="conceptoSeleccionadoId" (change)="onConceptoChange()" class="select-concepto-form">
-                  <option [ngValue]="null" disabled>[ Seleccione un concepto / arancel ]</option>
-                  @for (c of conceptosDisponibles; track c.id) {
-                    <option [ngValue]="c.id">{{ c.nombre }}</option>
-                  }
-                </select>
-              </div>
-              <div class="campo-novedad-input">
-                <label>Importe ($):</label>
-                <input type="number" [(ngModel)]="importeNovedad" placeholder="0.00" class="input-importe-form">
-              </div>
-              <div class="campo-novedad-btn">
-                <button type="button" class="btn-toggle btn-asentar-registro-manual" (click)="guardarNuevaNovedad()" [disabled]="guardandoNovedad">
-                  {{ guardandoNovedad ? 'PROCESANDO...' : 'ASENTAR REGISTRO' }}
-                </button>
-              </div>
-            </div>
-          </div>
-        }
-
-        <div class="modal-novedades-body">
-          <table class="tabla-retro modal-table">
-            <thead>
-              <tr>
-                <th class="text-center col-nov-fecha">F. Registro</th>
-                <th class="col-nov-concepto">Concepto Devengado</th>
-                <th class="text-center col-nov-periodo">Período</th>
-                <th class="text-center col-nov-estado">Estado Proceso</th>
-                <th class="text-right col-nov-monto">Importe</th>
-                <th class="text-center col-nov-accion">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @if (cargandoNovedades) {
-                <tr><td colspan="6" class="text-center celda-modal-espera">Consultando novedades contables para el período {{ periodoFiltro }}...</td></tr>
-              } @else {
-                @for (nov of novedadesFiltradas; track $index) {
-                  <tr>
-                    <td class="text-center">{{ nov.fechaRegistro }}</td>
-                    <td class="nombre-cell font-bold">{{ nov.nombreConcepto }}</td>
-                    <td class="text-center bold-cell">{{ nov.nombrePeriodo }}</td>
-                    <td class="text-center">
-                      <span class="badge-proceso" [class.badge-procesado]="nov.procesado">
-                        {{ nov.procesado ? 'FACTURADO' : 'PENDIENTE' }}
-                      </span>
-                    </td>
-                    <td class="money-right-novedad" [class.texto-rojo]="(nov.importe ?? 0) > 0">
-                      $ {{ nov.importe | number:'1.2-2' }}
-                    </td>
-                    <td class="text-center">
-                      <button type="button" class="btn-trash-retro" (click)="eliminarNovedad(nov)" title="Anular / Eliminar esta novedad del legajo">
-                          ✕
-                      </button>
-                    </td>
-                  </tr>
-                } @empty {
-                  <tr>
-                    <td colspan="6" class="text-center celda-modal-vacio-institucional">
-                        El alumno no registra novedades cargadas para el período {{ periodoFiltro }}.
-                    </td>
-                  </tr>
-                }
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  }
 
   @if (mostrarCartelMensaje) {
     <div class="cartel-dialogo-overlay">
       <div class="cartel-dialogo-box border-sauce-alerta">
         
         <div class="cartel-dialogo-header">
-          <h3>{{ cartelTipo === 'pregunta' ? '❓' : '🔔' }} {{ cartelTitulo }}</h3>
+          <h3>🔔 {{ cartelTitulo }}</h3>
         </div>
         
         <div class="cartel-dialogo-body">
@@ -339,13 +225,8 @@
         </div>
 
         <div class="cartel-dialogo-footer">
-          @if (cartelTipo === 'pregunta') {
-            <button type="button" class="btn-confirmar-custom" (click)="ejecutarAnulacionConfirmada()">
-              ✔ ACEPTAR
-            </button>
-          }
           <button type="button" class="btn-cancelar-custom" (click)="mostrarCartelMensaje = false">
-            {{ cartelTipo === 'pregunta' ? '❌ CANCELAR' : 'ENTENDIDO' }}
+            ENTENDIDO
           </button>
         </div>
 

@@ -7,8 +7,18 @@
     <div class="nav-links">
       <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">INICIO</a>
       <a routerLink="/anotador" routerLinkActive="active-link">ANOTADOR</a>
-      <a routerLink="/cuenta-corriente" routerLinkActive="active-link">CTA CORRIENTE</a>
       <a routerLink="/inscripcion" routerLinkActive="active-link">NUEVA INSCRIPCIÓN</a>
+
+       <div class="dropdown">
+        <a class="dropbtn">CONSULTAS ▼</a>
+        <div class="dropdown-content">
+          <a routerLink="/deuda-general">DEUDA GENERAL</a>
+          <a routerLink="/recaudacion">RECAUDACIÓN DIARIA</a>
+          <a routerLink="/facturacion-periodo">FACTURACIÓN POR PERÍODO</a>
+          <a routerLink="/recaudacion-periodo">RECAUDACIÓN POR PERÍODO</a>
+          <a routerLink="/recaudacion-fechas">RECAUDACIÓN POR FECHAS</a>
+        </div>
+      </div>
 
       <div class="dropdown">
         <a class="dropbtn">MANTENIMIENTO ▼</a>
@@ -24,14 +34,12 @@
       <div class="dropdown">
         <a class="dropbtn">ADMINISTRACIÓN ▼</a>
         <div class="dropdown-content">
-          <a routerLink="/recaudacion">RECAUDACIÓN DIARIA</a>
-          <a routerLink="/facturacion-periodo">FACTURACIÓN POR PERÍODO</a>
+          <a routerLink="/deuda-individual" routerLinkActive="active-link">DEUDA INDIVIDUAL</a>
           <a routerLink="/factura-alumno">FACTURA POR ALUMNO</a>
           <a routerLink="/factura-curso">FACTURA POR CURSO</a>
-          <a routerLink="/recaudacion-periodo">RECAUDACIÓN POR PERÍODO</a>
-          <a routerLink="/recaudacion-fechas">RECAUDACIÓN POR FECHAS</a>
-          <a routerLink="/deuda-general">DEUDA GENERAL</a>
           <a routerLink="/carga-pago">CARGA DE PAGO</a>
+          <a routerLink="/novedades-alumno">NOVEDADES POR ALUMNO</a>
+          <a routerLink="/novedades-curso">NOVEDADES POR CURSO</a>
           <a routerLink="/historia-facturacion">HISTORIA FACTURACIÓN</a>
         </div>
       </div>
