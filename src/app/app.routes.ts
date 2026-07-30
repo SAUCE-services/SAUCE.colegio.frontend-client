@@ -6,7 +6,6 @@ import { ListaPeriodosComponent } from './components/lista-periodos/lista-period
 import { ListaConceptosComponent } from './components/lista-conceptos/lista-conceptos';
 import { FormAlumnoComponent } from './components/form-alumno/form-alumno';
 import { AnotadorComponent } from './components/anotador/anotador';
-import { CuentaCorrienteComponent } from './components/cuenta-corriente/cuenta-corriente';
 import { RecaudacionDiariaComponent } from './components/recaudacion-diaria/recaudacion-diaria';
 import { FacturacionPeriodoComponent } from './components/facturacion-periodo/facturacion-periodo';
 import { RecaudacionPeriodoComponent } from './components/recaudacion-periodo/recaudacion-periodo';
@@ -18,6 +17,8 @@ import { CargaPagoComponent } from './components/carga-pago/carga-pago';
 import { FacturaCursoComponent } from './components/factura-curso/factura-curso';
 import { FacturaAlumnoComponent } from './components/factura-alumno/factura-alumno';
 import { HistoriaFacturacionComponent } from './components/historia-facturacion/historia-facturacion';
+import { NovedadesAlumnoComponent } from './components/novedades-alumno/novedades-alumno';
+import { DeudaIndividualComponent } from './components/deuda-individual/deuda-individual';
 
 export const routes: Routes = [
   // 1. Ruta por defecto: Carga la Home
@@ -31,10 +32,11 @@ export const routes: Routes = [
   { path: 'inscripcion', component: FormAlumnoComponent }, 
   { path: 'anotador', component: AnotadorComponent }, 
   { path: 'recaudacion', component: RecaudacionDiariaComponent },  
-  { path: 'cuenta-corriente', component: CuentaCorrienteComponent }, 
+  { path: 'deuda-individual', component: DeudaIndividualComponent }, 
   { path: 'facturacion-periodo', component: FacturacionPeriodoComponent },
   { path: 'recaudacion-periodo', component: RecaudacionPeriodoComponent }, 
   { path: 'recaudacion-fechas', component: RecaudacionFechasComponent },
+  { path: 'novedades-alumno', component: NovedadesAlumnoComponent},
   { path: 'novedades-curso', component: NovedadesCursoComponent},
   { path: 'deuda-general', component: DeudaGeneralComponent},
   { path: 'ciclo-lectivo', component: CicloLectivoComponent},
