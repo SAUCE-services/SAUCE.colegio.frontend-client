@@ -182,4 +182,18 @@ export class FacturaService {
   anularFactura(nroFactura: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/facturacion/anular-factura/${nroFactura}`, {});
   }
+
+    // --- FACTURACIÓN POR CONCEPTO / RUBRO ---
+  getFacturacionPorConceptoYPeriodo(periodo: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/facturacion/concepto/periodo`, {
+      params: { periodo }
+    });
+  }
+ 
+  descargarPdfFacturacionPorConceptoYPeriodo(periodo: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/facturacion/concepto/periodo-pdf`, {
+      params: { periodo },
+      responseType: 'blob'
+    });
+  }
 }

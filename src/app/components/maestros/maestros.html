@@ -1,0 +1,268 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Maestros</h1>
+
+      <button class="btn-toggle" (click)="toggleFormulario()">
+        {{ mostrarFormulario ? '✕ CANCELAR' : '+ NUEVO MAESTRO' }}
+      </button>
+    </div>
+
+    @if (mostrarFormulario) {
+      <div class="form-nuevo-concepto">
+        <h3>📝 Registro de Nuevo Maestro</h3>
+
+        <div class="inputs-row" style="flex-wrap: wrap;">
+          <div class="grupo-input">
+            <label>Apellido</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.apellido" placeholder="Apellido">
+          </div>
+          <div class="grupo-input">
+            <label>Nombre</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.nombre" placeholder="Nombre">
+          </div>
+          <div class="grupo-input">
+            <label>Tipo Doc.</label>
+            <select [(ngModel)]="nuevoProfesor.tipoDocumentoId">
+              <option [ngValue]="null">-</option>
+              @for (td of tiposDocumento; track td.tipoDocumentoId) {
+                <option [ngValue]="td.tipoDocumentoId">{{ td.descripcion }}</option>
+              }
+            </select>
+          </div>
+          <div class="grupo-input">
+            <label>Nro. Documento</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.nroDocumento" placeholder="Nro. Documento">
+          </div>
+        </div>
+
+        <div class="inputs-row" style="flex-wrap: wrap;">
+          <div class="grupo-input">
+            <label>Calle</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.dirCalle" placeholder="Calle">
+          </div>
+          <div class="grupo-input input-id">
+            <label>Nro.</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.dirNumero" placeholder="Nro.">
+          </div>
+          <div class="grupo-input input-id">
+            <label>Piso</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.dirPiso" placeholder="Piso">
+          </div>
+          <div class="grupo-input input-id">
+            <label>Depto.</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.dirDepto" placeholder="Depto.">
+          </div>
+          <div class="grupo-input">
+            <label>Localidad</label>
+            <select [(ngModel)]="nuevoProfesor.localidadId">
+              <option [ngValue]="null">-</option>
+              @for (loc of localidades; track loc.id) {
+                <option [ngValue]="loc.id">{{ loc.nombre }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="inputs-row" style="flex-wrap: wrap;">
+          <div class="grupo-input">
+            <label>Teléfono Fijo</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.telefonoFijo" placeholder="Teléfono Fijo">
+          </div>
+          <div class="grupo-input">
+            <label>Teléfono Celular</label>
+            <input type="text" [(ngModel)]="nuevoProfesor.telefonoCelular" placeholder="Teléfono Celular">
+          </div>
+          <div class="grupo-input">
+            <label>Actividad</label>
+            <select [(ngModel)]="nuevoProfesor.actividadId">
+              <option [ngValue]="null">-</option>
+              @for (act of actividades; track act.actividadId) {
+                <option [ngValue]="act.actividadId">{{ act.descripcion }}</option>
+              }
+            </select>
+          </div>
+          <div class="grupo-input">
+            <label>Establecimiento</label>
+            <select [(ngModel)]="nuevoProfesor.establecimientoId">
+              <option [ngValue]="null">-</option>
+              @for (est of establecimientos; track est.establecimientoId) {
+                <option [ngValue]="est.establecimientoId">{{ est.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <button class="btn-guardar" [disabled]="guardandoAlta" (click)="crearProfesor()">
+            {{ guardandoAlta ? 'GUARDANDO...' : 'GUARDAR REGISTRO' }}
+          </button>
+        </div>
+      </div>
+    }
+  </header>
+
+  <div class="tabla-container-amplio seccion-ficha">
+    <table class="tabla-retro" style="width: 100%; table-layout: fixed;">
+      <thead>
+        <tr>
+          <th style="width: 20%">Apellido, Nombre</th>
+          <th class="text-center" style="width: 15%">Documento</th>
+          <th style="width: 18%">Localidad</th>
+          <th style="width: 18%">Establecimiento</th>
+          <th class="text-center" style="width: 14%">Teléfono</th>
+          <th class="text-center" style="width: 15%">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of profesores; track p.maestroId) {
+          <tr>
+            <td class="nombre-cell font-bold">{{ p.apellido }}, {{ p.nombre }}</td>
+            <td class="text-center">{{ p.nroDocumento }}</td>
+            <td>{{ p.localidadNombre || '-' }}</td>
+            <td>{{ p.establecimientoNombre || '-' }}</td>
+            <td class="text-center">{{ p.telefonoCelular || p.telefonoFijo || '-' }}</td>
+            <td class="text-center">
+              <button type="button" class="btn-editar-accion" (click)="abrirEditor(p)">
+                📝 EDITAR
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center" style="padding: 40px; color: #666; font-weight: 600;">
+              No se encontraron registros en el archivo.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="paginacion-retro" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; align-items: center;">
+    <button class="btn-toggle" [disabled]="paginaActual === 0" (click)="cambiarPagina(paginaActual - 1)">« ANTERIOR</button>
+    <span class="info-pagina" style="font-weight: 700; color: #1a5d3b;">FOLIO {{ paginaActual + 1 }} DE {{ totalPaginas }}</span>
+    <button class="btn-toggle" [disabled]="paginaActual >= totalPaginas - 1" (click)="cambiarPagina(paginaActual + 1)">SIGUIENTE »</button>
+  </div>
+
+  @if (mostrarModalEditar && profesorEnEdicion) {
+    <div class="modal-deuda-overlay">
+      <div class="modal-deuda-box seccion-ficha" style="max-width: 900px; width: 90%;">
+        <div class="modal-deuda-header">
+          <h2>📝 MODIFICAR DATOS DEL MAESTRO</h2>
+          <button type="button" class="btn-close-modal" [disabled]="mensajeExito !== null" (click)="mostrarModalEditar = false">✕</button>
+        </div>
+
+        <div class="modal-deuda-body" style="display: flex; flex-direction: column; gap: 1.4rem; padding: 1.5rem 0.5rem 0 0.5rem;">
+
+          @if (mensajeExito) {
+            <div class="banner-exito-concepto">
+              <span>{{ mensajeExito }}</span>
+            </div>
+          }
+
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Apellido</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.apellido" class="input-edicion">
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Nombre</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.nombre" class="input-edicion">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Tipo Doc.</label>
+              <select [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.tipoDocumentoId" class="input-edicion">
+                <option [ngValue]="null">-</option>
+                @for (td of tiposDocumento; track td.tipoDocumentoId) {
+                  <option [ngValue]="td.tipoDocumentoId">{{ td.descripcion }}</option>
+                }
+              </select>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Nro. Documento</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.nroDocumento" class="input-edicion">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex: 2; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Calle</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.dirCalle" class="input-edicion">
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Nro.</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.dirNumero" class="input-edicion">
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Piso</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.dirPiso" class="input-edicion">
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Depto.</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.dirDepto" class="input-edicion">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Localidad</label>
+              <select [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.localidadId" class="input-edicion">
+                <option [ngValue]="null">-</option>
+                @for (loc of localidades; track loc.id) {
+                  <option [ngValue]="loc.id">{{ loc.nombre }}</option>
+                }
+              </select>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Teléfono Fijo</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.telefonoFijo" class="input-edicion">
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Teléfono Celular</label>
+              <input type="text" [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.telefonoCelular" class="input-edicion">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Actividad</label>
+              <select [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.actividadId" class="input-edicion">
+                <option [ngValue]="null">-</option>
+                @for (act of actividades; track act.actividadId) {
+                  <option [ngValue]="act.actividadId">{{ act.descripcion }}</option>
+                }
+              </select>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+              <label class="label-edicion">Establecimiento</label>
+              <select [disabled]="guardandoEdicion || mensajeExito !== null" [(ngModel)]="profesorEnEdicion.establecimientoId" class="input-edicion">
+                <option [ngValue]="null">-</option>
+                @for (est of establecimientos; track est.establecimientoId) {
+                  <option [ngValue]="est.establecimientoId">{{ est.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="subtotal-barra" style="margin: 2rem 0 0 0; display: flex; justify-content: flex-end; gap: 1rem; border: none; background: transparent; padding: 0;">
+          @if (!mensajeExito) {
+            <button type="button" class="btn-toggle" style="box-shadow: none;" [disabled]="guardandoEdicion" (click)="mostrarModalEditar = false">CANCELAR</button>
+            <button
+              type="button"
+              class="btn-deudas-clasico"
+              style="background: #1a5d3b; color: white; border-color: #1a5d3b;"
+              [disabled]="guardandoEdicion"
+              (click)="guardarCambios()">
+              {{ guardandoEdicion ? 'GUARDANDO...' : '💾 GUARDAR CAMBIOS' }}
+            </button>
+          } @else {
+            <span style="font-size: 0.8rem; font-weight: 700; color: #666; font-style: italic; align-self: center;">Sincronizando grilla oficial...</span>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

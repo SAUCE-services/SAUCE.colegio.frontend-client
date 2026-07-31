@@ -1,0 +1,112 @@
+<div class="page-container">
+  <header class="section-header">
+    <div class="header-main">
+      <h1>Facturación por Concepto / Rubro</h1>
+      <button class="btn-toggle" routerLink="/">« VOLVER AL INICIO</button>
+    </div>
+
+    <div class="filtros-periodo">
+      <div class="grupo-input">
+        <label>Seleccione Período</label>
+        <div class="input-mixto-search">
+          <select class="select-sauce" [(ngModel)]="periodoInput">
+            <option [ngValue]="null" disabled>[ Seleccione un período ]</option>
+            @for (p of periodosDisponibles(); track p.descripcion) {
+              <option [value]="p.descripcion">{{ p.descripcion }}</option>
+            }
+          </select>
+          <button type="button" class="btn-buscar-accion" (click)="consultar()" [disabled]="cargando">
+            {{ cargando ? 'BUSCANDO...' : 'CONSULTAR' }}
+          </button>
+        </div>
+      </div>
+
+      @if (reporte) {
+        <button class="btn-pdf-descarga" (click)="descargarPdf()">
+          📄 DESCARGAR REPORTE PDF
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (cargando) {
+    <p style="text-align: center; color: #666;">Consultando...</p>
+  }
+
+  @if (reporte) {
+    <div class="reporte-container">
+      <h2 style="margin-left: 2rem; color: #666;">Período: {{ reporte.filtroDescripcion }}</h2>
+
+      <div class="filtro-conceptos-botones">
+        <button
+          type="button"
+          class="btn-filtro-concepto"
+          [class.btn-filtro-activo]="conceptoFiltro === null"
+          (click)="seleccionarConcepto(null)">
+          TODOS
+        </button>
+        @for (c of reporte.conceptos; track c.nombreConcepto) {
+          <button
+            type="button"
+            class="btn-filtro-concepto"
+            [class.btn-filtro-activo]="conceptoFiltro === c.nombreConcepto"
+            (click)="seleccionarConcepto(c.nombreConcepto)">
+            {{ c.nombreConcepto }}
+          </button>
+        }
+      </div>
+
+      @for (concepto of conceptosFiltrados; track concepto.nombreConcepto) {
+        <div class="establecimiento-card">
+          <h2 class="est-titulo">{{ concepto.nombreConcepto }}</h2>
+
+          <div class="tabla-container-amplio">
+            <table class="tabla-retro">
+              <thead>
+                <tr>
+                  <th style="width: 100px;">Factura</th>
+                  <th style="width: 100px;">Legajo</th>
+                  <th>Apellido, Nombre del Alumno</th>
+                  <th style="width: 130px;">Período</th>
+                  <th class="text-center" style="width: 110px;">F. Factura</th>
+                  <th class="text-center" style="width: 110px;">F. Pago</th>
+                  <th class="text-center" style="width: 150px;">Importe</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of concepto.detalles; track $index) {
+                  <tr>
+                    <td class="bold-cell"># {{ item.nroFactura }}</td>
+                    <td class="text-center">{{ item.legajo }}</td>
+                    <td class="nombre-cell">{{ item.nombreAlumno }}</td>
+                    <td>{{ item.periodo }}</td>
+                    <td class="text-center">{{ item.fechaFactura | date:'dd/MM/yyyy' }}</td>
+                    <td class="text-center">{{ item.pagado ? (item.fechaPago | date:'dd/MM/yyyy') : '—' }}</td>
+                    <td class="money-center">{{ item.importe | number:'1.2-2' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="total-establecimiento-barra">
+            CANTIDAD FACTURADA: {{ concepto.cantidadFacturado }} - SUBTOTAL FACTURADO:{{ concepto.totalFacturado | number:'1.2-2' }}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            CANTIDAD COBRADA: {{ concepto.cantidadCobrado }} - SUBTOTAL PAGADO:{{ concepto.totalCobrado | number:'1.2-2' }}
+          </div>
+        </div>
+      }
+
+      <div class="caja-gran-total">
+        <div class="total-final">
+          <span class="label">TOTAL GENERAL FACTURADO ({{ reporte.cantidadTotalFacturado }} ítems)</span>
+          <span class="valor">{{ reporte.granTotalFacturado | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-final">
+          <span class="label">TOTAL GENERAL COBRADO({{ reporte.cantidadTotalCobrado }} ítems)</span>
+          <span class="valor">{{ reporte.granTotalCobrado | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

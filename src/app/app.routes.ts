@@ -19,6 +19,8 @@ import { FacturaAlumnoComponent } from './components/factura-alumno/factura-alum
 import { HistoriaFacturacionComponent } from './components/historia-facturacion/historia-facturacion';
 import { NovedadesAlumnoComponent } from './components/novedades-alumno/novedades-alumno';
 import { DeudaIndividualComponent } from './components/deuda-individual/deuda-individual';
+import { FacturacionConceptoComponent } from './components/facturacion-concepto/facturacion-concepto';
+import { MaestrosComponent } from './components/maestros/maestros';
 
 export const routes: Routes = [
   // 1. Ruta por defecto: Carga la Home
@@ -44,6 +46,8 @@ export const routes: Routes = [
   { path: 'factura-curso', component: FacturaCursoComponent},
   { path: 'factura-alumno', component: FacturaAlumnoComponent},
   { path: 'historia-facturacion', component: HistoriaFacturacionComponent },
+  { path: 'facturacion-concepto', component: FacturacionConceptoComponent },
+  { path: 'maestros', component: MaestrosComponent },
   
   // 3. Comodín: Si escriben cualquier cosa mal, vuelve a la Home
   { path: '**', redirectTo: '' }
