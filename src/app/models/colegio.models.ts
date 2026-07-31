@@ -285,3 +285,30 @@ export interface PagoCargaDto {
   importePagado: number;
   tipoPagoId: number | null;
 }
+
+export interface MaestroDto {
+  maestroId: number | null;
+  apellido: string;
+  nombre: string;
+  nroDocumento: string;
+ 
+  tipoDocumentoId: number | null;
+  tipoDocumentoDescripcion?: string;
+ 
+  dirCalle: string;
+  dirNumero: string;
+  dirPiso: string;
+  dirDepto: string;
+ 
+  telefonoFijo: string;
+  telefonoCelular: string;
+ 
+  localidadId: number | null;
+  localidadNombre?: string;
+ 
+  actividadId: number | null;
+  actividadNombre?: string;
+ 
+  establecimientoId: number | null;
+  establecimientoNombre?: string;
+}
