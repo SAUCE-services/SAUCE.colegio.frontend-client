@@ -155,9 +155,9 @@ $rojo-pdf: #cf222e;
       color: #444;
     }
 
-    // Centrado de importes y tipografía contable[cite: 15]
+    // Centrado de importes y tipografía contable
     .money-center { 
-      font-family: 'Courier New', Courier, monospace; 
+      font-family: 'inherit'; 
       font-weight: 800; 
       font-size: 1.2rem;
       color: #1a5d3b; 
