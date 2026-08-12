@@ -37,65 +37,32 @@
     <div class="reporte-container">
       <h2 style="margin-left: 2rem; color: #666;">Período: {{ reporte.filtroDescripcion }}</h2>
 
-      <div class="filtro-conceptos-botones">
-        <button
-          type="button"
-          class="btn-filtro-concepto"
-          [class.btn-filtro-activo]="conceptoFiltro === null"
-          (click)="seleccionarConcepto(null)">
-          TODOS
-        </button>
-        @for (c of reporte.conceptos; track c.nombreConcepto) {
-          <button
-            type="button"
-            class="btn-filtro-concepto"
-            [class.btn-filtro-activo]="conceptoFiltro === c.nombreConcepto"
-            (click)="seleccionarConcepto(c.nombreConcepto)">
-            {{ c.nombreConcepto }}
-          </button>
-        }
-      </div>
-
-      @for (concepto of conceptosFiltrados; track concepto.nombreConcepto) {
-        <div class="establecimiento-card">
-          <h2 class="est-titulo">{{ concepto.nombreConcepto }}</h2>
-
-          <div class="tabla-container-amplio">
-            <table class="tabla-retro">
-              <thead>
+      <div class="establecimiento-card">
+        <div class="tabla-container-amplio">
+          <table class="tabla-retro">
+            <thead>
+              <tr>
+                <th>Concepto / Rubro</th>
+                <th class="text-center" style="width: 150px;">Cantidad Facturado</th>
+                <th class="text-center" style="width: 170px;">Total Facturado</th>
+                <th class="text-center" style="width: 150px;">Cantidad Cobrado</th>
+                <th class="text-center" style="width: 170px;">Total Cobrado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (concepto of reporte.conceptos; track concepto.nombreConcepto) {
                 <tr>
-                  <th style="width: 100px;">Factura</th>
-                  <th style="width: 100px;">Legajo</th>
-                  <th>Apellido, Nombre del Alumno</th>
-                  <th style="width: 130px;">Período</th>
-                  <th class="text-center" style="width: 110px;">F. Factura</th>
-                  <th class="text-center" style="width: 110px;">F. Pago</th>
-                  <th class="text-center" style="width: 150px;">Importe</th>
+                  <td class="nombre-cell">{{ concepto.nombreConcepto }}</td>
+                  <td class="text-center">{{ concepto.cantidadFacturado }}</td>
+                  <td class="money-center">{{ concepto.totalFacturado | number:'1.2-2' }}</td>
+                  <td class="text-center">{{ concepto.cantidadCobrado }}</td>
+                  <td class="money-center">{{ concepto.totalCobrado | number:'1.2-2' }}</td>
                 </tr>
-              </thead>
-              <tbody>
-                @for (item of concepto.detalles; track $index) {
-                  <tr>
-                    <td class="bold-cell"># {{ item.nroFactura }}</td>
-                    <td class="text-center">{{ item.legajo }}</td>
-                    <td class="nombre-cell">{{ item.nombreAlumno }}</td>
-                    <td>{{ item.periodo }}</td>
-                    <td class="text-center">{{ item.fechaFactura | date:'dd/MM/yyyy' }}</td>
-                    <td class="text-center">{{ item.pagado ? (item.fechaPago | date:'dd/MM/yyyy') : '—' }}</td>
-                    <td class="money-center">{{ item.importe | number:'1.2-2' }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-
-          <div class="total-establecimiento-barra">
-            CANTIDAD FACTURADA: {{ concepto.cantidadFacturado }} - SUBTOTAL FACTURADO:{{ concepto.totalFacturado | number:'1.2-2' }}
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            CANTIDAD COBRADA: {{ concepto.cantidadCobrado }} - SUBTOTAL PAGADO:{{ concepto.totalCobrado | number:'1.2-2' }}
-          </div>
+              }
+            </tbody>
+          </table>
         </div>
-      }
+      </div>
 
       <div class="caja-gran-total">
         <div class="total-final">

@@ -23,19 +23,6 @@ export class FacturacionConceptoComponent implements OnInit {
   cargando = false;
   reporte: any = null;
 
-  // 🌟 Filtro por concepto: null = "TODOS"
-  conceptoFiltro: string | null = null;
-
-  get conceptosFiltrados(): any[] {
-    if (!this.reporte?.conceptos) return [];
-    if (!this.conceptoFiltro) return this.reporte.conceptos;
-    return this.reporte.conceptos.filter((c: any) => c.nombreConcepto === this.conceptoFiltro);
-  }
-
-  seleccionarConcepto(nombre: string | null) {
-    this.conceptoFiltro = nombre;
-  }
-
   ngOnInit(): void {
     this.periodoService.getPeriodosHistoricos().subscribe({
       next: (data: any) => {
@@ -51,7 +38,6 @@ export class FacturacionConceptoComponent implements OnInit {
     if (!this.periodoInput) return;
     this.cargando = true;
     this.reporte = null;
-    this.conceptoFiltro = null;
     this.cdr.detectChanges();
 
     this.facturaService.getFacturacionPorConceptoYPeriodo(this.periodoInput).subscribe({
