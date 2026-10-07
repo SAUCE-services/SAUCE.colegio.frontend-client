@@ -22,6 +22,12 @@ export class FacturaService {
     return this.http.get<HistoriaFacturacionDto[]>(`${this.baseUrl}/facturacion/historia/${alumnoId}`);
   }
 
+  descargarExcelHistoria(alumnoId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/facturacion/historia/${alumnoId}/excel`, {
+      responseType: 'blob'
+    });
+  }
+
   getDetalleFactura(id: number): Observable<LineaDetalleDto[]> {
     return this.http.get<LineaDetalleDto[]>(`${this.baseUrl}/facturacion/detalle/${id}`);
   }

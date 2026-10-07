@@ -31,6 +31,7 @@ export class HistoriaFacturacionComponent {
   cargandoDetalle = false;
   totalDeudaFinal = 0;
   anulando = false;
+  descargandoExcel = false;
 
   // 🌟 Cartel de confirmación/alerta custom
   mostrarCartelMensaje = false;
@@ -189,6 +190,33 @@ export class HistoriaFacturacionComponent {
       error: (err) => {
         console.error("Error en la petición:", err);
         this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Descarga la historia de facturación del alumno en Excel (grilla + detalle de conceptos)
+  descargarExcel() {
+    if (!this.movimientos || this.descargandoExcel) return;
+
+    const legajo = this.movimientos.legajo;
+    this.descargandoExcel = true;
+
+    this.facturaService.descargarExcelHistoria(legajo).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `historia_facturacion_${legajo}.xlsx`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.descargandoExcel = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al generar el Excel:', err);
+        this.descargandoExcel = false;
+        this.lanzarCartel('Error', 'No se pudo generar el Excel de la historia de facturación.', 'alerta');
         this.cdr.detectChanges();
       }
     });

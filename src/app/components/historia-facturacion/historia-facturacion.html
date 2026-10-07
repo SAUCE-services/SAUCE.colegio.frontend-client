@@ -70,6 +70,14 @@
           <label>ALUMNO:</label>
           <span class="nombre-resaltado">{{ movimientos.nombreCompleto }}</span>
         </div>
+        <button
+          type="button"
+          class="btn-toggle"
+          style="margin-left: auto;"
+          (click)="descargarExcel()"
+          [disabled]="descargandoExcel">
+          {{ descargandoExcel ? 'GENERANDO...' : 'EXCEL' }}
+        </button>
       </div>
 
       <div class="tabla-container-amplio seccion-ficha">
