@@ -110,6 +110,29 @@ $rojo-pdf: #cf222e;
   }
 }
 
+// BOTÓN EXCEL VERDE INSTITUCIONAL
+.btn-excel-descarga {
+  background: $blanco-puro;
+  color: $verde-colegial;
+  border: 2px solid $verde-colegial;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: $verde-colegial;
+    color: white;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 // --- CONTENEDORES DE REPORTE POR ESTABLECIMIENTO[cite: 14, 15] ---
 .establecimiento-card {
   margin: 0 2rem 3rem 2rem;

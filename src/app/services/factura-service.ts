@@ -202,4 +202,11 @@ export class FacturaService {
       responseType: 'blob'
     });
   }
+
+  descargarExcelFacturacionPorConceptoYPeriodo(periodo: string): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/facturacion/concepto/periodo-excel`, {
+    params: { periodo },
+    responseType: 'blob'
+  });
+}
 }
