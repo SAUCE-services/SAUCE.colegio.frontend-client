@@ -25,6 +25,9 @@
         <button class="btn-pdf-descarga" (click)="descargarPdf()">
           📄 DESCARGAR REPORTE PDF
         </button>
+        <button class="btn-excel-descarga" (click)="descargarExcel()" [disabled]="descargandoExcel">
+          {{ descargandoExcel ? 'GENERANDO...' : '📊 DESCARGAR REPORTE EXCEL' }}
+        </button>
       }
     </div>
   </header>

@@ -21,6 +21,7 @@ export class FacturacionConceptoComponent implements OnInit {
   periodoInput: string = '';
 
   cargando = false;
+  descargandoExcel = false;
   reporte: any = null;
 
   ngOnInit(): void {
@@ -73,6 +74,32 @@ export class FacturacionConceptoComponent implements OnInit {
       error: (err) => {
         console.error("Error al generar PDF de facturación por concepto:", err);
         alert("No se pudo cargar el archivo. Verifique la conexión.");
+      }
+    });
+  }
+
+  descargarExcel() {
+    if (!this.periodoInput || this.descargandoExcel) return;
+
+    const periodo = this.periodoInput;
+    this.descargandoExcel = true;
+
+    this.facturaService.descargarExcelFacturacionPorConceptoYPeriodo(periodo).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `facturacion_concepto_${periodo.replace(/[^A-Za-z0-9_-]/g, '_')}.xlsx`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.descargandoExcel = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Error al generar Excel de facturación por concepto:", err);
+        this.descargandoExcel = false;
+        alert("No se pudo generar el Excel. Verifique la conexión.");
+        this.cdr.detectChanges();
       }
     });
   }
